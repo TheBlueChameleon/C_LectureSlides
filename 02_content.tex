@@ -1,0 +1,746 @@
+% =========================================================================== %
+
+\begin{frame}[t,plain]
+\titlepage
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Script}
+%
+\begin{itemize}
+\item Kapitel 3
+	\begin{itemize}
+	\item 3.1 Daten im Speicher
+	\item 3.1.2 Adressierung – Pointer
+	\item 3.5 Zahlenformate
+	\end{itemize}
+\item Kapitel 4
+	\begin{itemize}
+	\item 4.1 Dateneingabe mit \mintinline{c}{scanf}
+	\end{itemize}
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Binärdarstellung}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{tcolorbox}[title=Dezimalzahlen]
+\begin{itemize}
+\item Nummeriere Zahlen von rechts nach links durch
+\item Beginne bei null
+\item Zehnerpotenz multiplizert mit Ziffer
+\end{itemize}
+\begin{codebox}[]
+{\scriptsize \ttfamily{2\,1\,0}\newline}
+$\texttt{135}_{10} = 1 \cdot 10^2 + 3 \cdot 10^1 + 5 \cdot 10^0$
+\end{codebox}
+\end{tcolorbox}
+%
+\column{.5\linewidth}
+\begin{tcolorbox}[title=Binärzahlen]
+\begin{itemize}
+\item Selbes Prinzip
+\item Nur zwei Ziffern: 1 und 0
+\item \emph{Zweier}potenzen
+\end{itemize}
+\begin{codebox}[]
+{\scriptsize \ttfamily{7\,6\,5\,4\,3\,2\,1\,0}}\newline
+$\texttt{10000111}_{2}$\newline
+$\quad   =   1 \cdot 2^7   +   1 \cdot 2^2   +   1 \cdot 2^1   +   1 \cdot 2^0$\newline
+$\quad   =   135_{10}$
+\end{codebox}
+\end{tcolorbox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Hexadezimal- und Oktalzahlen}
+%
+\begin{columns}
+\column{.4\linewidth}
+\begin{itemize}
+\item Hexadezimalzahlen
+	\begin{itemize}
+	\item 16 verschiedene \enquote{Ziffern}:\\ 
+		0-9, A-F
+	\item Elegante Darstellung von Binärzahlen
+	\item Häufig in technischen Dokumenten
+	\item Immer noch: Normale Zahl
+	\item Markierung: \texttt{0x} oder Suffix \texttt{h}
+	\end{itemize} 
+\item Oktalzahlen: 
+	\begin{itemize}
+	\item 8 Ziffern (0-7)
+	\item Bedeutung bei Festplattentreibern (8 bits pro Byte)
+	\end{itemize}
+\end{itemize}
+%
+\column{.6\linewidth}
+\begin{tcolorbox}[title=Beispiel]
+\begin{tabular}{cc}
+\textbf{Basis}    &   \textbf{Darstellung} \tabcrlf
+10 (Dezimal)      &   10\,794 \\
+2 (Binär)         &   \texttt{0010101010 00101010}$_2$ \\
+16 (Hexadezimal)  &   \texttt{0x2A2A} \\
+8 (Oktal)         &   \texttt{25052}$_8$ \\
+\end{tabular}
+\end{tcolorbox}
+%
+\begin{hintbox}
+Why do programmers confuse Helloween and Christmas?\newline
+Because \texttt{dec(25) == oct(31)} 
+\end{hintbox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Pointer}
+%
+\small
+%
+\begin{codebox}[Syntax: Pointer-Variable Deklarieren]
+	\mintinline{c}{Datentyp * Variable;}
+\end{codebox}
+%
+\tcbset{
+	colback=black!5!white,
+	colframe=blue!40!black,
+	leftupper=7mm,
+	arc=0pt,
+	width=.48\linewidth,
+	on line}
+\begin{tcolorbox}[title=Adress-Operator]
+	\mintinline{c}{&variable}
+\end{tcolorbox}
+\hspace{\fill}
+\begin{tcolorbox}[title=Dereferenzierungs-Operator]
+	\mintinline{c}{*variable}
+\end{tcolorbox}
+%
+\begin{itemize}
+\item Pointer: Formal ein \mintinline{c}{unsigned long long int}, also eine 64bit-Zahl.
+\item Vorstellung: Speicher als eindimensionale Liste; Pointer ist dann Listen-Index\newline
+	(\enquote{Nummer des Bytes im Speicher})
+\item Immer noch zugeordnet: Datentyp -- nötig für lesenden/schreibender Zugriff.\newline
+	(\emph{Wie viele Bytes lesen/schreiben?})
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+int main () {
+  int   Zahl   = 7;
+  int * Zeiger = &Zahl;
+  
+  printf("Zahl ist %d\n", Zahl);                   // 7
+  printf("Zeiger zeigt auf %p\n",        Zeiger);  // 0x7ffdf335b63c
+  printf("an dieser Stelle steht %d\n", *Zeiger);  // 7
+  
+  *Zeiger = 3;
+  
+  printf("Jetzt ist Zahl = %d\n", Zahl);           // 3
+}
+\end{minted}
+\end{codebox}
+%
+\begin{hintbox}
+\small Zeile 8 -- Ausgabe von Pointern über \texttt{\%p}
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Usereingaben}
+%
+\begin{codebox}[Syntax]
+\mintinline{c}{scanf(FormatString, ListePointer);}
+\end{codebox}
+\begin{itemize}
+\item Eingaben von Tastatur $\rightarrow$ angegebene Adresse(n)
+\item Vorkompilierte Routine in Bibliothek stdio.h -- 
+	keine direkte Verbindung zu Variablen im eigenen Code
+\item Daher Kommunikation mittels Pointer!
+\item \texttt{FormatString} wie bei \texttt{printf}
+\item \texttt{ListePointer} durch Kommata getrennt.
+\item Empfehlung: Nur eine Eingabe pro scanf-Zeile
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]%{scanf -- Beispiel}
+%
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+int main () {
+  int foobar = 0;
+  
+  printf("Bitte einen Wert eingeben\n");
+  scanf ("%d", &foobar);
+  
+  printf("Eingegeben wurde %d\n", foobar);
+}
+\end{minted}
+\end{codebox}
+%
+\begin{warnbox}
+\small Ohne das den Operator \mintinline{c}{&} stürzt das Programm ab, da -- verbotenerweise -- versucht wird, an die Adresse 0 (Wert von \mintinline{c}{foobar}) zu schreiben.
+\end{warnbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Script}
+%
+\begin{itemize}
+\item Kapitel 5
+	\begin{itemize}
+	\item 5.1 Wahrheitswerte
+	\item 5.2 Bedingte Ausführung von Code: \mintinline{c}{if}
+	\item 5.3 Logische Operatoren
+	\item 5.4 Abprüfung vieler Fälle: \mintinline{c}{switch}
+	\item 5.5 Kombinierte Fallunterscheidung und Wertzuweisung
+	\end{itemize}
+\item Kapitel 3
+	\begin{itemize}
+	\item 3.2 Bitweise Logik und Bit-Shifting
+	\item 3.4 Hierarchie der Operatoren
+	\end{itemize}
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{tcolorbox}[title=Vergleichsoperatoren]
+\begin{table}
+\newcolumntype{C}{>{\ttfamily\centering\arraybackslash} p{.1\linewidth}}
+\begin{tabularx}
+	{\linewidth}
+	{Cc|Cc|Cc}
+	
+	\normalfont Code & Wirkung & 
+	\normalfont Code & Wirkung & 
+	\normalfont Code & Wirkung \tabcrlf
+	
+	== & Gleichheit   & < & kleiner als & <= & kleiner oder gleich\\
+	!= & Ungleichheit & > & größer als  & >= & größer oder gleich
+\end{tabularx}
+\end{table}
+\end{tcolorbox}
+%
+\begin{warnbox}
+\small \emph{Doppeltes} Gleichheitszeichen! Einfaches Gleichheitszeichen ist \emph{Wertzuweisung}!
+\end{warnbox}
+%
+\begin{hintbox}
+\small Reihenfolge in \mintinline{c}{>=, <=} wie beim Sprechen: Größer/Gleich
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Wahrheitswerte}
+%
+\begin{itemize}
+\item Konzept: \emph{ja oder nein}
+\item Jeder beliebige Zahlenwert
+	\begin{itemize}
+	\item Entweder gleich 0 -- falsch
+	\item Oder ungleich 0 -- wahr
+	\end{itemize}
+\item Ergebnis der Vergleichsoperatoren ist ein Wahrheitswert (0 oder 1)
+\item \emph{Kein} eigener Datentyp, sondern ein \mintinline{c}{int}
+\item \enquote{Rechnungen} damit möglich (wenn auch selten sinnvoll)
+\end{itemize}
+%
+\begin{codebox}[Beispiel]
+\begin{minted}[fontsize=\scriptsize]{c}
+int x = 17;
+int truth = ((x > 5) + (x < 5) + (x == 17)) * 21;
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Bedingungen -- \mintinline{c}{if}, \mintinline{c}{else}}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item \emph{Wenn \texttt{Bedingung} erfüllt ist, dann mache \texttt{Anweisungen}}.
+\item Vermutlich DAS WICHTIGSTE Konzept. Existiert so in \emph{jeder} Sprache
+\item \emph{Bedingung}: Ausdruck, der zu Wahrheitswert ausgewertet werden kann
+\item \mintinline{c}{else}-Block optional: Umsetzung von \emph{Sonst mache \texttt{andere Anweisungen}}
+\end{itemize}
+%
+\column{.45\linewidth}
+\begin{codebox}[Syntax]
+\begin{minted}[fontsize=\scriptsize]{c}
+if (Bedingung) {
+  Anweisung_1;
+  Anweisung_2;
+  ...
+} else {
+  Anweisung_3;
+  ...
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\begin{warnbox}
+\small (Runde Klammern um die Bedingung), \{geschweiften Klammern um Anweisungen\}
+\end{warnbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{codebox}[\mintinline{text}{if} -- Beispiel]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+int main () {
+  int foobar = 0;
+  
+  printf("Bitte einen Wert eingeben\n");
+  scanf ("%d", &foobar);
+  
+  if (foobar == 0) {
+    printf("Betrag kleiner als Epsilon\n");
+  } else {
+    printf("Ave Imperator, morituri te salutant\n");
+  }
+}
+\end{minted}
+\end{codebox}
+%
+\begin{hintbox}
+\small Code durch Einrücken übersichtlich halten!
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{codebox}[Vergleiche -- Ein häufiger Fehler]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+int main () {
+  int foobar = 0;
+  
+  printf("Bitte einen Wert eingeben\n");
+  scanf ("%d", &foobar);
+  
+  if (foobar = 0) {
+    printf("Betrag kleiner als Epsilon\n");
+  } else {
+    printf("Ave Imperator, morituri te salutant\n");
+  }
+}
+\end{minted}
+\end{codebox}
+%
+\begin{warnbox}
+\small Compiler-Warnung zu Zeile 9
+\end{warnbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{cmdbox}[Compiler-Warnung bei obigem Code]
+\begin{minted}[fontsize=\scriptsize]{text}
+myProgram.c: In function ‘main’:
+myProgram.c:9:7: warning: suggest parentheses around assignment used as truth value 
+[-Wparentheses]
+   if (foobar = 0) {
+       ^~~~~~
+\end{minted}
+\end{cmdbox}
+%
+\begin{hintbox}[Weiterführende Infos / Ausblicke]
+\begin{itemize}
+\item Selten: Wertzuweisung und gleichzeitige Fallprüfung gewünscht.
+\item Beispiel: Funktion berechnet Wert, oder gibt bei Fehler 0 zurück
+\item Bevorzugt: Zwei Zeilen
+\item Auch erlaubt: \newline
+	\mintinline{c}{if ((variable = funktion())) ... }
+\end{itemize}
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Logische Verknüpfung}
+%
+\begin{columns}[T]
+\column{.49\linewidth}
+\begin{itemize}
+\item Kombination mehrerer Bedingunen
+\item \emph{Wenn [Opfer in Sicht] UND [keine weiteren Zeugen] dann [Messer]}
+\item weitere Verknüpfungen: \emph{oder} und \emph{Negation (\enquote{nicht})}
+\end{itemize}
+%
+\column{.45\linewidth}
+\begin{tcolorbox}[title=logische Vernküpfungen]
+\begin{center}
+\begin{table}
+	\newcolumntype{C}{>{\ttfamily\centering\arraybackslash} p{.4\linewidth}}
+	\newcolumntype{P}{>{         \centering\arraybackslash} p{.4\linewidth}}
+\begin{tabularx}
+	{.9\linewidth}	
+	{PC}
+Verknüpfung & \normalfont Code \tabcrlf
+
+AND      & \&\&  \\
+OR       & ||    \\
+Negation & !
+\end{tabularx}
+\end{table}
+\end{center}
+\end{tcolorbox}
+\end{columns}
+%
+\tcbset{on line, width=.45\linewidth}
+\begin{warnbox}
+\small\centering Doppeltes \mintinline{c}{&&} und \mintinline{c}{||}!\newline
+\end{warnbox}
+\hspace{\fill}
+\begin{warnbox}
+\small\centering Ihr wollt mir nicht allein im Dunkeln begegnen.\vspace{\fill}
+\end{warnbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+#include "lawlibrary.h"
+
+int main () {
+  int Fall_ID, Tatbestand, Rechtswidrigkeit, Schuldausschlussgrund;
+  
+  Fall_ID = getNewCase();
+  
+  Tatbestand            = checkActusReus(Fall_ID);
+  Rechtswidrigkeit      = checkMensRea  (Fall_ID);
+  Schuldausschlussgrund = checkDefense  (Fall_ID);
+  
+  if (Tatbestand && Rechtswidrigkeit && ! Schuldausschlussgrund) {
+    printf("Schuldig!\n");
+  } else {
+    printf("Freispruch!\n");
+  }
+}
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Bitweise Logik}
+%
+\begin{itemize}
+\item Zuvor: Kombination von Wahrheitwerten
+\item Jede Zahl aus Bits dargestellt, die ebenfalls Wahrheitswerte darstellen
+\end{itemize}
+%
+\begin{tcolorbox}[title=Bitweise Logikoperatoren]
+\begin{center}
+\begin{table}
+	\newcolumntype{C}{>{\ttfamily\centering\arraybackslash} p{.07\linewidth}}
+	\newcolumntype{P}{>{         \centering\arraybackslash} p{.20\linewidth}}
+\begin{tabularx}
+	{\linewidth}	
+	{PC|PC|PC}
+Verknüpfung & \normalfont Code &
+Verknüpfung & \normalfont Code &
+Verknüpfung & \normalfont Code \tabcrlf
+
+AND & \&   &   XOR      & \^{}              &   Bitshift links & {<}< \\
+OR  & |    &   Negation & \textasciitilde   &   Bitshift rechts & {>}>  \\
+\end{tabularx}
+\end{table}
+\end{center}
+\end{tcolorbox}
+%
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Bitweise Logik -- Beispiele}
+%
+\tcbset{on line, width=.3\linewidth}
+%
+\begin{center}
+%
+\begin{codebox}[AND]
+\begin{minted}{text}
+1 1 0 0   12
+1 0 1 0   10
+- AND -   --
+1 0 0 0    8
+\end{minted}
+\end{codebox}
+%
+\hspace{1em}
+%
+\begin{codebox}[OR]
+\begin{minted}{text}
+1 1 0 0   12
+1 0 1 0   10
+-- OR -   --
+1 1 1 0   14
+\end{minted}
+\end{codebox}
+%
+\hspace{1em}
+%
+\begin{codebox}[XOR]
+\begin{minted}{text}
+1 1 0 0   12
+1 0 1 0   10
+- XOR -   --
+0 1 1 0    6
+\end{minted}
+\end{codebox}
+%
+\end{center}
+%
+%
+\tcbset{on line, width=.45\linewidth}
+%
+\begin{center}
+%
+\begin{codebox}[Bitshift left by 1]
+\begin{minted}{text}
+1 0 1 0 1 0 1 0   170
+----- << 1 ----   ---
+0 1 0 1 0 1 0 0    84
+\end{minted}
+\end{codebox}
+%
+\hspace{\fill}
+%
+\begin{codebox}[Bitshift right by 1]
+\begin{minted}{text}
+0 1 0 1 0 1 0 1    85
+----- >> 1 ----   ---
+0 0 1 0 1 0 1 0    42
+\end{minted}
+\end{codebox}
+%
+\end{center}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Hierarchie der Operatoren}
+%
+\begin{tcolorbox}%[title=Details]
+%
+\begin{tabularx}
+	{\linewidth}
+	{cc|cc}
+	
+	Rang & Operator            &  Rang & Operator                             \tabcrlf
+	1    & \texttt{++, -{}-}   &  5    & Bitweise (\texttt{\&, |}, \ldots)    \\
+	2    & \texttt{*, /, \%}   &  6    & Logische (\texttt{\&\&, ||}, \ldots) \\
+	3    & \texttt{+, -}       &  7    & Zuweisungen (\texttt{=, +=}, \ldots) \\
+	4    & Vergleiche (\texttt{>=, <, ==}, \ldots) \\
+	
+\end{tabularx}
+\phantom{}\newline
+%
+\scriptsize \url{http://en.cppreference.com/w/c/language/operator_precedence}
+\end{tcolorbox}
+%
+\begin{hintbox}
+Im Zweifel: Klammern benutzen
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Verschachtelung}
+%
+Zwei Gleichwertige Code-Beispiele:
+%
+\begin{columns}[T]
+\column{.48\linewidth}
+\begin{codebox}[logische Verknüpfung]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+if ((a == b) && (b != c)) {
+   printf("a ist b, b nicht c\n");
+}
+\end{minted}
+\end{codebox}
+%
+\column{.48\linewidth}
+\begin{codebox}[Verschachtelung]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+if    (a == b) {
+   if (b != c) {
+      printf("a ist b, b nicht c\n");
+   }
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\begin{hintbox}
+Einrückungen retten Leben!
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Zwei Kurzformen mit \mintinline{c}{if}}
+%
+\begin{columns}[T]
+\column{.45\linewidth}
+\begin{tcolorbox}[title=\emph{Einzeilige} \mintinline{text}{if}-Blöcke]
+\begin{itemize}
+\item \{Geschweifte Klammern\} optional
+\item Nicht zu empfehlen\newline
+	(Fehlerquelle beim Erweitern)
+\end{itemize}
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+if (Ausdruck)
+   Anweisung_1;
+else
+   Anweisung_2;
+\end{minted}
+\end{codebox}
+\end{tcolorbox}
+%
+\column{.55\linewidth}
+\begin{tcolorbox}[title=Bedingte Zuweisung]
+%
+\begin{codebox}[Syntax]
+\scriptsize\mintinline{c}{Bedingung ? Wert_ja : Wert_nein}
+\end{codebox}
+\begin{codebox}[Beispiel]
+\scriptsize\mintinline{c}{max_ab = a > b  ?  a  :  b}
+\end{codebox}
+Kann manche Ausdrücke stark vereinfachen, an anderen Stellen eher verkomplizieren
+\end{tcolorbox}
+%
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{columns}[T]
+\column{.48\linewidth}
+\begin{Large}
+{\mintinline{c}{switch}-Blocks}
+\vspace{6pt}
+\end{Large}
+\begin{itemize}
+\item Fallunterscheidung für \mintinline{c}{int}- und \mintinline{c}{char}-Ausdrücke
+\item \enquote{Erstes aus einer Liste}
+\item Vergleich nur mit \emph{konstanten Ausdrücken}
+\item \mintinline{c}{break}: Verlässt aktuelle \{Umgebung\}
+\item \mintinline{c}{default}: Wie \mintinline{c}{else}.\newline
+	\emph{Muss} letzter Anweisungsblock sein.
+\end{itemize}
+%
+\column{.48\linewidth}
+\begin{codebox}[Syntax]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+switch (Ausdruck) {
+   case Wert_1:
+      Anweisungen_1;
+      break;
+
+   ...
+
+   case Wert_n:
+      Anweisungen_n;
+      break;
+      
+   default:
+      Anweisungen_sonst;
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Beispiel}
+%
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+
+char c = 'x';
+switch (c) {
+    case 'u':
+        printf("Will mir jemand was vormachen?\n");
+        break;
+    case 'x':
+        printf("Doch ein x.\n");
+        break;
+    default:
+        printf("Seltsam\n");
+}
+\end{minted}
+\end{codebox}
+%
+\begin{hintbox}
+\small 'Einfache Anführungszeichen': ASCII-Wert (Zahlenwert) des eingeschlossenen Zeichens
+\end{hintbox}
+%
+\end{frame}

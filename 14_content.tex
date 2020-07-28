@@ -1,0 +1,213 @@
+% =========================================================================== %
+
+\begin{frame}[t,plain]
+\titlepage
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[t,fragile]%{Rekursion: Selbstaufrufe}
+%
+\begin{columns}[T]
+\column{.7\linewidth}
+\begin{Large}
+Rekursion: Selbstaufrufe
+\vspace{10pt}
+\end{Large}
+%
+\begin{itemize}
+\item Routinen, die sich selbst aufrufen
+\item Beispiel: Ordnerstruktur inclusive Unterordner durchsuchen
+	\begin{itemize}
+	\item alle Dateien des Stammverzeichnisses auflisten
+	\item alle Ordner im Stammverzeichnis auflisten
+	\item \emph{die Ordnerstruktur jedes Unterverzeichnisses auflisten}
+	\item[$\Rightarrow$] Selbstbezug
+	\end{itemize}
+\item Manche Aufgaben so sehr elegant lösbar
+\item Wartung schwierig
+\end{itemize}
+%
+\begin{hintbox}
+\footnotesize Um Rekursion zu verstehen, muss man zunächst Rekursion verstehen.
+\end{hintbox}
+%
+\column{.23\linewidth}
+\includegraphics[width=\linewidth]{./gfx/foldertree}
+%
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Ein einfacheres Beispiel: Summe einer Liste}
+%
+\begin{tcolorbox}
+\emph{Die Summe aller Elemente einer Liste ist gleich dem ersten Listenelement plus der
+Summe der verbleibenden Liste ohne ihr erstes Element.}
+\end{tcolorbox}
+%
+\begin{itemize}
+\item Rekursive Formulierung: Berechnung der Summe durch Kenntnis einer \emph{Untersumme}
+\item Abbruchbedingung: \emph{triviale Liste}: Nur ein Element
+\item Lehrbeispiel; Lösung über \mintinline{c}{for}-Schleife effizienter
+\item So eine Lösung ist aber nicht immer verfügbar
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{codebox}[Code: Summe einer Liste]
+\begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
+#include <stdio.h>
+
+int listsum_recursive(int * list, unsigned int N) {
+  if (N == 1) {
+    return list[0];
+    
+  } else {
+    return list[0] + listsum_recursive(list + 1, N - 1);
+  }
+}
+
+int main () {
+  int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  printf("Summe: %d\n", listsum_recursive(list, sizeof(list) / sizeof(*list)));
+}
+
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}
+%
+\tcbset{width=.7\linewidth, on line}
+\scriptsize
+\begin{codebox}[Rekursionsstufe 0: Symbol und Werte, equal height group=grRecIn]
+\texttt{N = 9, list = \{1, 2, 3, 4, 5, 6, 7, 8, 9\}}
+\begin{codebox}[Rekursionsstufe 1: Symbole und Werte]
+\texttt{N = 8, list = \{2, 3, 4, 5, 6, 7, 8, 9\}}
+\begin{codebox}[Rekursionsstufe 2: Symbole und Werte]
+\texttt{N = 7, list = \{3, 4, 5, 6, 7, 8, 9\}}
+\begin{codebox}[Rekursionsstufe 3-7]
+...
+\begin{codebox}[Rekursionsstufe 8]
+\texttt{N = 1, list = \{9\}}%
+\end{codebox}%
+\end{codebox}%
+\end{codebox}%
+\end{codebox}%
+\end{codebox}
+%
+\tcbset{width=.28\linewidth, on line}
+\small
+\begin{hintbox}[Beachte, equal height group=grRecIn]
+Jeder Aufruf \enquote{lebt} in seinem eigenen Scope! Das Symbol \texttt{N} bezeichnet jeweils unterschiedliche Speicherstellen!
+
+Dasselbe gilt für den \emph{Pointer} \texttt{list} (jedoch nicht für die Daten der Liste selbst).
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{codebox}[Code: Summe einer Liste]
+\begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
+#include <stdio.h>
+
+int listsum_recursive(int * list, unsigned int N) {
+  if (N == 1) {
+    return list[0];
+    
+  } else {
+    return list[0] + listsum_recursive(list + 1, N - 1);
+  }
+}
+
+int main () {
+  int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  printf("Summe: %d\n", listsum_recursive(list, sizeof(list) / sizeof(*list)));
+}
+
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}
+%
+\scriptsize
+\begin{codebox}[Rekursionsstufe 0: Rückgabewerte]
+\begin{codebox}[Rekursionsstufe 1: Rückgabewerte]
+\begin{codebox}[Rekursionsstufe 2: Rückgabewerte]
+\begin{codebox}[Rekursionsstufe 3-7]
+\begin{codebox}[Rekursionsstufe 8: Rückgabewerte]
+\texttt{return 9};
+\end{codebox}
+...
+\end{codebox}
+\texttt{return 3 + 39};
+\end{codebox}
+\texttt{return 2 + 42};
+\end{codebox}
+\texttt{return 1 + 44};
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[t,fragile]%{Rekursion: Selbstaufrufe}
+%
+\tcbset{width=.6\linewidth, on line}
+\begin{codebox}[Beispiel: Fakultät]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+int factorial (int n) {
+    if (n > 1) {
+        return n * factorial(n-1);
+    } else if (n < 1) {
+        printf("invalid argument\n"); 
+        return -1;
+    } else {
+        return 1;
+    }
+}
+
+int main(void) {
+    for (int n=0; n<10; n++) {
+        printf("%d! = %d\n", n, factorial(n));
+    }
+}
+\end{minted}
+\end{codebox}
+%
+\tcbset{width=.38\linewidth, on line}
+\begin{hintbox}[Definition: Fakultät]
+\[N! = N \cdot (N-1) \cdot ... \cdot 1 \]
+oder
+\[N! = \prod_{i=1}^{N} i \]
+\end{hintbox}
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}
+%
+\begin{center}
+Code Ordnerstruktur...
+\end{center}
+%
+\end{frame}

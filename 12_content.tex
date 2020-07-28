@@ -1,0 +1,512 @@
+% =========================================================================== %
+
+\begin{frame}[t,plain]
+\titlepage
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{\texttt{\#define} und der Präprozessor}
+%
+\begin{columns}[T]
+\column{.43\linewidth}
+\begin{itemize}
+\item Präprozessor: Ändert Code, bevor Compiler einsetzt
+\item Beispiel: \mintinline{c}{#include} -- wird durch Dateiinhalt ersetzt
+\item \mintinline{c}{#define} -- Symbole anlegen (Makros)
+	\begin{itemize}
+	\item Konvention: ALL CAPS
+	\end{itemize}
+\item Vordefinierte Symbole
+	\begin{itemize}
+	\item \texttt{\_\_DATE\_\_}, \texttt{\_\_TIME\_\_}
+	\item \texttt{\_\_LINE\_\_}, \texttt{\_\_FILE\_\_}
+	\item \texttt{\_\_WIN32}, \texttt{WIN32}, \texttt{\_\_WIN32\_\_}
+	\item \texttt{\_\_UNIX}, \texttt{\_\_APPLE}, ...
+	\end{itemize}
+\item \mintinline{c}{#if}-Konstrukt und \mintinline{c}{defined} 
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+#define M_PI 3.14159265358979323846
+
+#if defined(__WIN32)
+    /* Windows-Specific Code */
+#else
+    /* Unix-Specific Code */
+#endif
+
+int main (void) {
+   printf("pi = %lf\n", M_PI);
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{}
+%
+%
+\begin{minipage}{.495\linewidth}
+\begin{warnbox}[Kein Semikolon, leftupper=6mm, equal height group=grDangers1]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+#define N 10;
+
+int main () {
+  int x = N;
+  
+  printf("%d", x);
+  printf("%d", N);
+}
+
+\end{minted}
+\end{warnbox}
+%
+\begin{codebox}[Expansion, leftupper=6mm, equal height group=grDangers2]
+\begin{minted}[fontsize=\scriptsize]{c}
+int x = 10;;
+...  
+printf("%d", 10;);
+\end{minted}
+\end{codebox}
+\end{minipage}
+%
+%
+\begin{minipage}{.495\linewidth}
+\begin{warnbox}[Klammern, leftupper=6mm, equal height group=grDangers1]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+#define SIX 1 + 5
+#define NINE 8 + 1
+
+int main () {
+  printf("SIX multiplied by NINE equals"
+         " %d.\n", SIX * NINE);
+}
+\end{minted}
+\end{warnbox}
+%
+\begin{codebox}[Expansion, leftupper=6mm, equal height group=grDangers2]
+\begin{minted}[fontsize=\scriptsize]{c}
+printf("SIX multiplied by NINE equals"
+         " %d.\n", 1 + 5 * 8 + 1);
+\end{minted}
+\end{codebox}
+\end{minipage}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{hintbox}[Empfehlung: \texttt{const} globals]
+Wir haben gesehen, dass \mintinline{c}{#define}-Symbole einige Gefahren bergen. Neben den oben gezeigten Fallen bieten diese auch keine \emph{Type Safety}. Zu empfehlen sind daher globale Konstanten:
+\begin{center}
+\mintinline{c}{const double M_PI = 3.14159265358979323846;}
+\end{center}
+
+Der Hauptzweck von \mintinline{c}{#define}-Symbolen sind Konstruktionen mit \mintinline{c}{#if}.
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{codebox}[Mehrzeilige Makros]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+#define PRINT_HEADLINE \
+  printf("+----------------------+\n"); \
+  printf("| headline             |\n"); \
+  printf("+----------------------+\n")
+
+int main () {
+  PRINT_HEADLINE;
+}
+\end{minted}
+\end{codebox}
+%
+\begin{cmdbox}[Ausgabe]
+\begin{minted}[fontsize=\scriptsize]{text}
++----------------------+
+| headline             |
++----------------------+
+\end{minted}
+\end{cmdbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\adjustbox{valign=t}{\begin{minipage}{.495\linewidth}
+\begin{hintbox}[Vor- und Nachteile]
+Vorteile
+\begin{itemize}
+\item Kein Overhead für Funktionsaufruf
+\item Schnellere Programme
+\end{itemize}
+Nachteile
+\begin{itemize}
+\item Größere ausführbare Dateien durch Code-Kopien
+\item Unerwartete Nebenwirkungen und schwer deutbare Fehlermeldungen
+\end{itemize}
+\end{hintbox}
+\end{minipage}}
+%
+%
+\adjustbox{valign=t}{\begin{minipage}{.495\linewidth}
+\begin{hintbox}[Vor- und Nachteile]
+In Deklarations-Zeile: Funktionen als \mintinline{c}{inline} ausgezeichnen\\
+Compiler setzt diese ähnlich um; Verhalten im Code aber wie bei Funktionen, ohne Nebeneffekte.
+\end{hintbox}
+%
+\begin{codebox}[Beispiel]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+inline void print_headline();
+       void print_headline() {
+  printf("+----------------------+\n");
+  printf("| headline             |\n");
+  printf("+----------------------+\n");
+}
+\end{minted}
+\end{codebox}
+\end{minipage}}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Parametrisierte Makros -- \enquote{Mini-Funktionen}}
+%
+\begin{columns}[b]
+\column{.55\linewidth}
+\begin{itemize}
+\item Ebenfalls über \mintinline{c}{#define}
+\item Ebenfalls vor Kompilation verarbeitet
+\item Parameter in runden Klammern () und durch Kommata getrennt
+\item Kein Leerzeichen zwischen Macro-Name und Parameterliste!
+\end{itemize}
+%
+\begin{hintbox}
+\begin{itemize}
+\item Keine Semikolons (;)
+\item Klammern um gesamten Ausdruck
+\end{itemize}
+\end{hintbox}
+%
+\column{.45\linewidth}
+\begin{codebox}[Beispiel]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+#define MAX(a, b) (a > b ? a : b)
+
+int main (void) {
+   int x = 3, y = 7;
+   
+   printf(
+      "max(%d, %d) = %d\n", 
+      x, y, 
+      MAX(x, y)
+   );
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\adjustbox{valign=t}{\begin{minipage}{.495\linewidth}
+\begin{warnbox}[Nebeneffekte, leftupper=6mm]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+#define MAX(a, b) (a > b  ?  a : b)
+
+int main () {
+  int i = 8, j = 7;
+  printf("MAX: %2d\n" , MAX(i++, j++));
+  printf(" i : %2d\n", i);
+  printf(" j : %2d\n", j);
+}
+\end{minted}
+\end{warnbox}
+\end{minipage}}
+%
+%
+\adjustbox{valign=t}{\begin{minipage}{.495\linewidth}
+\begin{codebox}[Expansion Zeile 7, leftupper=6mm]
+\begin{minted}[fontsize=\scriptsize]{c}
+  printf("MAX: %2d\n" , 
+    i++ > j++ ?  i++ : j++)
+  );
+\end{minted}
+\end{codebox}
+
+\begin{cmdbox}[Ausgabe, leftupper=6mm]
+\begin{minted}[fontsize=\scriptsize]{text}
+MAX: 9
+ i : 10
+ j : 8
+\end{minted}
+\end{cmdbox}
+\end{minipage}}
+%
+%
+\begin{hintbox}
+Inline-Funktionen bevorzugen!
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{\emph{Stringify}-Operator}
+%
+\begin{itemize}
+\item Oft zu Debug-Zwecken: Verwandle Code-Teil in String
+\item Stringify-Makro-Operator \texttt{\#}
+\end{itemize}
+%
+\begin{codebox}[Beispiel]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#define DebugInt(x) printf("The value of %s is %d\n", #x, x)
+
+int myInt = 5;
+
+DebugInt(myInt);
+DebugInt(myInt + 7);
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}[Ausgabe]
+\begin{minted}[fontsize=\scriptsize, linenos]{text}
+The value of myInt is 7
+The value of myInt + 7 is 12
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{\emph{Concatenation}-Operator}
+%
+\begin{itemize}
+\item Verkettune zwei Code-Zeichenketten zu einem Ausdruck
+\item Concatenation-Operator \texttt{\#\#}
+\end{itemize}
+%
+\tcbset{width=.495\linewidth, height=4.8cm, on line}
+%
+\begin{codebox}[Beispiel: Ohne Concatenation]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+typedef struct {
+  *name; 
+  (*function)(void);
+} command;
+
+command menuItems[] = {
+  {"quit", proc_quit},
+  {"help", proc_help}
+};
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}[Beispiel: Mit Concatenation]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+typedef struct {
+  *name; 
+  (*function)(void);
+} command;
+
+#define COMMAND(X) {#X, proc_ ## X}
+
+command menuItems[] = {
+  COMMAND(quit),
+  COMMAND(help)
+};
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Farbige Ausgabe}
+%
+\begin{itemize}
+\item Unix-Konsolen \emph{parsen} den zu druckenden Text selbst nocheinmal. Beispiel: \mintinline{text}{\n}
+\item Weitere Codes für farbige Ausgabe und Positionierung von Text
+\item Windows: Andere Mechanismen -- Siehe Script
+\item Farbausgabe: \mintinline{text}{\x1b[~~m}
+\item \mintinline{text}{~~} wird durch Zahlen-Symbole ersetzt -- Siehe Script
+\end{itemize}
+%
+\tcbset{width=.6\linewidth, on line}
+\begin{codebox}[Beispiel: Farbige Ausgabe, equal height group=grColoured]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+printf("\x1b[31mRed\n");
+printf("\x1b[93m\x1b[44mYellow on blue\n");
+\end{minted}
+\end{codebox}
+%
+\tcbset{width=.38\linewidth, on line}
+\begin{cmdbox}[Ausgabe, equal height group=grColoured]
+\scriptsize
+{\color{red}Red}\\
+\colorbox {blue}{\color{yellow}Yellow on blue}
+\end{cmdbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Konsolenausgabe positionieren, Konsole löschen}
+%
+\begin{itemize}
+\item Kommando: Konsole leeren: 
+	\tabto{7cm} \mintinline{c}{printf("\033[H\033[J");}
+\item Kommando: Springe zu Zeile \texttt{r}, Spalte \texttt{c}: 
+	\tabto{7cm} \mintinline{c}{printf("\033[%d;%dH", (r), (c));}
+\end{itemize}
+%
+\begin{codebox}[Beispiel: Farbige Ausgabe]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+printf("\033[%d;%dH", 10, 20);
+printf("Text in line 10, column 20\n");
+printf("Next line starts at column 1.\n");
+\end{minted}
+\end{codebox}
+%
+\begin{hintbox}
+Schwer zu merkende Kommandos einmal mit \mintinline{c}{#define} oder \mintinline{c}{enum} festhalten und durch besser greifbare Symbole ersetzen. Funktionen schreiben!
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\tcbset{width=.495\linewidth, on line}
+%
+\begin{codebox}[Beispiel: Wrapper für Konsole, equal height group=grWrapperColour]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+inline void console_clear();
+void console_clear() 
+  {printf("\033[H\033[J");}
+
+inline void console_goto(int r, int c);
+void console_goto(int r, int c)
+  {printf("\033[%d;%dH", r, c);}
+
+typedef enum {
+  FORE_BLACK,
+  FORE_RED,
+  // ...
+  BACK_BLACK,
+  BACK_RED,
+  // ..
+  // See GRIPS for full code
+\end{minted}
+\end{codebox}
+%	
+\begin{codebox}[Beispiel: ... Fortsetzung ..., equal height group=grWrapperColour]
+\begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
+  SPC_NORMAL,
+  SPC_UNDERLINE_ON,
+  SPC_UNDERLINE_OFF,
+  SPC_ITALICS_ON,
+  SPC_ITALICS_OFF,
+  SPC_BLINK_ON,
+  SPC_BLINK_OFF,
+  SPC_BOLD_ON,
+  SPC_BOLD_OFF
+} consoleColors;
+
+void setcolor (consoleColors code) {
+  switch (code) {
+    case FORE_BLACK :
+      printf("\x1b[30m") ; break;
+    case FORE_RED :
+      printf("\x1b[31m") ; break;
+    // ...
+  }
+}
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\tcbset{width=.495\linewidth, on line, height=7cm}
+%
+\begin{codebox}[... Fortsetzung]
+\begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
+int main (void) {
+  console_clear();
+
+  setcolor(FORE_BRIGHT_RED);	
+  console_goto(10, 20);
+
+  printf("bright red.\n");
+  printf("next row starts at col 1.\n");
+
+  setcolor(FORE_YELLOW); 
+  setcolor(BACK_BLUE);
+  printf("yellow on blue.\n");
+
+  setcolor(SPC_UNDERLINE_ON);
+  printf("same colors, underlined.\n");
+  setcolor(SPC_UNDERLINE_OFF);
+  printf("                        \n");
+}
+\end{minted}
+\end{codebox}
+%	
+\begin{codebox}[Beispiel: Find codes]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+int main (void) {
+  char fmtstr[20];
+  
+  for (int i=0; i<108; i++) {
+    sprintf(fmtstr, "\x1b[%dm", i);
+    printf("%s: %d\n", fmtstr, i);
+  }
+}
+\end{minted}
+\end{codebox}
+%
+\end{frame}

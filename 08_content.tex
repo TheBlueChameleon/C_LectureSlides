@@ -1,0 +1,272 @@
+% =========================================================================== %
+% --------------------------------------------------------------------------- %
+
+\begin{frame}[t,plain]
+\titlepage
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Schleifen}
+%
+\begin{itemize}
+\item \mintinline{c}{while}: Wiederhole, solange eine Bedingung erfüllt ist
+\item Bedingung: Beliebiger Ausdruck, der sich zu einem Wahrheitswert auswerten lässt.
+\item Wahrheitswert: Entweder 0 oder nicht 0
+\item Daher auch: \mintinline{c}{while (variable)}
+\item Achtung: \emph{Alles} ist Zahl
+\item Achtung bei Operatoren: Doppeltes Gleichheitszeichen \texttt{==} ! 
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{tcbraster}[raster columns=2, raster equal height, nobeforeafter]
+%
+\begin{codebox}[Beispiel: \texttt{strlen}, equal height group=A]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+int strlen(char * string) {
+  int Stelle = 0;
+  
+  if (string) {
+    while(string[Stelle]) {Stelle++;}
+    return Stelle;
+    
+  } else {
+    return -1;
+  }
+}
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}[...Fortsetzung, equal height group=A]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+int main () {
+  printf("Länge des leeren Strings: "
+         "%d\n", strlen("")
+  );
+  
+  char string[] = "exurb1a!";
+  printf("%s: "
+         "%d\n", string, strlen(string)
+  );
+  
+  string[3] = 0;
+  printf("%s: "
+         "%d\n", string, strlen(string)
+  );
+}
+\end{minted}
+\end{codebox}
+\end{tcbraster}
+%
+%
+\begin{cmdbox}[Ausgabe]
+\begin{minted}[fontsize=\scriptsize]{text}
+Länge des leeren Strings: 0      exurb1a!: 8     exu: 3
+\end{minted}
+\end{cmdbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Zählschleifen}
+%
+\begin{itemize}
+\item \mintinline{c}{for}-Schleifen für \enquote{abzählbare} Mengen
+\item \enquote{Für jedes \texttt{x} mache...}
+\item 80\% der Fälle: Durchlaufe Array-Indizes
+\item Daher auch meist: \mintinline{c}{int}-Zählvariable, beginnend bei 0
+\item Gefühlt feste Form, auch wenn andere Konstruktionen möglich sind
+\item Zweiter Block: Wahrheitswert. Daher kann auch hier Vergleichsoperator manchmal entfallen
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\tcbset{width=.495\linewidth, on line}
+%
+\begin{codebox}[Beispiel: \texttt{strlen} mit \texttt{for}, equal height group=B]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+int strlen(char * string) {
+  if (string) {
+    int Stelle = 0;
+    
+    for (; string[Stelle]; Stelle ++) {}
+    return Stelle;
+    
+  } else {
+    return -1;
+  }
+}
+\end{minted}
+\end{codebox}
+%
+\begin{hintbox}[Tipp, equal height group=B]
+\small
+Solche Konstruktionen können effiziente und elegante Lösungen darstellen; in den meisten Fällen \enquote{stolpert} man aber beim Lesen über die \mintinline{c}{for}-Zeile. In der Regel ist die \enquote{Standard Form}:
+\begin{center}
+\mintinline{c}{for(int i=0; i<N; i++)}
+\end{center}
+zu bevorzugen.
+\end{hintbox}
+%
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{\mintinline{c}{break} und \mintinline{c}{continue}}
+%
+\begin{columns}[T]
+\column{.4\linewidth}
+\begin{itemize}
+\item Beide Statements: implizites \mintinline{c}{goto}
+\item \mintinline{c}{break}: Hinter die Schleifen-Klammer (\})
+\item \mintinline{c}{continue}: Vor die Schleifen-Klammer (\{)
+\item Funktioniert nur über eine Ebene hinweg
+\item Wenn mehrere Schleifen gleichzeitig übersprungen werden sollen: \mintinline{c}{goto} oder Flags
+	(Variablen mit Wahrheitswert)
+\end{itemize}
+%
+\column{.57\linewidth}
+\begin{codebox}[Beispiel: Verschachtelte Schleifen verlassen]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+int main () {
+  for   (int i=1; i<100; i++) {
+    for (int j=1; j<100; j++) {
+      if (i + j > 150) {
+        goto label_end;
+      }
+      printf("%d + %d = %d", i, j, i+j);
+    }
+  }
+  
+  label_end:
+}
+\end{minted}
+\end{codebox}
+%
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{columns}[T]
+\column{.45\linewidth}
+\begin{Large}
+{\mintinline{c}{for}: Variation des Iterationsschritts}
+\vspace{6pt}
+\end{Large}
+%
+\begin{itemize}
+\item Häufige Abweichung von der \enquote{Standard-Form}:
+\item Andere Inkremente als \texttt{+1}
+\item Trivial: Nur geradzahlige Elemente  (\texttt{i += 2})
+\item Schritte Variabler Breite \\
+	(\texttt{i += var})
+\item \texttt{var} kann auch innerhalb der Schleife geändert werden!
+\end{itemize}
+%
+\column{.45\linewidth}
+\begin{codebox}[Beispiel: Variable Schrittweite, equal height group=B]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+int main () {
+  for (int i=1; i<100; i += i) {
+    printf("%d\n", i);
+  }
+}
+\end{minted}
+\end{codebox}
+%
+\begin{cmdbox}[Ausgabe, equal height group=B]
+\begin{minted}[fontsize=\scriptsize]{text}
+1
+2
+4
+8
+16
+32
+64
+\end{minted}
+\end{cmdbox}
+%
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{columns}[T]
+\column{.45\linewidth}
+\begin{Large}
+{Schleifen und Scopes}
+\vspace{6pt}
+\end{Large}
+%
+\begin{itemize}
+\item \emph{Alle} Strukturen, die \{geschweifte Klammern\} benutzen, bilden eigene Scopes
+\item Also auch \mintinline{c}{for}, \mintinline{c}{while}, \mintinline{c}{do..while},
+	  \mintinline{c}{if}, \mintinline{c}{switch}, \ldots
+\item \mintinline{c}{for}: Sogar zwei Ebenen: Schleifenkopf und -körper
+\item Variablen da deklarieren, wo gebraucht
+\item Namen eindeutig vergeben
+\end{itemize}
+%
+\column{.45\linewidth}
+\begin{codebox}[Beispiel: Variable Schrittweite]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+int main () {
+  int i = 1;
+  
+  for (int i = 0; i < 3; i++) {
+    int i = 2;
+    printf("i=%d\n", i);
+  }
+  printf("i=%d\n", i);
+}
+\end{minted}
+\end{codebox}
+%
+\begin{cmdbox}[Ausgabe]
+\begin{minted}[fontsize=\scriptsize]{text}
+i=2
+i=2
+i=2
+i=1
+\end{minted}
+\end{cmdbox}
+%
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+(Lösung zur Kartenspiel-Aufgabe)
+%
+\end{frame}
+
+% =========================================================================== %

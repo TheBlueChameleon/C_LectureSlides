@@ -1,0 +1,572 @@
+% =========================================================================== %
+
+\begin{frame}[t,plain]
+\titlepage
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Recap}
+%
+Letzte Stunde haben wir gesehen/kennengelernt:
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item Sprunganweisung \mintinline{c}{goto} -- Spaghetti-Code
+\item Schleifen
+	\begin{itemize}
+	\item \mintinline{c}{while} und \mintinline{c}{do-while} -- allgemeine Bedingungen
+	\item \mintinline{c}{for} -- Zählschleifen
+	\item Eingriff mit \mintinline{c}{continue} und \mintinline{c}{break}
+	\end{itemize}
+\item Die CPP-Referenz \url{https://en.cppreference.com/}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{itemize}
+\item Automatische Listen -- Arrays
+	\begin{itemize}
+	\item Speicherbild
+	\item Syntax für Zugriff -- Ziel-Operator und Index-Operator
+	\item Initialisierung
+	\item Mehrdimensionale Arrays
+	\end{itemize}
+\item (Pseudo-)Zufallszahlen
+\item \emph{Fragen hierzu?}
+\end{itemize}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Aus den letzten Übungen}
+%
+\begin{codebox}[Aufgabe \enquote{Weihnachtsbaum} -- Drei Schleifen]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+  int i, j;
+  int h = 7;
+  
+  for (i = 0; i < h; i++) {
+    for (j = 0; j < (h-i)  ; j++) {printf(" ");}
+    for (j = 0; j < 2*i + 1; j++) {printf("*");}
+    printf("\n");
+  }
+}
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Aus den letzten Übungen}
+%
+\begin{codebox}[Aufgabe \enquote{Weihnachtsbaum} -- Zwei Schleifen]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+  int r, c, h = 7;
+  
+  for   (r = 0; r <     h    ; r++) {
+    for (c = 0; c < 2 * h + 1; c++) {
+      printf("%s", abs(c - h) < (r + 1)   ?   "*"   :   " ");
+    }
+    printf("\n");
+  }
+}
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Script}
+%
+\begin{itemize}
+\item Kapitel 8
+	\begin{itemize}
+	\item 8.3. C-Strings
+		\begin{itemize}
+		\item 8.3.4. Nützliche Funktionen aus der String-Library
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{C-String library -- \texttt{string.h}}
+%
+\tcbset{
+	width=.48\linewidth,
+	on line
+}
+%
+Sammlung von Routinen zum Umgang mit Strings\newline
+Für uns: \emph{Byte-Strings}. Siehe: \url{http://de.cppreference.com/w/c/string/byte}
+\begin{center}		% begin..end creates a new paragraph, a behaviour that is otherwise inactive in
+\hrule				% the beamer class. So I abuse this command here -- nothing is actually centered.
+\end{center}
+%
+\begin{tcolorbox}[title=\texttt{strlen}, height=4.7cm]
+\begin{itemize}
+\item Gibt Zahl der Bytes bis zum ersten Auftreten eines \emph{Null-Chars} aus.
+\item[$\Rightarrow$] Zahl der Buchstaben in einem String
+\item[$\Rightarrow$] Keine \emph{sinnvolle} verwendung mit anderen Datentypen
+\end{itemize}
+\end{tcolorbox}
+%
+\begin{tcolorbox}[title=\texttt{sizeof}, height=4.7cm]
+\begin{itemize}
+\item Gibt je nach Datentyp verschiedene Werte zurück.
+\item Automatische Arrays: Größe des Arrays in Bytes
+	\begin{itemize}
+	\item Bei Strings also: Schriftzeichen inclusive Null-Char
+	\end{itemize}
+\item Ansonsten: Größe des \emph{Datentyps}
+\end{itemize}
+\end{tcolorbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{columns}[T]
+\column{.6\linewidth}
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+#include <string.h>
+
+int main () {
+   char array[] = {1, 2, 3, 0, 4};
+   int  iList[] = {1, 2, 3, 0, 4};
+   
+   // lu: unsigned long int
+   printf("sizeof(array): %lu\n", sizeof(array));
+   printf("strlen(array): %lu\n", strlen(array));
+   printf("sizeof(int)  : %lu\n", sizeof(int)  );
+
+   // unsinniger Ausdruck:
+   //printf("strlen(int)  : %lu\n", strlen(int));
+	
+   printf("strlen(iList): %lu\n", strlen(iList));
+   printf("sizeof(iList): %lu\n", sizeof(iList));
+}
+\end{minted}
+\end{codebox}
+%
+\column{.35\linewidth}
+\begin{cmdbox}[Ausgabe]
+\ttfamily \scriptsize
+sizeof(array): 5\newline
+strlen(array): 3\newline
+sizeof(int)\quad: 4\newline
+strlen(iList): 1\newline
+sizeof(iList): 20\newline
+\end{cmdbox}
+%
+\begin{warnbox}
+Warnung in Zeile 16:\newline
+\texttt{int *} passt nicht auf\newline
+\texttt{char *}!
+\end{warnbox}
+%
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Texte auf Gleichheit Prüfen -- \texttt{strcmp}}
+%
+\begin{columns}[T]
+\column{.4\linewidth}
+\begin{codebox}[Syntax]
+\footnotesize\texttt{strcmp(ptr\_A, ptr\_B)}
+\end{codebox}
+%
+\begin{tcolorbox}[title=Rückgabewerte]
+\begin{itemize}
+\item 0 bei Gleichheit
+\item kleiner 0, wenn A lexikographisch${}^{1}$ vor B
+\item größer 0, wenn A lexikographisch nach B
+\end{itemize}
+\end{tcolorbox}
+%
+\column{.6\linewidth}
+\begin{codebox}[Beispiel]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+#include <string.h>
+
+int main () {
+  char s[] = "Hieronymus";
+  
+  printf("%d\n", strcmp(s, "Hieronymus")); //  0
+  printf("%d\n", strcmp(s, "hieronymus")); //-32
+  printf("%d\n", strcmp(s, "HieronYmus")); // 32
+  printf("%d\n", strcmp(s, "Lauser")    ); // -4
+}
+\end{minted}
+\end{codebox}
+\scriptsize ${}^{1}$ \enquote{alphabetisch}, berücksichtigt Ziffern und Sonderzeichen
+%
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Strings Verketten -- \texttt{strcat}}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{codebox}[Syntax]
+\footnotesize\texttt{strcat(ptr\_dst, ptr\_src)}
+\end{codebox}
+%
+\begin{itemize}
+\item Hängt String bei \texttt{ptr\_src} an das Ende des Strings bei \texttt{ptr\_dst} an
+\item Bei \texttt{ptr\_dst} muss bereits genug Speicher zur Verfügung stehen
+\item String bei \texttt{ptr\_src} bleibt unverändert
+\item Rückgabewert: \texttt{ptr\_dst}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}[Beispiel]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+#include <string.h>
+
+int main () {
+  char dst[256] = "Hieronymus";
+  char src[   ] = " Lauser";
+
+  strcat(dst, src);
+  printf("%s\n", dst);
+}
+\end{minted}
+\end{codebox}
+%
+\begin{cmdbox}[Ausgabe]
+\scriptsize\texttt{Hieronymus Lauser}
+\end{cmdbox}
+%
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Strings Kopieren -- \texttt{strcpy}}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{codebox}[Syntax]
+\footnotesize\texttt{strcpy(ptr\_dst, ptr\_src)}
+\end{codebox}
+%
+\begin{itemize}
+\item Kopiert Inhalt von String \texttt{ptr\_src} nach \texttt{ptr\_dst}
+\item Für \texttt{ptr\_dst} muss bereits genug Speicher zur Verfügung stehen
+\item \texttt{ptr\_src} bleibt unverändert
+\item Rückgabewert: \texttt{ptr\_dst}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}[Beispiel]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+#include <string.h>
+
+int main () {
+  char dst[256];
+  char src[   ] = "Hieronymus";
+
+  strcpy(dst, src);
+  printf("%s --> %s\n", src, dst);
+}
+\end{minted}
+\end{codebox}
+%
+\begin{cmdbox}[Ausgabe]
+\scriptsize\texttt{Hieronymus -{}-> Hieronymus}
+\end{cmdbox}
+%
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Strings durchsuchen -- \texttt{strchr} und \texttt{strrchr}}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{codebox}[Syntax]
+\footnotesize\texttt{ strchr(ptr\_data, int\_code)}\newline
+\footnotesize\texttt{strrchr(ptr\_data, int\_code)}
+\end{codebox}
+%
+\begin{itemize}
+\item Sucht das erste Zeichen mit Code \texttt{int\_code} im String \texttt{ptr\_data}
+\item Rückgabe: Pointer auf dieses Zeichen oder \texttt{NULL} zurück, wenn nicht gefunden.
+\item \texttt{strrchr}: Suche \enquote{von hinten}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}[Beispiel]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+#include <string.h>
+
+int main () {
+  char  str[] = "Replace *asteriscs*";
+  char *found;   
+   
+  found = strchr(str, '*');
+  while (found) {
+    *found = '"';
+    found = strchr(str, '*');
+  }
+  
+  printf("%s\n", str);
+}
+\end{minted}
+\end{codebox}
+%
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Varianten für allgemeine Arrays: \texttt{memXXX}}
+%
+\begin{columns}[T]
+\column{.45\linewidth}
+\begin{itemize}
+\item Strings: \emph{nullterminiert}
+\item Zahlen-Arrays können 0 enthalten
+\item Varianten \texttt{memcmp}, \texttt{memcpy}, \texttt{memchr}
+\item Brauchen zusätzlichen Parameter \texttt{bytecount}
+\end{itemize}
+%
+\begin{warnbox}
+\begin{itemize}
+\item Größe der Datentypen beachten!
+\item Genug Speicher zur Verfügung stellen!
+\end{itemize}
+\end{warnbox}
+%
+\column{.55\linewidth}
+\begin{codebox}[Beispiel -- \enquote{\texttt{memcat}} mit \texttt{memcpy}]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+#include <string.h>
+
+int main () {
+  int i;
+   
+  int dst[256] = {1, 2, 3};
+  int src[   ] = {4, 5, 6};
+  int *dummy = dst + 3;
+   
+  memcpy(dummy, src, 3 * sizeof(int));
+   
+  for (i=0; i<6; i++) {
+    printf("dst[%d]: %d\n", i, dst[i]);
+  }
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Groß- und Kleinschreibung -- \texttt{tolower} und \texttt{toupper}}
+%
+\begin{columns}[T]
+\column{.45\linewidth}
+\begin{codebox}[Syntax]
+\texttt{tolower(int\_code)}\newline
+\texttt{toupper(int\_code)}
+\end{codebox}
+\begin{itemize}
+\item Geben ASCII-Codes zurück
+\item Ändern nur a...z bzw. A...Z
+\item Keine Behandlung von Umlauten, Akzenten, ...
+\item Definiert in \texttt{ctype.h}
+\end{itemize}
+%
+\column{.55\linewidth}
+\begin{codebox}[Beispiel -- \enquote{\texttt{memcat}} mit \texttt{memcpy}]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+#include <ctype.h>
+
+int main () {
+  char src[] = "MiXeD cAsE, äöüß & ÄÖÜ";
+  char upC[256], loC[256];
+  int i;
+
+  for (i=0; src[i]; i++) {
+    upC[i] = toupper(src[i]);
+    loC[i] = tolower(src[i]);
+  }
+  printf("original  : %s\n", src);
+  printf("upper case: %s\n", upC);
+  printf("lower case: %s\n", loC);
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Zeichentypen in Klassen einteilen -- \texttt{isXXX}-Functions}
+%
+\begin{columns}[T]
+\column{.37\linewidth}
+\begin{codebox}[Syntax]
+\texttt{isXXX(int\_code)}
+\end{codebox}
+\begin{itemize}
+\item Ganze Klasse von Funktionen
+\item Rückgabe: Wahrheitswert
+\item \texttt{int\_code} vom Typ XXX?
+\item Ziffer, Buchstabe, ...
+\item Siehe Tabelle auf\newline
+	{\footnotesize\url{http://de.cppreference.com}}
+\item Definiert in \texttt{ctype.h}
+\end{itemize}
+%
+\column{.63\linewidth}
+\begin{codebox}[Beispiel -- Ist Text Fließkommazahl?]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+int main () {
+  char input[256]; int i, tVal = 1;
+  printf("Please enter a number:\n");
+  scanf("%255s", input);
+	
+  for (i=0; i<strlen(input); i++)
+    tVal &= isdigit(input[i]) || (input[i] == '.');
+	
+  printf("%s is%s a number.\n", 
+         input, 
+         tVal ? "" : " not");
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Umwandlung Zahlenwert $\leftrightarrow$ String}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{codebox}[String $\rightarrow$ Zahl]
+\footnotesize\texttt{number = atoXXX(ptr\_String)}
+\end{codebox}
+\begin{itemize}
+\item ASCII to XXX
+\item \texttt{atoi}: int
+\item \texttt{atof}: float
+\item \texttt{atoll}: long long
+\item[$\Rightarrow$] \url{http://de.cppreference.com/w/c/string/byte/atoi}
+\item Definiet in \texttt{stdlib.h}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}[Zahl $\rightarrow$ String]
+\begin{minted}[fontsize=\scriptsize]{c}
+sprintf(ptr_String, 
+        "format string", 
+        number1, number2, ...
+);
+\end{minted}
+\end{codebox}
+\begin{itemize}
+\item Ausgabe nicht auf Bildschirm, sondern \enquote{in String}
+\item Format String wie bei \texttt{printf}
+\item Auch mehrere Werte gleichzeitig
+\item Definiert in \texttt{stdio.h}
+\end{itemize}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{codebox}[atoi{,} atof]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+   char str[] = "1234.56789";
+
+   double d;
+   int    i;
+
+   i = atoi(str);
+   d = atof(str);
+
+   printf("%s -> int   : %d\n" , str, i);
+   printf("%s -> double: %lf\n", str, d);
+}
+\end{minted}
+\end{codebox}
+%
+\column{.5\linewidth}
+\begin{codebox}[sprintf]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+int main () {
+  int day, month, year;
+  char filename[256];
+	
+  printf("Please enter today's date:\n");
+  scanf("%d %d %d", &year, &month &day);
+	
+  sprintf(filename, 
+    "logfile_%04d-%02d-%02d.log",
+    year, month, day);
+    
+  printf("Writing into log file:\n%s", 
+     filename);
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\end{frame}

@@ -1,0 +1,634 @@
+% =========================================================================== %
+
+\begin{frame}[t,plain]
+\titlepage
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Script}
+%
+\begin{itemize}
+\item Kapitel 9
+	\begin{itemize}
+	\item 9.1. Scopes
+	\item 9.2. Funktionen
+		\begin{itemize}
+		\item 9.2.1. Scopes in bisher bekannten Strukturen
+		\item 9.2.2. Forward Declaration
+		\item 9.2.3. Übergabe \enquote{By Reference} und \enquote{By Value}
+		\item 9.2.4. Datentyp void
+		\item 9.2.5. Globale Variablen
+		\item 9.2.6. Was als Funktion auslagern
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{columns}[T]
+\column{.3\linewidth}
+\begin{Large}
+Funktionen
+\vspace{10pt}
+\end{Large}
+%
+\begin{itemize}
+\item Häufig auftretende Arbeitsschritte zu Einheit verpacken
+\item Von Parametern abhängig gestaltbar
+\item Rückgabewert
+\item Muss vor Aufruf definiert sein
+\item Die Meisten Befehle bisher waren bereits Funktionen
+\end{itemize}
+%
+\column{.7\linewidth}
+\begin{codebox}[Syntax: Deklaration (Funktions-Prototyp)]
+\begin{minted}[fontsize=\footnotesize]{c}
+Rueckgabetyp Funktionsname ( Parameterliste );
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}[Syntax: Funktionskörper]
+\begin{minted}[fontsize=\footnotesize]{c}
+Rueckgabetyp Funktionsname ( Parameterliste ) {
+   Anweisungen
+   return Rueckgabewert;
+}
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}[Syntax: Aufruf]
+\begin{minted}[fontsize=\footnotesize]{c}
+Funktionsname ( Parameterliste )
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Für MathematikerInnen}
+%
+Funktion: Abbildung aus einem Raum in einen anderen.
+\begin{center}
+
+\end{center}
+\begin{minipage}{.49\linewidth}
+Beispiel: $f: \mathbb{R} \to \mathbb{R}$
+
+Entsprechung in C:\\
+\mintinline{c}{double f(double x);}
+\end{minipage}
+%
+\begin{minipage}{.49\linewidth}
+Beispiel: $g: \mathbb{R} \times \mathbb{Z} \to \mathbb{R}$
+
+Entsprechung in C:\\
+\mintinline{c}{double g(double x, int n);}
+\end{minipage}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{codebox}[Beispiel: Mit Deklaration]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+double polyNomNomNom(double x);
+// ========================================================================= //
+int main() {
+  printf(   "%lf\n", polyNomNomNom( 1 )   );
+  printf(   "%lf\n", polyNomNomNom(2.5)   );
+}
+// ========================================================================= //
+double polyNomNomNom(double x) {
+  return 3.7 * x * x * x   +   1.4 * x * x   -   x   +   1;
+}
+\end{minted}
+\end{codebox}
+%
+\begin{cmdbox}[Ausgabe]
+\begin{minted}[fontsize=\scriptsize]{text}
+5.100000
+65.062500
+\end{minted}
+\end{cmdbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Beispiel: Ohne Deklaration}
+%
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+double polyNomNomNom(double x) {
+  return 3.7 * x * x * x   +   1.4 * x * x   -   x   +   1;
+}
+
+// ========================================================================= //
+
+int main() {
+  printf(   "%lf\n", polyNomNomNom( 1 )   );
+  printf(   "%lf\n", polyNomNomNom(2.5)   );
+}
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]%{\mintinline{c}{void} -- der Nicht-Datentyp}
+%
+\begin{columns}[T]
+\column{.43\linewidth}
+\begin{Large}
+\mintinline{c}{void} -- der Nicht-Datentyp
+\vspace{10pt}
+\end{Large}
+\begin{itemize}
+\item Funktionen, die kein \emph{Argument} erwarten: \mintinline{c}{void}
+\item Aufruf: \mintinline{c}{funcName();}
+\item Rückgabetyp; früher auch in Parameterliste
+	\begin{itemize}
+	\item \mintinline{c}{int main (void)}
+	\end{itemize}
+\item Verlassen einer \mintinline{c}{void}-Funktion mit \mintinline{c}{return;}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+void hieronymus() {
+  printf("Lauser\n");
+}
+
+int main () {
+  hieronymus();
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\begin{hintbox}
+\texttt{funcName} ohne Parameterliste ist nur ein Pointer!
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Scopes}
+%
+\begin{columns}[b]
+\column{.5\linewidth}
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+int main () {
+  int x = 7, z = 2;
+  {
+    int x = 9, y = 3;
+    printf("Inner Scope:\n");
+    printf("   x: %d\n", x);
+    printf("   y: %d\n", y);
+    printf("   z: %d\n", z);
+  }
+  printf("Outer Scope:\n");
+  printf("   x: %d\n", x);
+//printf("   y: %d\n", y); undefiniert 
+  printf("   z: %d\n", z);
+}
+\end{minted}
+\end{codebox}
+%
+\column{.5\linewidth}
+\begin{itemize}
+\item Regeln \enquote{Sichtbarkeit} von Variablen
+%\item  \{Umgebungen\} 
+\item Gleiche Namen erlaubt -- unterschiedliche Speicherbereiche
+\item Sichtbarkeit nur von außen nach innen
+\end{itemize}
+%
+\begin{cmdbox}[Ausgabe]
+\begin{minted}[fontsize=\scriptsize]{text}
+Inner Scope:
+   x: 9
+   y: 3
+   z: 2
+Outer Scope:
+   x: 7
+   z: 2
+\end{minted}
+\end{cmdbox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]%Scopes in Funktionen
+%
+\begin{columns}[b]
+\column{.5\linewidth}
+\begin{Large}
+\vspace{10pt}
+Scopes in Funktionen
+\vspace{6pt}
+\end{Large}
+\begin{itemize}
+\item Funktion definiert eigenen Scope
+\item Parameter \enquote{leben} in diesem Scope
+\item Lokale Kopien
+\item Variablen aus \texttt{main} nicht in \texttt{func} sichtbar
+\item \texttt{x} aus \texttt{main} ist nicht dasselbe Objekt wie \texttt{x} in \texttt{func}
+\end{itemize}
+%
+\begin{hintbox}
+Benutzt sprechende Namen für\newline Funktionsparameter!
+\end{hintbox}
+%
+\column{.5\linewidth}
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+void func(int x) {
+  int y = 3;
+  x += y;
+  printf("in func: %d\n", x);
+}
+int main () {
+  int x = 3;   
+  func(x);   
+  printf("in main: %d\n", x);
+//printf("%d\n", y); undefiniert
+}
+\end{minted}
+\end{codebox}
+%
+\begin{cmdbox}[Ausgabe]
+\begin{minted}[fontsize=\scriptsize]{text}
+in func: 6
+in main: 3
+\end{minted}
+\end{cmdbox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Lokale Kopien}
+%
+\begin{itemize}
+\item Deklaration einer Funktion: Neue Variable für jeden Parameter
+\item Funktionsaufruf: Kopieren eines Werts an die Parameter-Speicherstelle
+\item Funktion arbeitet mit der lokalen Kopie
+\item Original-Wert wird nicht verändert
+\end{itemize}
+%
+\begin{tcbraster}[raster columns=2, raster equal height, nobeforeafter]
+\begin{codebox}
+\begin{minted}[linenos, fontsize=\scriptsize]{c}
+#include <stdio.h>
+
+void func(int x) {x = 5;}
+
+int main () {
+  int x = 2;
+  func(x);
+  printf("%d\n", x);
+}
+\end{minted}
+\end{codebox}
+%
+\begin{tcolorbox}[title=T]
+%\scriptsize
+\begin{tabular}{c|cc}
+	Zeile & \texttt{x} in \texttt{main} & \texttt{x} in \texttt{func} \tabcrlf
+	6     & 2 & ??  \\
+	7     & 2 &  2  \\
+	3     & 2 &  5  \\
+	8     & 2 & (5) \\
+\end{tabular}
+\vphantom{h}
+\end{tcolorbox}
+\end{tcbraster}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Warum Scopes}
+%
+\begin{itemize}
+\item Funktionen: \enquote{abgeschlossene Arbeitspakete}
+\item Sollen weitgehend unabhängig vom Rest des Codes funktionieren
+\item Parameterliste als \enquote{Eingangsportal}, Rückgabewert als \emph{Ausgangsportal}
+\item Sonst: Keine Wechselwirkung
+\item Erlaubt, in komplexen Strukturen zu denken, ohne \emph{jede Einzelheit} des Codes im Auge zu
+	behalten
+\item In Funktionen daher: Lokale Kopien -- minimale Wechselwirkung
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\tcbset{width=.495\linewidth, height=7.6cm, on line}
+%
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+#include <math.h>
+
+double myExp(double x0, int accuracy) {
+  double x = 1.0;
+  double denominator = 1.0;
+  double result = 1.0;
+
+  for (int i=1; i<accuracy; i++) {
+    x           *= x0;
+    denominator *= i;
+    result      += x / denominator;
+  }
+  
+  return result;
+}
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
+int main () {
+  double d, e;
+  
+  printf("Genauigkeit\t"
+         "Näherung\t"
+         "Abweichung\t"
+         "Relativ\n"
+  );
+  
+  for (int i=0; i<10; i++) {
+    e = myExp(1, i);
+    d = e - exp(1);
+    printf("%d\t"
+           "%+8.6lf\t"
+           "%+8.6lf\t"
+           "%8.3lf\n",
+           i, e, d, d/e
+    );
+  }
+}
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{cmdbox}[Ausführungseispiel: Funktion \texttt{myExp} in Anwendung]
+\begin{minted}[fontsize=\scriptsize]{text}
+Genauigkeit     Näherung        Abweichung      Relativ
+0               +1.000000       -1.718282         -1.718
+1               +1.000000       -1.718282         -1.718
+2               +2.000000       -0.718282         -0.359
+3               +2.500000       -0.218282         -0.087
+4               +2.666667       -0.051615         -0.019
+5               +2.708333       -0.009948         -0.004
+6               +2.716667       -0.001615         -0.001
+7               +2.718056       -0.000226         -0.000
+8               +2.718254       -0.000028         -0.000
+9               +2.718279       -0.000003         -0.000
+\end{minted}
+\end{cmdbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]%{Globale Variablen}
+%
+\begin{columns}[b]
+\column{.45\linewidth}
+\begin{Large}
+{Globale Variablen}
+\vspace{10pt}
+\end{Large}
+\begin{itemize}
+\item Deklaration außerhalb von Functions
+\item \enquote{eine Ebene höher} als selbst \mintinline{c}{int main()}
+\item Verhalten wie immer bei Scopes
+\item Sparsam gebrauchen!
+\end{itemize}
+%
+\begin{cmdbox}[Ausgabe]
+\begin{minted}[fontsize=\scriptsize]{text}
+main:
+  global   : 7
+  overwrite: 6
+func:
+  global   : 7
+  overwrite: 8
+\end{minted}
+\end{cmdbox}
+%
+\column{.53\linewidth}
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+int global    = 7;
+int overwrite = 8;
+
+void func() {
+  printf("func:\n");
+  printf("  global   : %d\n", global   );
+  printf("  overwrite: %d\n", overwrite);
+}
+
+int main () {
+  int overwrite = 6;
+  
+  printf("main:\n");
+  printf("  global   : %d\n", global   );
+  printf("  overwrite: %d\n", overwrite);
+  
+  func();
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Werte zurück geben}
+%
+\tcbset{width=.495\linewidth, height=5cm, on line}
+%
+\begin{itembox}[Einzelnen Wert]
+\item Über \mintinline{c}{return}
+\item Muss zum Rückgabetyp passen
+\item Verlässt Funktion an dieser Stelle
+\item Mehrere \mintinline{c}{return}-Anweisungen möglich (Bedingungen)
+\item Trotzdem nur ein Rückgabewert
+\end{itembox}
+%
+\begin{itembox}[mehrere Werte]
+\item Übergabe von Pointern
+\item Funktion schreibt an Adresse von Pointern
+\item Vergleiche: \texttt{scanf}
+\end{itembox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]%{Wertrückgabe mit \mintinline{c}{return}}
+%
+\tcbset{width=.6\linewidth, height=7.5cm, on line}
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+#include <math.h>
+
+double compute(
+  double x, 
+  char   op, 
+  double y) 
+{
+  switch (op) {
+    case '+': return x + y;
+    case '-': return x - y;
+    case '*': return x * y;
+    case '/':
+      if (!y) {printf("division by zero\n");}
+      return x / y;            // return #inf
+  }
+  
+  printf ("illegal operator\n");
+  return NAN;
+}
+\end{minted}
+\end{codebox}
+%
+\tcbset{width=.38\linewidth, on line}
+\begin{codebox}[... Fortsetzung]
+\begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
+int main () {
+  double a, b;
+  char c;
+
+  printf("Number 1:\n");
+  scanf("%lf", &a);
+
+  printf("Operator:\n");
+  scanf(" %c", &c);
+
+  printf("Number 2:\n");
+  scanf("%lf", &b);
+
+  printf(
+    "%lf %c %lf = %lf",
+    a, c, b,
+    compute(a, c, b)
+  );
+}
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Wertübergabe mit Pointern als Parameter}
+%
+\tcbset{width=.495\linewidth, on line}
+%
+\begin{codebox}[Code, equal height group=gByRef]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+void func(int x, int * y) {
+  printf("in func:\n");
+  printf("   before change: ");
+  printf("x: %d; y: %d\n", x, *y);
+
+   x = 3;
+  *y = 3;
+
+  printf("   after  change: ");
+  printf("x: %d; y: %d\n", x, *y);
+}
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}[... Fortsetzung, equal height group=gByRef]
+\begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
+int main () {
+  int a = 1, b = 1;
+
+  printf("in main:\n");
+  printf("   before call  : ");
+  printf("a: %d; b: %d\n", a, b);
+
+  func(a, &b);
+
+  printf("in main:\n");
+  printf("   after  call  : ");
+  printf("a: %d; b: %d\n", a, b);
+}
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Was als Funktion \enquote{auslagern}?}
+%
+\begin{columns}
+\column{.5\linewidth}
+\begin{itemize}
+\item Häufig wiederkehrende Berechnungen\newline
+	Beispiel: Skalarprodukt
+\item Insbesondere: Parametrisierte Probleme\newline
+	Beispiel: Bestimme Anzahl eines bestimmten Buchstaben in einem Text
+\item Übersichtliche Gestaltung von Code (sprechende Namen!)\newline
+	Beispiel \texttt{compute(a, operator, b)}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{itemize}
+\item Speziallösungen für Probleme, zu denen nur eine allgemeine Lösung zur Verfügung steht
+\item Vorbereiten von Objekten, mit denen weiter gerechnet wird
+\item[$\Rightarrow$] Erst durch Funktionen sind komplexe Programme möglich!
+\end{itemize}
+\end{columns}
+%
+\begin{hintbox}
+Funktionen können auch andere Funktionen aufrufen.
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %

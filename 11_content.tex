@@ -1,0 +1,685 @@
+% =========================================================================== %
+
+\begin{frame}[t,plain]
+\titlepage
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Recap}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item \mintinline{c}{struct}s
+	\begin{itemize}
+	\item \enquote{Container-Datentyp}
+	\item Daten-Records
+	\item Pointer-Records
+	\item Pointer auf \texttt{struct}s
+	\item Operator \texttt{->}
+	\end{itemize}
+\item \mintinline{c}{enum}s
+	\begin{itemize}
+	\item automatisch nummerierte \mintinline{c}{int}-Liste
+	\item Konstanten, die Programm gut lesbar/wartbar machen
+	\end{itemize}
+\end{itemize}
+%
+\column{.55\linewidth}
+\begin{itemize}
+\item \mintinline{c}{union}s
+	\begin{itemize}
+	\item Casting-Interface
+	\item Syntax wie \mintinline{c}{struct}
+	\end{itemize}
+\item \mintinline{c}{typedef}
+	\begin{itemize}
+	\item Alias für häufig benutzte Datentypen
+	\item Mehrfach-Definitionen, \zB für Pointer
+	\end{itemize}
+\item Fragen?
+\end{itemize}
+\end{columns}
+
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Recap}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item Aufteilung in Module
+	\begin{itemize}
+	\item Header: Definitionen; Sichtbar-Machen
+	\item Module: Normaler C-Code
+	\item Globale Variablen über Module hinweg: \mintinline{c}{extern}
+	\end{itemize}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{itemize}
+\item Modifier, Speicherklassen
+	\begin{itemize}
+	\item \mintinline{c}{static}, \mintinline{c}{extern}, \mintinline{c}{register}
+	\item \mintinline{c}{unsigned}, \mintinline{c}{const}, \mintinline{c}{restrict}, 
+		\mintinline{c}{volatile}
+	\end{itemize}
+\item Fragen?
+\end{itemize}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Script}
+%
+\begin{itemize}
+\item Kapitel 9
+	\begin{itemize}
+	\item 9.4. Funktionszeiger
+	\end{itemize}
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{Large}
+{Wiederholung: Pointer vs. Skalar}
+\vspace{6pt}
+\end{Large}
+%
+\begin{itemize}
+\item Skalar: Tatsächliches Objekt -- einzelne Zahl
+\item Pointer: Wo ist die gefragte Zahl?
+\item Analogie: Früchte in nummerierten Boxen
+	\begin{itemize}
+	\item Frucht         \tab $\rightarrow$ Skalar
+	\item Nummer der Box \tab $\rightarrow$ Pointer 
+	\item Nummer der Box bestimmen \newline
+		$\rightarrow$ Adress-Operator \texttt{\&variable})
+	\item Inhalt der Box ansehen oder verändern \newline
+		$\rightarrow$ Dereferenzierung \texttt{*variable})
+	\end{itemize}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}[Beispiel: Einfache Pointer]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+int main () {
+  int    x =  7;
+  int * px = &x;
+  
+  printf("%d\n",   x);   // 7
+  printf("%d\n", *px);   // 7
+  
+  *px = 8;
+  printf("%d\n",   x);   // 8
+  
+  x = 9;
+  printf("%d\n", *px);   // 9
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{Large}
+{Wiederholung: Automatische Arrays}
+\vspace{6pt}
+\end{Large}
+%
+\begin{itemize}
+\item Liste von Werten
+\item Realisierung über Startadresse und Index
+\item Analogie mit Früchten und Boxen:
+	\begin{itemize}
+	\item Nummer der ersten Box \newline 
+		$\rightarrow$ Pointer
+	\item Schritte zwischen erster und gewünschter Box \newline
+		$\rightarrow$ Index
+	\item Eine bestimmte Frucht ansehen oder austauschen \newline
+		$\rightarrow$ \texttt{variable[index]}
+	\end{itemize}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}[Beispiel: Statische Arrays]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+int main () {
+  int px[] = {1, 2, 3};
+
+  printf("first item at %p\n", px);
+  printf("value first item: %d\n", px[0]);
+  printf("alternative syntax: %d\n", *px);
+}
+\end{minted}
+\end{codebox}
+%
+\begin{hintbox}
+Schon bei Deklaration genau überlegen: ist das ein Pointer oder ein Skalar?\newline
+Pointer im Namen kennzeichnen!
+\end{hintbox}
+\end{columns}
+
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Wiederholung: Dynamische Arrays}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item Box-Anzahl erst zur Laufzeit bestimmen
+\item Analogie mit Früchten und Boxen:
+	\begin{itemize}
+	\item Gib mir $N$ Boxen \newline 
+		$\rightarrow$ \footnotesize \texttt{ptr = malloc(N * sizeof(type))}
+	\item \small Gib mir $N$ \emph{leere} Boxen \newline 
+		$\rightarrow$ \footnotesize \texttt{ptr = calloc(N, sizeof(type))}
+	\item \small Ich brauche meine Boxen nicht mehr \newline
+		$\rightarrow$ \footnotesize \texttt{free(ptr)}
+	\item \small Zahl nötiger Boxen hat sich geändert \newline
+		$\rightarrow$ \footnotesize \texttt{ptr = realloc(ptr, N * size)}
+	\end{itemize}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}[Beispiel: Dynamische Arrays]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdlib.h>
+
+int main () {
+  int * px = malloc(5 * sizeof(*px));
+
+  for (int i=0; i<5; i++) {px[i] = i;}
+
+  px = realloc(px, 6 * sizeof(*px));
+
+  free(px);
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Wiederholung: Funktionen -- Argumente}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item Jede Funktion hat \enquote{ihre eigenen} Boxen
+\item Aufruf mit Parametern: Vorbefüllen der Boxen der Funktion
+\item Ausnahme: Globale Variablen
+\item Werte in aufrufender Funktion ändern \newline
+	$\rightarrow$ Pointer übergeben: welchen Wert ändern
+\end{itemize}
+%
+\begin{warnbox}
+Ziel des Pointers muss zu beim Zugriff existieren!
+\end{warnbox}
+%
+\column{.5\linewidth}
+\begin{codebox}[Beispiel: Parameterübergabe]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+void passPtr(int x, int * px) {
+   printf("&x: %p,  px: %p\n", &x,  px);
+   printf(" x: %d, *px: %d\n",  x, *px);
+   
+     x = 7;
+   *px = 7;
+}
+
+int main (void) {
+   int    y = 5, z = 6;
+   int * pz = &z;
+   
+   printf("&y: %p,  pz: %p\n", &y,  pz);
+   passPtr(y, pz);
+   printf(" y: %d, *pz: %d\n",  y, *pz);
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Function Pointers: Motivation}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item Idee: Eine Funktion soll parametrisiert verschiedene andere Funktionen aufrufen
+\item Beispiel 1: Buttons
+	\begin{itemize}
+	\item User-Interface mit mehreren Buttons
+	\item Anwender soll über diese seine wichtigsten Programm-Funktionen aufrufen können
+	\item Funktion des Button also zur Laufzeit änderbar
+	\end{itemize}
+\item Beispiel 2: aus der Mathe:
+	\begin{itemize}
+	\item Eine erste Funktion berechnet tatsächlich Funktionswert $f(x)$
+	\item Eine zweite Funktion soll Nullstellen von $f(x)$ finden
+	\end{itemize}
+
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{itemize}
+\item Lösung: Variable enthält Information: Welche Funktion aufrufen
+\item Problem: Information \enquote{Funktionsname} geht beim Kompilieren verloren
+\item Lösung: Pointer auf die Speicherstelle, wo die Funktion beginnt
+\item[$\Rightarrow$] \enquote{Springe an die Speicherstelle [Pointer], lese die Bytes dort und führe die Anweisungen dort aus.}
+\end{itemize}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Funktionszeiger: Umsetzung}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item Compiler muss über zum Funktionszeiger dieselben Informationen \enquote{wissen} wie über Funktion selbst:
+	\begin{itemize}
+	\item Rückgabetyp
+	\item Name und Art der Parameter
+	\item Name des Pointers
+	\end{itemize}
+\item Vergleiche \emph{Funktions-Prototypen} (Deklaration von Funktionen, deren Körper noch nicht geschrieben wurde, um sie bereits aufrufbar zu machen)
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}[Syntax: Deklaration]
+\begin{minted}[fontsize=\scriptsize]{c}
+Rueckgabetyp (*pointer) (Parameterliste);
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}[Syntax: Aufruf]
+\begin{minted}[fontsize=\scriptsize]{c}
+pointer(Parameterliste);
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}[Syntax: Zuweisung]
+\begin{minted}[fontsize=\scriptsize]{c}
+pointer = andere_funktion;
+\end{minted}
+\end{codebox}
+\end{columns}
+
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{codebox}[Beispiel: Funktionszeiger]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+void foo() {
+  printf("blerb.\n");
+}
+
+int main () {
+  void (*funcPtr)() = foo;
+  
+  printf("direkt : ");
+  foo();
+  
+  printf("funcPtr: ");
+  funcPtr();
+}
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\tcbset{width=.495\linewidth, on line, height=8cm}
+\begin{codebox}[Beispiel: Auf Nullstellen prüfen]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+#include <math.h>
+
+int hasZeros(
+  double(*f)(double), 
+  double a, double b, double s 
+) {
+  if (f(a) == 0) {return 1;}
+  
+  int lastsgn = (f(a) > 0);
+  double x;
+  
+  for (x=a; x<b; x+=s) {
+    if (lastsgn != (f(x) > 0)) {
+      return 1;
+    } else {
+      lastsgn = (f(x) > 0);
+    }
+  }
+  return 0;
+}
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}[...Fortsetzung]
+\begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
+int main (void) {
+  printf("sin has %szeros %s\n",
+    hasZeros(sin, 0, 3.14, 0.01) ? 
+    "" : "no ",
+    "between 0 and pi."
+  );
+  
+  printf("cos has %szeros %s\n",
+    hasZeros(cos, 0, 3.14, 0.01) ? 
+    "" : "no ",
+    "between 0 and pi."
+  );
+  
+  printf("exp has %szeros %s\n",
+    hasZeros(exp, 0, 3.14, 0.01) ? 
+    "" : "no ",
+    "between 0 and pi."
+  );
+}
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{\texttt{qsort}}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item Vorgefertigte Sortierfunktion
+\item Quicksort-Algorithmus: Besprochen in VL \emph{Algorithmen und Datenstrukturen}
+\item Sortieren von allgemeinen Listen
+	\begin{itemize}
+	\item unabhängig vom Datentyp
+	\item für beliebige Sortier-Kriterien
+	\end{itemize}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{itemize}
+\item Lösung über Funktionszeiger für Sortier-Kriterium
+\item \mintinline{c}{void *} auf zu sortierende Daten -- allgemeingültig
+\item Zusätzliche Information: Größe eines Elements
+\item \mintinline{c}{size_t}: Alias für \mintinline{c}{unsigned long}  
+\end{itemize}
+\end{columns}
+%
+\begin{codebox}[Prototyp der Funktion \texttt{qsort}]
+\begin{minted}[fontsize=\scriptsize]{c}
+void qsort( void * ptr, size_t count, size_t size,
+            int (*comp)(const void *, const void *) );
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\tcbset{width=.495\linewidth, on line}
+%
+\begin{codebox}[Beispiel: \texttt{qsort}, equal height group=Gqsort]
+\begin{minted}[linenos, fontsize=\scriptsize]{c}
+#include <stdio.h>
+#include <stdlib.h>
+ 
+int asc(const void* a, 
+        const void* b
+       ) {
+  int arg1 = *(const int *) a;
+  int arg2 = *(const int *) b;
+ 
+  if (arg1 < arg2) return -1;
+  if (arg1 > arg2) return  1;
+  return 0;
+}
+
+int dsc(const void* a, 
+        const void* b
+       ) {
+  return -comp_ascending(a, b);
+}
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}[...Fortsetzung, equal height group=Gqsort]
+\begin{minted}[linenos, firstnumber=last, fontsize=\scriptsize]{c}
+int main(void) {
+  int ints[] = {-2, 99, 0, -743, 2, 4};
+  int size = sizeof(ints)/sizeof(*ints);
+    
+  printf("Aufsteigend:\n");
+  qsort(ints, size, sizeof(int), asc);
+    
+  for (int i = 0; i < size; i++) {
+    printf("%d ", ints[i]);
+  }
+  printf("\n");
+    
+  printf("Absteigend:\n");
+  qsort(ints, size, sizeof(int), dsc);
+    
+  for (int i = 0; i < size; i++) {
+    printf("%d ", ints[i]);
+  }
+  printf("\n");
+}
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Script}
+%
+\begin{itemize}
+\item Kapitel 12
+	\begin{itemize}
+	\item 12.2. Kommandozeilenparameter
+	\end{itemize}
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{Large}
+{Kommandozeilenparameter}
+\vspace{6pt}
+\end{Large}
+%
+\begin{itemize}
+\item Systemebene: Kommandozeile $\rightarrow$ Betriebssystem (OS): Programm starten
+\item GUIs: Nur Verpackung, Weiterleitung an Konsole
+\item Hierbei: Parameter $\rightarrow$ Programm
+\end{itemize}
+%
+\begin{cmdbox}[Beispiel: Compileraufruf]
+\footnotesize 
+gcc myCode.c -std=c11 -Wall -lm\\
+./cr myCode.c
+\end{cmdbox}
+%
+%
+\column{.5\linewidth}
+\begin{itemize}
+\item[$\Rightarrow$] Beliebige Zeichenketten können an ein Programm weiter gereicht werden!
+\item Umsetzung: OS...
+	\begin{itemize}
+	\item aufrufendes Kommando $\rightarrow$ Speicher
+	\item \enquote{Parsing} des Kommandos: Zerlegen in Einzelteile (Trennzeichen: Leerzeichen)
+	\item Sonderbehandlung: Text in ''double quotes'' wird nicht zertrennt
+	\item Übergibt Pointer auf die einzelnen Kommando-Teile an das aufgerufene Programm
+	\item Gleiches Verhalten bei Windows, Linux, Mac.
+	\end{itemize}
+\end{itemize}
+\end{columns}
+
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Kommandozeilenparameter -- Entgegennahme}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item Bisher: \mintinline{c}{int main()} -- Keine Parameter für das Hauptprogramm
+\item Alternative Form: 
+	\begin{codebox}[main mit Parametern]
+	\footnotesize\mintinline{c}{int main(int argc, char **argv)}
+	\end{codebox}
+\item neue Parameter:
+	\begin{itemize}
+	\item \mintinline{c}{int argc} -- \enquote{argument count}: Wie viele Parameter
+	\item \mintinline{c}{char ** argv} -- \enquote{argument values}: Liste der Parameter
+	\end{itemize}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{itemize}
+\item Erinnerung: String ist Liste von \mintinline{c}{char}s
+\item Parameterliste ist Liste von Strings
+\item[$\Rightarrow$] \texttt{argv} ist \emph{Liste von Listen}
+\item[$\Rightarrow$] \mintinline{c}{char **}
+\end{itemize}
+\begin{itemize}
+\item Einschub: Rückgabetyp \mintinline{c}{int}
+	\begin{itemize}
+	\item OS kann auf \enquote{Antwort} von Programm reagieren
+	\item Üblich: \enquote{Fehlercode}, vom Programmierer definiert
+	\item Guter Stil: Programm beenden mit \mintinline{c}{return 0;}	
+	\end{itemize}
+\end{itemize}
+\end{columns}
+
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{codebox}[Beispiel: Alle Parameter einzeln ausgeben]\label{code:cmdLine}
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+int main (int argc, char ** argv) {
+  printf("This programme goes by the file name:\n");
+  printf("%s\n\n", argv[0]);
+  
+  if (argc == 1) {
+    printf("no Parameters.\n");
+  } else {
+  printf("%3d Parameters:\n", argc - 1);
+  }
+  int i;
+  for(i=1; i<argc; i++) {
+    printf("%3d\t%s\n", i, argv[i]);
+  }
+}
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Kommandozeilenparameter: Kompilieren und Aufrufen}
+%
+\begin{itemize}
+\item Kein unterschied beim Kompilieren.
+	\begin{cmdbox}[Kompilieren mit Parametern -- wie immer]
+	\footnotesize 
+	gcc myCode.c -std=c11 -Wall -lm -o myExecutable
+	\end{cmdbox}
+\item Starten durch anhängen der Parameter
+	\begin{cmdbox}[Ausführen mit Parametern]
+	\footnotesize 
+	./myExecutable my parameters
+	\end{cmdbox}
+\item Funktioniert so auf jedem Linux/Mac-Rechner
+\item Windows: Programm-Aufruf bis auf führendes \texttt{./} identisch
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Kommandozeilenparameter: Beispiel von Folie \ref{code:cmdLine}}
+%
+\begin{cmdbox}[Kompilieren ohne Script{,} Aufruf mit Parametern]
+\begin{minted}[fontsize=\footnotesize]{text}
+gcc cmdLineProc.c -std=c11 -Wall -o cmdLineProc
+./cmdLineProc Hieronymus Lauser "Chameleons are beautiful" more Parameters
+\end{minted}
+\end{cmdbox}
+%
+\begin{cmdbox}[Ausgabe]
+\begin{minted}[fontsize=\scriptsize]{text}
+This programme goes by the file name:
+./cmdLineProc
+
+  5 Parameters:
+  1	Hieronymus 
+  2	Lauser 
+  3	Chameleons are beautiful
+  4	more 
+  5	Parameters
+\end{minted}
+\end{cmdbox}
+%
+\end{frame}

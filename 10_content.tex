@@ -1,0 +1,417 @@
+% =========================================================================== %
+
+\begin{frame}[t,plain]
+\titlepage
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Script}
+%
+\begin{itemize}
+\item Kapitel 9
+	\begin{itemize}
+	\item 9.2.8. Speicherklasse static	
+	\end{itemize}
+\item Kapitel 11
+	\begin{itemize}
+	\item 11.1. Trennung von Header- und Modul-Code
+	\item 11.2. Speicherklasse extern
+	\item 11.3. Funktionen mit eingeschränkter Sichtbarkeit: static
+	\end{itemize}
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Modifier}
+%
+\begin{itemize}
+\item Deklaration: \texttt{Datentyp Variablenname}
+\item Zusatz-Informationen möglich
+\item Modifier \mintinline{c}{unsigned, const, restrict, volatile}
+	\begin{itemize}
+	\item verändern das Laufzeitverhalten von Variablen
+	\item Optimierung durch Compiler
+	\end{itemize}
+\item Speicherklassen \mintinline{c}{static, extern, register}
+	\begin{itemize}
+	\item Steuern Lebensdauer und Sichtbarkeit
+	\end{itemize}
+\item[$\Rightarrow$] \texttt{Speicherklasse Modifier Datentyp Variablenname}
+	\begin{itemize}
+	\item Reihenfolge tatsächlich beliebig
+	\end{itemize}
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{\mintinline{c}{unsigned}}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item Abwandlung Ganzzahl-Datentypen
+	\begin{itemize}
+	\item \mintinline{c}{char}, \mintinline{c}{short}, \mintinline{c}{int}, \mintinline{c}{long},
+		  \mintinline{c}{long long}
+	\end{itemize}
+\item Erlaubt nur positive Werte
+\item Dafür doppelter Betrag
+\item Unintuitives verhalten: Buffer underflow
+\item Ausgabe mit \texttt{printf}: Modifier Formatzeichen \texttt{u}
+	\begin{itemize}
+	\item Weitere Typen: \texttt{hh} für \mintinline{c}{char}
+	\item Weitere Typen: \texttt{h} für \mintinline{c}{short}
+	\item Weitere Typen: \texttt{d} für \mintinline{c}{int}
+	\item Weitere Typen: \texttt{l} für \mintinline{c}{long}
+	\item Weitere Typen: \texttt{ll} für \mintinline{c}{long long}
+	\end{itemize}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+int main () {
+  unsigned char x = 17; // binär: 00010001
+  printf("%hhu\n", x);
+  
+  x -= 18;              // -> -1: 11111111
+  printf("%hhu\n", x);
+}
+\end{minted}
+\end{codebox}
+%
+\begin{cmdbox}[Ausgabe]
+\scriptsize
+17\\
+255
+\end{cmdbox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{Large}
+{\mintinline{c}{const}}
+\vspace{6pt}
+\end{Large}
+%
+\begin{itemize}
+\item Verhindert Wert-Änderung nach Initialisierung
+\item Sicherheitsmechanismus
+\item Häufig für Naturkonstanten (globale \enquote{Variablen})
+\item Manchmal auch in Funktions-Signaturen
+	\begin{itemize}
+	\item CPP-Referenz
+	\end{itemize}
+\item Kann mit \mintinline{c}{unsigned} kombiniert werden
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+const double PI = 3.141592654;
+
+double circleArea(double r) {
+  return r * r * PI;
+}
+
+int main () {
+  printf("Kreisfläche: %lf\n", 
+         circleArea(80085)
+        );
+  
+  // PI = 3.0; -- Verboten
+}
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{\mintinline{c}{restrict}, \mintinline{c}{volatile} und \mintinline{c}{register}}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item \mintinline{c}{restrict}: Optimierung Pointer-Zugriffe
+\item Kein \enquote{Überlappen} referenzierter Speicherbereiche
+\item Beeinflusst interne Umsetzung durch Compiler
+\end{itemize}
+%
+\begin{itemize}
+\item \mintinline{c}{volatile}: Hinweis, dass Variable von anderen Prozessen geändert werden kann
+\item Verhindert Optimierungsschritte des Compilers
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{itemize}
+\item \mintinline{c}{register}: Ablegen im \enquote{Prozessor-Speicher}
+\item Optimierung für Variablen, die besonders häufig gelesen/geändert werden
+\end{itemize}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{Large}
+{\mintinline{c}{static}}
+\vspace{6pt}
+\end{Large}
+%
+\begin{itemize}
+\item Residente Variablen
+\item Speicherstelle wird nicht frei gegeben, wenn Scope verlassen wird
+\item Optionaler Startwert wird nur ein einziges Mal zugewiesen
+\item Symbol dennoch nur auf Scope begrenzt
+\item Nützlich in Funktionen
+\item Häufig: \enquote{setze Suche fort}
+\item Ausblick: Technik \emph{Rekursion}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+void func () {
+  static int calls = 0;
+  printf("Aufruf %d von func\n", ++calls);
+}
+
+int main () {
+  for (int i=0; i<3; i++) {func();}
+}
+\end{minted}
+\end{codebox}
+%
+\begin{cmdbox}[Ausgabe]
+\scriptsize
+Aufruf 1 von func\\
+Aufruf 2 von func\\
+Aufruf 3 von func
+\end{cmdbox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %\\
+
+\begin{frame}[fragile]{Auslagern in mehrere Dateien -- Modularisierung}
+%
+\begin{itemize}
+\item \mintinline{c}{#include "filename.ext"} bzw. \mintinline{c}{#include <filename.ext>} wird ersetzt
+	durch Inhalt der Datei
+\item \enquote{Copy \& Paste}
+\item \texttt{''Double Quotes}: Lade aus aktuellem Verzeichnis
+\item \texttt{<angle brackets>}: Lade aus Standard-Verzeichnis
+\item Konvention:
+	\begin{itemize}
+	\item Dateiendung \texttt{.c}: Tatsächlicher Code -- Funktionen, Anweisungen
+	\item Dateiendung \texttt{.h}: \enquote{\emph{Header}} -- Definitionen
+	\end{itemize}
+\item Dadurch: Code vorkompilierbar, als Bibliothek einbindbar
+	\begin{itemize}
+	\item Großprojekte kompilieren schneller
+	\item Kommerzielle \enquote{Blackbox-Lösungen}
+	\end{itemize}
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Inhalt Header}
+%
+\begin{itemize}
+\item Header: \texttt{.h}-Datei
+\item \enquote{verbinden} mehrere Module
+\item Werden also in mehreren \texttt{.c}-Dateien via \mintinline{c}{#include "header.h"} eingebunden
+\item Nur \emph{Definitionen}, keine \emph{Deklarationen}
+	\begin{itemize}
+	\item Funktions-Prototypen
+	\item \mintinline{c}{typedef}s
+	\item \mintinline{c}{struct}s
+	\item \mintinline{c}{union}s
+	\item \mintinline{c}{enum}s
+	\item[$\Rightarrow$] Alles, was selbst keinen Speicherplatz braucht
+	\end{itemize}
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Module}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+%\begin{Large}
+%{Module}
+%\vspace{6pt}
+%\end{Large}
+%
+\begin{itemize}
+\item \enquote{normaler} C-Code
+\item Nur ein Modul mit \texttt{int main()}
+\item Modul als \enquote{umfassender Scope}
+\item[$\Rightarrow$] \enquote{eigene globale Variablen je Modul}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{cmdbox}
+\scriptsize
+gcc modul1.c modul2.c ... [Optionen]
+\end{cmdbox}
+%
+\begin{itemize}
+\item Nur Module, keine Header
+\item Bedenke: Bereits durch \mintinline{c}{#include}-Zeile teil der \texttt{.c}-Datei
+\end{itemize}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{codebox}[Beispiel: Header \texttt{vector2D.h}]
+\begin{minted}[linenos, fontsize=\scriptsize]{c}
+typedef struct {
+  double x;
+  double y;
+} vector2D;
+
+vector2D v2_sum     (vector2D a, vector2D b);
+double   v2_length  (vector2D v);
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}[Beispiel: Modulcode \texttt{vector2D.c}]
+\begin{minted}[linenos, fontsize=\scriptsize]{c}
+#include "vector2D.h"
+#include <math.h>
+
+vector2D v2_sum (vector2D a, vector2D b) {
+  vector2D reVal = {a.x + b.x, a.y + b.y}; 
+  return reVal;
+}
+
+double v2_length (vector2D v) {return hypot(v.x, v.y);}
+\end{minted}
+\end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\adjustbox{valign=t}{\begin{minipage}{.5\linewidth}
+\begin{codebox}[Beispiel: Hauptmodulcode \texttt{myProg.c}]
+\begin{minted}[linenos, fontsize=\scriptsize]{c}
+#include <stdio.h>
+#include "vector2D.h"
+
+int main () {
+  vector2D v = {1,1}, w = {2, 3};
+  
+  printf("%lf\n", 
+          v2_length(v2_sum(v, w))
+        );
+}
+\end{minted}
+\end{codebox}
+\end{minipage}}
+%
+\adjustbox{valign=t}{\begin{minipage}{.45\linewidth}
+\begin{cmdbox}
+\scriptsize
+gcc std=c11 myProg.c vector2D.c -lm -Wall -Wextra
+\end{cmdbox}
+%
+\begin{cmdbox}[Ausgabe]
+\scriptsize
+5.000000
+\end{cmdbox}
+\end{minipage}}
+%
+\begin{itemize}
+\item Kein \mintinline{c}{#include <math.h>} im Hauptmodul nötig (aber erlaubt)
+\item Aber: \texttt{-lm} beim Compiler-Aufruf nötig
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Über Module geteilte globale Variablen: Speicherklasse \mintinline{c}{extern}}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item Globale Variablen auf Module beschränkt
+\item In Header: Copy \& Paste $\Rightarrow$ Mehrfaches Anlegen
+\item Stattdessen: \mintinline{c}{extern}
+\item Im Header: \enquote{Sichtbarmachen} einer Variablen
+\item Selbst keine Deklaration, nur Definition
+\item Keine Wertzuweisung in \mintinline{c}{extern}-Zeile
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}[Syntax]
+\mintinline{c}{extern Datentyp Variable;}
+\end{codebox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{codebox}[Beispiel: Hauptmodulcode \texttt{myProg.c}]
+\begin{minted}[linenos, fontsize=\scriptsize]{c}
+#include <stdio.h>
+#include "definitions.h"
+
+int main () {
+  printf("Globale Variable 'global' = %lf\n", global);
+}
+\end{minted}
+\end{codebox}
+
+\begin{codebox}[Beispiel: Header \texttt{definitions.h}]
+\begin{minted}[linenos, fontsize=\scriptsize]{c}
+extern double global;
+\end{minted}
+\end{codebox}
+
+\begin{codebox}[Beispiel: Modul \texttt{module.c}]
+\begin{minted}[linenos, fontsize=\scriptsize]{c}
+#include "definitions.h"
+
+double global = 5.0;
+\end{minted}
+\end{codebox}
+%
+\end{frame}
