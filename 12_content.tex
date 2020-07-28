@@ -6,6 +6,23 @@
 
 % =========================================================================== %
 
+\begin{frame}{Script}
+%
+\begin{itemize}
+\item Kapitel 14
+	\begin{itemize}
+	\item 14.1. Konstante Ausdrücke und vordefinierte Symbole
+	\item 14.2. Bedingte Kompilierung
+	\item 14.3. Parametrisierte Macros
+	\item 14.4. Stringify-Operator \texttt{\#}
+	\item 14.5. Concatenation-Operator \texttt{\#\#}
+	\end{itemize}
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
 \begin{frame}[fragile]{\texttt{\#define} und der Präprozessor}
 %
 \begin{columns}[T]
@@ -355,158 +372,117 @@ command menuItems[] = {
 
 % =========================================================================== %
 
-% =========================================================================== %
-
-\begin{frame}[fragile]{Farbige Ausgabe}
+\begin{frame}{Script}
 %
 \begin{itemize}
-\item Unix-Konsolen \emph{parsen} den zu druckenden Text selbst nocheinmal. Beispiel: \mintinline{text}{\n}
-\item Weitere Codes für farbige Ausgabe und Positionierung von Text
-\item Windows: Andere Mechanismen -- Siehe Script
-\item Farbausgabe: \mintinline{text}{\x1b[~~m}
-\item \mintinline{text}{~~} wird durch Zahlen-Symbole ersetzt -- Siehe Script
+\item Kapitel 15
+	\begin{itemize}
+	\item 15.5. Variadische Funktionen
+	\end{itemize}
 \end{itemize}
 %
-\tcbset{width=.6\linewidth, on line}
-\begin{codebox}[Beispiel: Farbige Ausgabe, equal height group=grColoured]
-\begin{minted}[fontsize=\scriptsize, linenos]{c}
-printf("\x1b[31mRed\n");
-printf("\x1b[93m\x1b[44mYellow on blue\n");
-\end{minted}
-\end{codebox}
+\end{frame}% =========================================================================== %
+
+\begin{frame}[fragile]{Variadische Funktionen -- Variable Zahl von Argumenten}
 %
-\tcbset{width=.38\linewidth, on line}
-\begin{cmdbox}[Ausgabe, equal height group=grColoured]
-\scriptsize
-{\color{red}Red}\\
-\colorbox {blue}{\color{yellow}Yellow on blue}
-\end{cmdbox}
+\begin{columns}[T]
+\column{.45\linewidth}
+\begin{itemize}
+\item Vgl. \texttt{printf}: Beliebige Zahl von Parametern
+\item Umsetzung über \emph{variadische Funktionen}
+\item Prototyp/Funktions-Signatur enthält \texttt{...} als letztes Argument
+\item Intern: Übergabe eines \mintinline{c}{void *} für Daten und eines \mintinline{c}{int *} für Datenmenge
+\end{itemize}
+%
+\column{.55\linewidth}
+\begin{codebox}[Syntax: Funktions-Signatur]
+\begin{minted}[fontsize=\scriptsize]{c}
+return_type funcName(feste_Parameter, ...);
+\end{minted}
+%
+\end{codebox}
+\begin{itemize}
+\item Funktion muss aus den festen Parametern (mindestens einer) die anderen Parameter rekonstruieren
+\item Handling über Funktionen und Makros aus \texttt{stdarg.h}
+\end{itemize}
+\end{columns}
 %
 \end{frame}
 
 % =========================================================================== %
 
-\begin{frame}[fragile]{Konsolenausgabe positionieren, Konsole löschen}
+\begin{frame}{Variadische Argumente auslesen}
 %
 \begin{itemize}
-\item Kommando: Konsole leeren: 
-	\tabto{7cm} \mintinline{c}{printf("\033[H\033[J");}
-\item Kommando: Springe zu Zeile \texttt{r}, Spalte \texttt{c}: 
-	\tabto{7cm} \mintinline{c}{printf("\033[%d;%dH", (r), (c));}
+\item \texttt{va\_list} -- Datentyp, enthält beide Pointer
+\item \texttt{va\_start(list, count)} -- Makro. Speichert Pointer von Typ \texttt{va\_list} in Variable \texttt{list}. Parameter \texttt{count} ist Zahl der Werte in der Liste.
+\item \texttt{va\_arg(list, type)}  -- Makro, liest den nächsten Wert aus Liste \texttt{list} von Typ \texttt{va\_list}; Wert selbst ist vom Typ \texttt{type}.
+\item \texttt{va\_end(list)} -- Makro, gibt Speicher für Liste \texttt{list} wieder frei.
 \end{itemize}
 %
-\begin{codebox}[Beispiel: Farbige Ausgabe]
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{minipage}{.49\linewidth}
+\begin{codebox}[Beispiel: Standardabweichung ...]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
-printf("\033[%d;%dH", 10, 20);
-printf("Text in line 10, column 20\n");
-printf("Next line starts at column 1.\n");
+#include <stdio.h>
+#include <stdarg.h>
+#include <math.h>
+ 
+double stddev(int count, ...) {
+   double sum = 0, sum_sq = 0, num;
+   
+   va_list args;   
+   va_start(args, count);
+   
+   for (int i = 0; i < count; ++i) {
+      num = va_arg(args, double);
+      sum    += num;
+      sum_sq += num * num;
+   }
+   va_end(args);
+   
+   return sqrt(sum_sq / count - 
+      (sum / count) * (sum / count));
+}
+\end{minted}
+\end{codebox}
+\end{minipage}
+%
+\begin{minipage}{.49\linewidth}
+\begin{codebox}[... Fortsetzung (von \href{https://en.cppreference.com/w/c/variadic/va_arg}{cppreference})]
+\begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
+int main(void) 
+{
+   printf(
+      "Std. deviation of list: %f\n", 
+      stddev(
+         4, 
+         25.0, 27.3, 26.9, 25.7
+      )
+   );
+}
 \end{minted}
 \end{codebox}
 %
-\begin{hintbox}
-Schwer zu merkende Kommandos einmal mit \mintinline{c}{#define} oder \mintinline{c}{enum} festhalten und durch besser greifbare Symbole ersetzen. Funktionen schreiben!
+\vspace{-4pt}
+\begin{hintbox}[Definition: Standardabweichung]
+\footnotesize Statistisches Maß für Streuung einer Messreihe $(x_i)_{i=1,\ldots,n}$ um Mittelwert 
+$\overline{x}$.
+\[
+\sigma = \sqrt{
+	\frac
+		{\sum^{n}_{i=1}(x_i - \overline{x})^2}
+		{n}
+}
+\]
 \end{hintbox}
+\end{minipage}
 %
 \end{frame}
 
 % =========================================================================== %
-
-\begin{frame}[fragile]
-%
-\tcbset{width=.495\linewidth, on line}
-%
-\begin{codebox}[Beispiel: Wrapper für Konsole, equal height group=grWrapperColour]
-\begin{minted}[fontsize=\scriptsize, linenos]{c}
-#include <stdio.h>
-
-inline void console_clear();
-void console_clear() 
-  {printf("\033[H\033[J");}
-
-inline void console_goto(int r, int c);
-void console_goto(int r, int c)
-  {printf("\033[%d;%dH", r, c);}
-
-typedef enum {
-  FORE_BLACK,
-  FORE_RED,
-  // ...
-  BACK_BLACK,
-  BACK_RED,
-  // ..
-  // See GRIPS for full code
-\end{minted}
-\end{codebox}
-%	
-\begin{codebox}[Beispiel: ... Fortsetzung ..., equal height group=grWrapperColour]
-\begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
-  SPC_NORMAL,
-  SPC_UNDERLINE_ON,
-  SPC_UNDERLINE_OFF,
-  SPC_ITALICS_ON,
-  SPC_ITALICS_OFF,
-  SPC_BLINK_ON,
-  SPC_BLINK_OFF,
-  SPC_BOLD_ON,
-  SPC_BOLD_OFF
-} consoleColors;
-
-void setcolor (consoleColors code) {
-  switch (code) {
-    case FORE_BLACK :
-      printf("\x1b[30m") ; break;
-    case FORE_RED :
-      printf("\x1b[31m") ; break;
-    // ...
-  }
-}
-\end{minted}
-\end{codebox}
-%
-\end{frame}
-
-% =========================================================================== %
-
-\begin{frame}[fragile]
-%
-\tcbset{width=.495\linewidth, on line, height=7cm}
-%
-\begin{codebox}[... Fortsetzung]
-\begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
-int main (void) {
-  console_clear();
-
-  setcolor(FORE_BRIGHT_RED);	
-  console_goto(10, 20);
-
-  printf("bright red.\n");
-  printf("next row starts at col 1.\n");
-
-  setcolor(FORE_YELLOW); 
-  setcolor(BACK_BLUE);
-  printf("yellow on blue.\n");
-
-  setcolor(SPC_UNDERLINE_ON);
-  printf("same colors, underlined.\n");
-  setcolor(SPC_UNDERLINE_OFF);
-  printf("                        \n");
-}
-\end{minted}
-\end{codebox}
-%	
-\begin{codebox}[Beispiel: Find codes]
-\begin{minted}[fontsize=\scriptsize, linenos]{c}
-#include <stdio.h>
-
-int main (void) {
-  char fmtstr[20];
-  
-  for (int i=0; i<108; i++) {
-    sprintf(fmtstr, "\x1b[%dm", i);
-    printf("%s: %d\n", fmtstr, i);
-  }
-}
-\end{minted}
-\end{codebox}
-%
-\end{frame}

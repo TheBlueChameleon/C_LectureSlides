@@ -9,11 +9,11 @@
 \begin{frame}[fragile]{Recap}
 %
 \begin{itemize}
-\item Function Pointers
+\item Funktionszeiger
 	\begin{itemize}
-	\item Deklaration:	\tabto{4cm}	\texttt{returntype (*funcname) (parameterlist)}
-	\item Aufruf	:		\tabto{4cm}	\texttt{funcname(parameterlist)}
-	\item Zuweisung:		\tabto{4cm}	\texttt{funcname = otherfunction}
+	\item Deklaration:	\tabto{4cm}	\texttt{Rueckgabetyp (*Funktionsname) (Parameterliste)}
+	\item Aufruf	:			\tabto{4cm}	\texttt{Funktionsname (Parameterliste)}
+	\item Zuweisung:		\tabto{4cm}	\texttt{Funktionsname = AndereFunktion}
 	\end{itemize}
 \item Kommandozeilen-Parameter
 	\begin{itemize}
@@ -21,13 +21,49 @@
 	\item \mintinline{c}{int main(int argc, char ** argv)}
 	\item Aufruf über \texttt{./myCode myParams}
 	\end{itemize}
+\end{itemize}
+%
+\begin{minipage}{.49\linewidth}
+\begin{itemize}
 \item Präprozessor
 	\begin{itemize}
 	\item \mintinline{c}{#define}
 	\item \mintinline{c}{#if}, \mintinline{c}{#else if}, \mintinline{c}{#endif}
 	\item Makros
 	\end{itemize}
-\item Fragen?
+\end{itemize}
+\end{minipage}
+%
+%
+\begin{minipage}{.49\linewidth}
+\begin{itemize}
+\item variadische Funktionen
+	\begin{itemize}
+	\item Parameterliste mit \texttt{...}
+	\item \texttt{va\_list}, \texttt{va\_start}, \texttt{va\_arg} und \texttt{va\_end} aus \texttt{<stdarg.h>}
+	\end{itemize}
+\end{itemize}
+\end{minipage}
+%
+\begin{center}
+Fragen?
+\end{center}
+
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Script}
+%
+\begin{itemize}
+\item Kapitel 13
+	\begin{itemize}
+	\item 13.1. File-Handle und Zugriffsmodi
+	\item 13.2. Text-Zugriff – Lesen und Schreiben in menschlichem Format
+	\item 13.3. Binär-Zugriff – Lesen und Schreiben in Binärformat
+	\item 13.4. Cursorposition in Dateien: \mintinline{c}{fseek} und \mintinline{c}{ftell}
+	\end{itemize}
 \end{itemize}
 %
 \end{frame}
@@ -47,7 +83,7 @@ Dateiverwaltung
 \item Zugriff über \emph{handle}
 	\item Komplexes Datenobjekt, von \texttt{stdio.h} bereits vorbereitet
 	\item Pointer auf \texttt{struct} vom Typ \texttt{FILE}
-	\item Enthält Dateiname, Pfad, Cursorposition, Dateimodus, ...
+	\item Enthält \enquote{Adresse auf dem Datenträger}, Cursorposition, Dateimodus, ...
 \item Handle erhalten: Über \texttt{fopen}
 \item Muss wieder geschlossen werden mit \texttt{fclose}
 \end{itemize}
@@ -55,9 +91,9 @@ Dateiverwaltung
 \column{.5\linewidth}
 \begin{codebox}[Syntax: fopen]
 \begin{minted}[fontsize=\scriptsize]{c}
-FILE * fp = fopen(filename, mode);
+FILE * handle = fopen(filename, mode);
 ...
-fclose(fp);
+fclose(handle);
 \end{minted}
 \end{codebox}
 %
@@ -82,7 +118,7 @@ fclose(fp);
 \begin{frame}[fragile]
 %
 \begin{columns}[T]
-\column{.49\linewidth}
+\column{.40\linewidth}
 \begin{Large}
 In Dateien schreiben
 \vspace{10pt}
@@ -96,22 +132,26 @@ In Dateien schreiben
 \item Rückgabewert: Zahl geschriebener Zeichen
 \end{itemize}
 %
-\column{.51\linewidth}
+\column{.60\linewidth}
 \begin{codebox}[Syntax]
 \begin{minted}[fontsize=\footnotesize]{c}
-fprintf(handle, formatstr, arglist);
+fprintf(handle, Formatstring, Parameter);
 \end{minted}
 \end{codebox}
 %
 \begin{codebox}[Beispiel]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 int a = 7;
-FILE * fp = fopen ("myFile.txt", "w");
-  fprintf(fp, "literal text\n");
-  fprintf(fp, "%d\t%s\n", a, "more text");
+FILE * handle = fopen ("myFile.txt", "w");
+  fprintf(handle, "literal text\n");
+  fprintf(handle, "%d\t%s\n", a, "more text");
 fclose(fp);
 \end{minted}
 \end{codebox}
+%
+\begin{warnbox}
+\texttt{fclose} nicht vergessen!
+\end{warnbox}
 \end{columns}
 %
 \end{frame}
@@ -134,7 +174,7 @@ Arrays schreiben
 	\item Also Dateiinhalt wie im Speicher
 \end{itemize}
 \item Definiert in \texttt{stdio.h}
-\item Rückgabewert: Zahl geschriebenen Objekte
+\item Rückgabewert: Zahl geschriebene Objekte
 \item Schneller als \texttt{fprintf}, da keine Übersetzung in menschenlesbares Format nötig.
 \end{itemize}
 %
@@ -237,14 +277,10 @@ Beachte die drei \texttt{NULL}-chars bei der Ausgabe mit \texttt{fwrite}
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Aus Dateien lesen}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-Aus Dateien lesen
-\vspace{10pt}
-\end{Large}
 %
 \begin{itemize}
 \item \texttt{fscanf}: Wie \texttt{scanf}, zusätzlicher Parameter \texttt{handle}
@@ -254,25 +290,30 @@ Aus Dateien lesen
 \item Rückgabewert: Zahl erfolgreich gelesener Arumente
 \end{itemize}
 %
-\column{.5\linewidth}
 \begin{codebox}[Syntax]
 \begin{minted}[fontsize=\footnotesize]{c}
 fscanf(handle, formatstr, arglist);
 \end{minted}
 \end{codebox}
 %
+\column{.5\linewidth}
+%
 \begin{codebox}[Beispiel]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
-int a = 7;
-FILE * fp = fopen ("myFile.txt", "r");
-  int    x;
-  double y;
-  char   z;
-  char string[100];
+#include <stdio.h>
+
+int main () {
+  int a = 7;
+  FILE * fp = fopen ("myFile.txt", "r");
+    int    x;
+    double y;
+    char   z;
+    char string[100];
   
-  fscanf(fp, "%d %lf %c", &x, &y, &z);
-  fscanf(fp, "%99s", string);
-fclose(fp);
+    fscanf(fp, "%d %lf %c", &x, &y, &z);
+    fscanf(fp, "%99s", string);
+  fclose(fp);
+}
 \end{minted}
 \end{codebox}
 \end{columns}
@@ -320,7 +361,11 @@ fread(dest, count, size, handle);
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Beispielaufgabe}
+%
+\begin{center}
+Zurücklesen des Arrays \texttt{alphabet} und des \texttt{int}s \texttt{somenum} aus dieser Datei:
+\end{center}
 %
 \begin{cmdbox}[Quelldatei]
 \begin{minted}[fontsize=\scriptsize]{text}
@@ -362,7 +407,7 @@ void gotoEnter(FILE * fp) {
 }
 
 int main (void) {
-  char alphabet[26] = {};
+  char alphabet[26] = {0};
   int  somenum, i;
   
   FILE * fp = fopen("file.txt", "r");
@@ -466,7 +511,7 @@ Lese- und Schreibmethode aufeinander abstimmen: \texttt{fread} mit \texttt{fwrit
 \begin{codebox}[Syntax]
 \begin{minted}[fontsize=\scriptsize]{c}
 long int offset = ftell (pFile);
-fseek (pFile, offset, origin);
+fseek (hFile, offset, origin);
 \end{minted}
 \end{codebox}
 %
@@ -474,7 +519,7 @@ fseek (pFile, offset, origin);
 \item \texttt{ftell}: Bytes ab Dateianfang
 \item \texttt{fseek}: Setze Cursor in Datei
 	\begin{itemize}
-	\item \texttt{pFile}: Handle zur Datei
+	\item \texttt{hFile}: Handle zur Datei
 	\item \texttt{offset}: Neue Cursorposition in Bytes, bezogen auf Referenzpunkt
 	\item \texttt{origin}: Referenzpunkt:
 		\begin{itemize}
@@ -541,13 +586,13 @@ endReached = feof(handle);
 #include <stdio.h>
 
 int main () {
-  char string[1024] = {};
+  char string[1024] = {0};
   int i = 0;
   
   FILE * pFile = fopen ("file.dat", "r");
   do {
      fread(string + i, 1, 1, pFile);
-     if (++i == 1024) {break;}
+     if (++i == 1023) {break;}
   } while (!feof(pFile));
 
   printf("%s\n", string);  
@@ -584,7 +629,7 @@ Dateilänge bestimmen
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 #include <stdio.h>
 
-long int lof (FILE * pFile) {
+long int flof (FILE * pFile) {
   long int oldPos = ftell(pFile);
   
   fseek(pFile, 0L, SEEK_END);
@@ -597,7 +642,7 @@ long int lof (FILE * pFile) {
 int main (void) {
   FILE * pFile = fopen("file.txt", "r");  
   printf(
-    "file.txt: %ld bytes.\n", lof(pFile)
+    "file.txt: %ld bytes.\n", flof(pFile)
   );
   fclose(pFile);
 }
