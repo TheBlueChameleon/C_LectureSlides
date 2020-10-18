@@ -47,20 +47,19 @@
 \end{itemize}
 %
 \column{.5\linewidth}
-\begin{codebox}[Compiler-Kommando]
+\begin{cmdbox}[Compiler-Kommando]
 \begin{minted}[fontsize=\scriptsize]{text}
 gcc 
    myCodefile1.c myCodefile2.c ...
    -lm -lglut -lGL
-   -std=c99 -Wall 
+   -std=c11 -Wall 
    `pkg-config --cflags --libs gtk+-2.0`
    -o myExecutable
 \end{minted}
-\end{codebox}
+\end{cmdbox}
 %
 \begin{itemize}
 \item Information hier nur der Vollständigkeit halber -- jeder Programmierer automatisiert das
-\item[$\Rightarrow$] Script \texttt{crg}
 \end{itemize}
 \end{columns}
 %
