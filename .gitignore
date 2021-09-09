@@ -1,0 +1,21 @@
+# patterns to exclude
+*.aux
+*.log
+*.lof
+*.lot
+*.out
+*.pdf
+*.synctex.gz
+*.toc
+*.pygtex
+*.pygstyle
+*.nav
+*.vrb
+*.snm
+
+# files to ignore
+.directory
+
+# directories to exclude
+# e.g. "Source Material/"
+*/_minted*/
