@@ -191,7 +191,7 @@
   \draw [blue] (b1) rectangle (b2);
   \node [right=5mm of code, text width=6cm]
   {\color{blue}Meist ein Schritt. Hier oft:\\
-  {\small\ttfamily gcc -std=c11 programm.c }};
+  {\small\ttfamily gcc -std=c11 programm.c -lm}};
   \draw[flow] (programm) -- (compiler);
   \draw[flow] (stdio) -- (compiler);
   \draw[flow] (math) -- (compiler);
@@ -472,12 +472,11 @@ int main () {
 	\begin{tabularx}
 		{\linewidth}
 		{CC}
-		\toprule[1pt]
 		
 		Datentyp & Interpretation \tabcrlf
-		int    & Ganzzahl \\
-		double & Kommazahl \\
-		char   & Buchstabe
+		\texttt{int}    & Ganzzahl \\
+		\texttt{double} & Kommazahl \\
+		\texttt{char}   & Buchstabe
 	\end{tabularx}\newline
 	\end{table}
 	\end{center}	
@@ -510,6 +509,7 @@ int main () {
 }
 \end{minted}
 \end{codebox}
+%
 \end{frame}
 
 % =========================================================================== %
@@ -535,7 +535,6 @@ int main () {
 	\begin{tabularx}
 		{\linewidth}
 		{LP|LP}
-		\toprule[1pt]
 		
 		\normalfont Symbol & Interpretation                & \normalfont Symbol & Interpretation \tabcrlf
 		\%d, \%i           & Ganzzahl                      & \%f    & float-Wert \\
@@ -546,6 +545,33 @@ int main () {
 \end{table}
 \tiny Dies ist nur eine Liste der \emph{wichtigsten} Formatierungen. 
 Siehe \url{http://en.cppreference.com/w/c/io/fprintf}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
+\begin{codebox}[Beispiel: \texttt{printf} mit Variablen und Ausdrücken]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+int main () {
+  int a, b;
+  
+  a = 7;
+  b = 3;
+  
+  printf("a + b = %d + %d = %d\n", a, b, a + b);
+}
+\end{minted}
+\end{codebox}
+%
+\begin{cmdbox}[Ausgabe: \texttt{printf} mit Variablen und Ausdrücken]
+\begin{minted}[fontsize=\scriptsize,linenos]{text}
+a + b = 7 + 3 = 10
+\end{minted}
+\end{cmdbox}
 %
 \end{frame}
 
@@ -568,7 +594,6 @@ Siehe \url{http://en.cppreference.com/w/c/io/fprintf}
 \begin{tabularx}
 	{.8\linewidth}
 	{cC|cC}
-	\toprule[1pt]
 	
 	Operation   & \normalfont Zeichen  &  Operation         & \normalfont Zeichen \tabcrlf
 	Addition    & +                    &  Multiplikation    & * \\
@@ -610,7 +635,6 @@ Siehe \url{http://en.cppreference.com/w/c/io/fprintf}
 	\begin{tabularx}
 		{\linewidth}
 		{CC}
-		\toprule[1pt]
 	
 		Operation                          & Code \tabcrlf
 		Inkrement 1                        & \usebox{\codeShorthandInc} \\
@@ -748,17 +772,16 @@ Siehe \url{http://en.cppreference.com/w/c/io/fprintf}
 	\begin{tabularx}
 		{\linewidth}
 		{SBS}
-		\toprule[1pt]
 		
-		Datentyp    & Wertebereich${}^1$ & Speicherbedarf${}^1$ \tabcrlf
-		char        &               -128 \ldots              +127 & 1 Byte\\
-		short int   &           -32\,768 \ldots          +32\,767 & 2 Byte\\
-		int${}^2$   &  -2\,147\,483\,648 \ldots +2\,147\,483\,647 & 4 Byte\\
-		long        &  -2\,147\,483\,648 \ldots +2\,147\,483\,647 & 4 Byte\\
-		long long   & $\pm$9\,223\,372\,036\,854\,775\,808        & 8 Byte\tabcrlf
-		float       & $\pm$3.4E+38, ca. 7 signifikante Ziffern    & 4 Byte\\	
-		double      & $\pm$1.7E+308, ca. 16 signifikante Ziffern  & 8 Byte\\
-		long double & sehr viel                                   & 16 Byte${}^1$
+		Datentyp             & Wertebereich${}^1$ & Speicherbedarf${}^1$ \tabcrlf
+		\texttt{char}        &               -128 \ldots              +127 & 1 Byte\\
+		\texttt{short int}   &           -32\,768 \ldots          +32\,767 & 2 Byte\\
+		\texttt{int}${}^2$   &  -2\,147\,483\,648 \ldots +2\,147\,483\,647 & 4 Byte\\
+		\texttt{long}        &  -2\,147\,483\,648 \ldots +2\,147\,483\,647 & 4 Byte\\
+		\texttt{long long int}  & $\pm$9\,223\,372\,036\,854\,775\,808        & 8 Byte\tabcrlf
+		\texttt{float}       & $\pm$3.4E+38, ca. 7 signifikante Ziffern    & 4 Byte\\	
+		\texttt{double}      & $\pm$1.7E+308, ca. 16 signifikante Ziffern  & 8 Byte\\
+		\texttt{long double} & sehr viel                                   & 16 Byte${}^1$
 	\end{tabularx}
 \end{table}
 \tiny ${}^1$: Tatsächlich Abhängig vom Zielsystem -- Compiler passt die Größen der Datentypen an die \emph{Systemarchitektur}, um zu optimieren. Obige Werte gelten für heute übliche Systeme. Es gibt Möglichkeiten, die Typengrößen explizit festzulegen; dies ist aber ein fortgeschrittenes Thema.
@@ -781,6 +804,10 @@ Siehe \url{http://en.cppreference.com/w/c/io/fprintf}
 	width=.48\linewidth,
 	on line}
 %
+\begin{tcbraster}[raster columns=2,
+                  raster equal height,
+                  nobeforeafter,
+                  raster column skip=0.2cm]
 \begin{codebox}[Beispiel]
 \begin{minted}[fontsize=\footnotesize,linenos]{c}
 #include <stdio.h>
@@ -788,15 +815,15 @@ Siehe \url{http://en.cppreference.com/w/c/io/fprintf}
 int main () {
   printf("%lf\n", 3 / 4);
   printf("%d\n" , 3 / 4);
-  printf("%f\n" , 3.0 / 4);
-  printf("%f\n" , (float)3 / 4);
+  printf("%lf\n", 3.0 / 4);
+  printf("%l\n" , (float)3 / 4);
   printf("%d\n" , 3.0 / 4);
 }
 \end{minted}
 \end{codebox}
 %
 \begin{cmdbox}[Ausgabe]
-\vspace{3pt}
+\vspace{30pt}
 \begin{minted}[fontsize=\footnotesize]{text}
 0.000000
 0
@@ -806,6 +833,7 @@ int main () {
 \end{minted}
 \vspace{3pt}
 \end{cmdbox}
+\end{tcbraster}
 %
 \end{frame}
 
