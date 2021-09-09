@@ -64,7 +64,7 @@ $\quad   =   135_{10}$
 \begin{frame}{Hexadezimal- und Oktalzahlen}
 %
 \begin{columns}
-\column{.4\linewidth}
+\column{.45\linewidth}
 \begin{itemize}
 \item Hexadezimalzahlen
 	\begin{itemize}
@@ -82,8 +82,9 @@ $\quad   =   135_{10}$
 	\end{itemize}
 \end{itemize}
 %
-\column{.6\linewidth}
+\column{.55\linewidth}
 \begin{tcolorbox}[title=Beispiel]
+\footnotesize
 \begin{tabular}{cc}
 \textbf{Basis}    &   \textbf{Darstellung} \tabcrlf
 10 (Dezimal)      &   10\,794 \\
@@ -94,6 +95,7 @@ $\quad   =   135_{10}$
 \end{tcolorbox}
 %
 \begin{hintbox}
+\small
 Why do programmers confuse Helloween and Christmas?\newline
 Because \texttt{dec(25) == oct(31)} 
 \end{hintbox}
@@ -170,7 +172,8 @@ int main () {
 \begin{frame}{Usereingaben}
 %
 \begin{codebox}[Syntax]
-\mintinline{c}{scanf(FormatString, ListePointer);}
+\small
+\mintinline{c}{scanf(FormatString, Pointer1, Pointer2, ...);}
 \end{codebox}
 \begin{itemize}
 \item Eingaben von Tastatur $\rightarrow$ angegebene Adresse(n)
@@ -178,6 +181,9 @@ int main () {
 	keine direkte Verbindung zu Variablen im eigenen Code
 \item Daher Kommunikation mittels Pointer!
 \item \texttt{FormatString} wie bei \texttt{printf}
+	\begin{itemize}
+	\item Strenge Unterscheidung zwischen \texttt{\%f} und \texttt{\%lf}!
+	\end{itemize}
 \item \texttt{ListePointer} durch Kommata getrennt.
 \item Empfehlung: Nur eine Eingabe pro scanf-Zeile
 \end{itemize}
@@ -410,7 +416,7 @@ myProgram.c:9:7: warning: suggest parentheses around assignment used as truth va
 \begin{frame}{Logische Verknüpfung}
 %
 \begin{columns}[T]
-\column{.49\linewidth}
+\column{.45\linewidth}
 \begin{itemize}
 \item Kombination mehrerer Bedingungen
 \item \emph{Wenn [Opfer in Sicht] UND [keine weiteren Zeugen] dann [Messer]}
@@ -437,14 +443,19 @@ Negation & !
 \end{tcolorbox}
 \end{columns}
 %
-\tcbset{on line, width=.45\linewidth}
+%\tcbset{on line, width=.45\linewidth}
+\begin{columns}[T]
+\column{.45\linewidth}
 \begin{warnbox}
 \small\centering Doppeltes \mintinline{c}{&&} und \mintinline{c}{||}!\newline
 \end{warnbox}
-\hspace{\fill}
+%
+\column{.45\linewidth}
+%\hspace{\fill}
 \begin{warnbox}
 \small\centering Ihr wollt mir nicht allein im Dunkeln begegnen.\vspace{\fill}
 \end{warnbox}
+\end{columns}
 %
 \end{frame}
 
@@ -667,7 +678,7 @@ else
 \scriptsize\mintinline{c}{Bedingung ? Wert_ja : Wert_nein}
 \end{codebox}
 \begin{codebox}[Beispiel]
-\scriptsize\mintinline{c}{max_ab = a > b  ?  a  :  b}
+\scriptsize\mintinline{c}{max_ab = a > b  ?  a  :  b;}
 \end{codebox}
 Kann manche Ausdrücke stark vereinfachen, an anderen Stellen eher verkomplizieren
 \end{tcolorbox}
@@ -690,8 +701,10 @@ Kann manche Ausdrücke stark vereinfachen, an anderen Stellen eher verkomplizier
 \item Fallunterscheidung für \mintinline{c}{int}- und \mintinline{c}{char}-Ausdrücke
 \item \enquote{Erstes aus einer Liste}
 \item Vergleich nur mit \emph{konstanten Ausdrücken}
-\item \mintinline{c}{break}: Verlässt aktuelle \{Umgebung\}
-\item \mintinline{c}{default}: Wie \mintinline{c}{else}.\newline
+\item \inC{break}: Verlässt aktuelle \{Umgebung\}
+\item Ohne \inC{break} wird auch nachfolgender \inC{case} ausgeführt
+\item \enquote{Fallthrough}, meist nicht gewollt
+\item \inC{default}: Wie \mintinline{c}{else}.\newline
 	\emph{Muss} letzter Anweisungsblock sein.
 \end{itemize}
 %
@@ -720,7 +733,7 @@ switch (Ausdruck) {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]{Beispiel}
+\begin{frame}[fragile]
 %
 \begin{codebox}
 \begin{minted}[fontsize=\scriptsize,linenos]{c}
