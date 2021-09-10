@@ -13,16 +13,15 @@ Letzte Stunde haben wir gesehen/kennengelernt:
 \begin{columns}[T]
 \column{.5\linewidth}
 \begin{itemize}
-\item die Arbeitsumgebung
+\item Arbeitsumgebung
 	\begin{itemize}
 	\item Code-Editor, Konsole
 	\item Kompilieren, Programme Starten über die Konsole
-	\item Script-Lösung \mintinline{text}{cr}
 	\end{itemize}
-\item die Grundlegende Struktur einer Code-Datei
+\item grundlegende Struktur von Codes
 	\begin{itemize}
-	\item \mintinline{c}{#include}-Zeilen
-	\item Hauptprogramm \mintinline{c}{int main () { ... }}
+	\item \inC{#include}-Zeilen
+	\item Hauptprogramm \inC{int main () { ... }}
 	\end{itemize}
 \end{itemize}
 %
@@ -30,13 +29,20 @@ Letzte Stunde haben wir gesehen/kennengelernt:
 \begin{itemize}
 \item Variablen und Operatoren
 	\begin{itemize}
-	\item Datentypen (\zB \mintinline{c}{int}, \mintinline{c}{char}, \ldots)
+	\item Datentypen (\zB \inC{int}, \inC{char}, \ldots)
 	\item Hierarchie der Operatoren (\enquote{Punkt vor Strich})
 	\end{itemize}
-\item Befehl \mintinline{c}{printf} zur formattierten Ausgabe
-\item \emph{Fragen hierzu?}
+\item Befehl \inC{printf} zur formatierten Ausgabe\\
+	\begin{itemize}
+	\item Formatstring: \texttt{"Text in double quotes"}\\
+	\item Enthält Platzhalter (\texttt{\%}) mit Datentyp-Zeichen (\texttt{d}, \texttt{f}, \texttt{lf}, \texttt{p}, ...)
+	\end{itemize}
 \end{itemize}
 \end{columns}
+%
+\begin{center}
+\emph{Fragen hierzu?}
+\end{center}
 %
 \end{frame}
 
@@ -53,21 +59,24 @@ Letzte Stunde haben wir gesehen/kennengelernt:
 	\item \enquote{Adresse} von Information im Speicher
 	\item Nutzen: Meist Kommunikation mit anderen Programmteilen
 	\end{itemize}
-\item Dateneingabe mit \mintinline{c}{scanf}
+\item Dateneingabe mit \inC{scanf}
 \end{itemize}
 %
 \column{.5\linewidth}
 \begin{itemize}
 \item Bedingungsstrukturen
 	\begin{itemize}
-	\item \mintinline{c}{if-else}
-	\item \mintinline{c}{switch-case}
+	\item \inC{if-else}
+	\item \inC{switch-case}
 	\item Schachtelung
 	\end{itemize}
 \item Logische Verknüpfung und Bitweise Logik
-\item \emph{Fragen hierzu?}
 \end{itemize}
 \end{columns}
+%
+\begin{center}
+\emph{Fragen hierzu?}
+\end{center}
 %
 \end{frame}
 
@@ -291,11 +300,11 @@ int main () {
 \begin{itemize}
 \item Kapitel 7
 	\begin{itemize}
-	\item 7.1. Programmsprünge: \mintinline{c}{goto}
-	\item 7.2. Schleife mit Bedingung: \mintinline{c}{while}
-	\item 7.3. Schleife mit Bedingung und einem garantierten Durchlauf: \mintinline{c}{do-while}
-	\item 7.4. Zählschleifen: \mintinline{c}{for}
-	\item 7.5. Eingriffe in den Kontrollfluss: \mintinline{c}{break und continue}
+	\item 7.1. Programmsprünge: \inC{goto}
+	\item 7.2. Schleife mit Bedingung: \inC{while}
+	\item 7.3. Schleife mit Bedingung und einem garantierten Durchlauf: \inC{do-while}
+	\item 7.4. Zählschleifen: \inC{for}
+	\item 7.5. Eingriffe in den Kontrollfluss: \inC{break und continue}
 	\end{itemize}
 \end{itemize}
 %
@@ -307,15 +316,15 @@ int main () {
 %
 \begin{itemize}
 \item Gängige Mathematische Problemstellungen schon gelöst. Z.\;B.: Wurzel einer Zahl
-\item Header: \mintinline{c}{#include <math.h>}
+\item Header: \mintinline{c}{#include <math.h>} % \inC fails to work with the # symbol...
 \item Linken: Kommandozeilenoption \texttt{-lm}
 \end{itemize}
 %
 \begin{cmdbox}[Kommandozeilenaufruf (minimal)]
-gcc myCode.c -lm
+gcc myCode.c {\color{cyan}-lm}
 \end{cmdbox}
 \begin{cmdbox}[Kommandozeilenaufruf (empfohlen)]
-gcc -std=c11 -Wall -Wextra -Wpedantic myCode.c -lm -o myExe
+gcc -std=c11 -Wall -Wextra -Wpedantic myCode.c {\color{cyan}-lm} -o myExe
 \end{cmdbox}
 %
 \end{frame}
@@ -331,11 +340,12 @@ gcc -std=c11 -Wall -Wextra -Wpedantic myCode.c -lm -o myExe
 \item Bibliothek \texttt{libmath} definiert viele Lösungen
 \item Im Code: \mintinline{c}{#include <math.h>}
 \item Compileraufruf\newline 
-	\texttt{gcc -lm [OPTIONS] [mycode.c]}\
+	\texttt{gcc {\color{blue}-lm} [OPTIONS] [mycode.c]}\
 \end{itemize}
 Siehe auch\newline \url{http://www.cplusplus.com/reference/cmath/}
 %
 \column{.5\linewidth}
+\vspace{-12pt}
 \begin{tcolorbox}[title=wichtige Funktionen]
 \begin{table}
 \footnotesize
@@ -387,14 +397,14 @@ Siehe auch\newline \url{http://www.cplusplus.com/reference/cmath/}
 \item Stärke von Computern: Wiederholungen
 \item In schneller Folge gleichartige Arbeiten durchführen
 \item Beispiel: Ähnliche Berechnungen
-\item Kombinierbar mit anderen Blocks, wie z.\,B. \mintinline{c}{if}
+\item Kombinierbar mit anderen Blocks, wie z.\,B. \inC{if}
 \end{itemize}
 \end{columns}
 \end{frame}
 
 % =========================================================================== %\\
 
-\begin{frame}[fragile]{\mintinline{c}{goto} -- Sprunganweisung}
+\begin{frame}[fragile]{\inC{goto} -- Sprunganweisung}
 %
 \begin{columns}[T]
 \column{.47\linewidth}
@@ -406,11 +416,12 @@ Siehe auch\newline \url{http://www.cplusplus.com/reference/cmath/}
 \item Spaghetti-Code -- nicht verwenden
 \item Interne Umsetzung von \emph{Schleifen}
 \end{itemize}
-\begin{hintbox}
-Sprechende Labels verwenden!
-\end{hintbox}
+\begin{warnbox}
+Hier nur zur Illustration! Bessere Möglichkeiten kommen gleich!
+\end{warnbox}
 %
-\column{.53\linewidth}
+\column{.50\linewidth}
+\vspace{-6pt}
 \begin{codebox}[Beispiel: Wurzeln der Zahlen 1 bis 10]
 \begin{minted}[fontsize=\scriptsize,linenos]{c}
 #include <stdio.h>
@@ -422,7 +433,7 @@ int main () {
   iterationPoint:
     printf("Wurzel aus %4.1lf: %lf.\n",
            foo, sqrt(foo));
-    foo++;
+    ++foo;
   if (foo <= 10) {goto iterationPoint;}
     
   printf("Erfolgreicher Abschluss.\n");
@@ -435,26 +446,54 @@ int main () {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]{\mintinline{c}{while}-Schleifen}
+\begin{frame}[fragile]
+%
+\begin{hintbox}[Tangente: \texttt{variable++} vs. \texttt{++variable}]
+\small
+Die Ausdrücke \texttt{variable++} und \texttt{++variable} tun (fast) dasselbe: beide erhöhen den Wert von \texttt{variable} um $1$. Der Unterschied liegt im \emph{Ergebnis} (Rückgabewert) der Operation:
+
+\vspace{3pt}
+Wir können auch diese Zeilen hier schreiben:
+
+\begin{minted}{c}
+int result;
+int variable = 0;
+
+result = variable++;    // result = 0
+result = ++variable;    // result = 2
+\end{minted}
+
+Im einen Fall wird also zuerst \texttt{variable} kopiert und dann inkrementiert, im anderen Fall wird zuerst inkrementiert, dann kopiert. Diese Feinheit wird so gut wie nie benutzt.
+
+\vspace{3pt}
+Da für die Kopie der alte Wert benötigt wird, ist \texttt{variable++} minimal aufwändiger als \texttt{++variable}. In der Praxis benutzen Programmierer*innen beide Formen.
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{\inC{while}-Schleifen}
 %
 \begin{columns}[T]
-\column{.4\linewidth}
+\column{.45\linewidth}
 \begin{codebox}[Syntax]
-\begin{minted}[fontsize=\scriptsize,linenos]{c}
+\begin{minted}[fontsize=\scriptsize]{c}
 while (Bedingung) {
-	Anweisungen
+  Anweisungen
 }
 \end{minted}
 %
 \end{codebox}
 \begin{itemize}
-\item Wiederhole Anweisungen, während Bedingung erfüllt
+\item Wiederhole Anweisungen, \emph{während} (while) Bedingung erfüllt
 \item Ausführung Zeile für Zeile
 \item Prüfung am Anfang der Schleife
+\item Prüfung vor jeder Wiederholung
 \item Komplettes Überspringen möglich
 \end{itemize}
 %
-\column{.6\linewidth}
+\column{.5\linewidth}
 \begin{codebox}[Beispiel: Wurzeln der Zahlen 1 bis 10]
 \begin{minted}[fontsize=\scriptsize,linenos]{c}
 #include <stdio.h>
@@ -467,7 +506,7 @@ int main () {
     printf("Wurzel aus %4.1lf: %lf.\n", 
            foo, sqrt(foo)
     );
-    foo++;
+    ++foo;
   }
 }
 \end{minted}
@@ -478,10 +517,10 @@ int main () {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]{\mintinline{c}{do-while}-Schleifen}
+\begin{frame}[fragile]{\inC{do-while}-Schleifen}
 %
 \begin{itemize}
-\item Variante der \enquote{normalen} \mintinline{c}{while}-Schleife
+\item Variante der \enquote{normalen} \inC{while}-Schleife
 \item Einmalige Ausführung des Schleifeninhalts garantiert
 \item Prüfung der Bedingung \emph{am Ende} statt \emph{am Anfang}
 \end{itemize}
@@ -525,7 +564,7 @@ int main(void) {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]{\mintinline{c}{for}-Schleifen}
+\begin{frame}[fragile]{\inC{for}-Schleifen}
 %
 \begin{itemize}
 \item \enquote{Zähl-Schleifen} -- für im Vornhinein bekannte Zahl von Durchläufen.
@@ -536,7 +575,7 @@ int main(void) {
 \begin{columns}[T]
 \column{.45\linewidth}
 \begin{codebox}[Syntax]
-\begin{minted}[fontsize=\scriptsize,linenos]{c}
+\begin{minted}[fontsize=\scriptsize]{c}
 for (Start; Bedingung; Iteration) {
    Anweisungen
 }
@@ -553,8 +592,8 @@ while (Bedingung) {
 \end{minted}
 \end{codebox}
 %
-\column{.55\linewidth}
-\begin{codebox}[Wurzeln der Zahlen 1 bis 10 \mintinline{text}{for}]
+\column{.50\linewidth}
+\begin{codebox}[Wurzeln der Zahlen 1 bis 10 mit \texttt{for}]
 \begin{minted}[fontsize=\scriptsize,linenos]{c}
 #include <stdio.h>
 #include <math.h>
@@ -562,7 +601,7 @@ while (Bedingung) {
 int main () {
   double foo;
   
-  for (foo = 1; foo <= 10; foo++) {
+  for (foo = 1; foo <= 10; ++foo) {
     printf("Wurzel aus %4.1lf: %lf.\n", 
            foo, sqrt(foo)
     );
@@ -583,18 +622,19 @@ int main () {
 \begin{itemize}
 \item In \{Umgebungen\} können Variablen deklariert werden
 \item Diese \enquote{existieren} nur \emph{innerhalb} der \{Umgebung\}
-\item Betrifft: \mintinline{c}{if, switch, while, do, for, ...}
-\item Bei \mintinline{c}{for}: Kurzform mit Gleichzeitiger Deklaraion und Initialisierung
+\item Betrifft: \inC{if, switch, while, do, for, ...}
+\item Bei \inC{for}: Kurzform mit Gleichzeitiger Deklaraion und Initialisierung
 \item Variable \enquote{lebt} nur innerhalb der Schleife
 \end{itemize}
 %
 \column{.55\linewidth}
+\vspace{-6pt}
 \begin{codebox}[\mintinline{text}{for} und Scopes]
 \begin{minted}[fontsize=\scriptsize,linenos]{c}
 #include <stdio.h>
 
 int main () {
-  for (int i = 1; i < 10; i++) {
+  for (int i = 1; i < 10; ++i) {
     printf("%d\n", i);
   }
   
@@ -610,30 +650,48 @@ Mehr dazu später
 
 % ========================================================================== %
 
-\begin{frame}[fragile]{\mintinline{c}{break} and \mintinline{c}{continue}}
+\begin{frame}
 %
-\begin{columns}[T]
-\column{.5\linewidth}
+\begin{hintbox}[Scopes und Schleifen: Zweck]
+Programme werden schnell groß (kleinere Projekte nehmen schnell einige Tausend Zeilen ein). Den \emph{kompletten} Überblick darüber zu behalten ist (für Menschen) nahezu unmöglich. Stattdessen gibt es viele Techniken, Code zu \emph{modularisieren}, \ie in \emph{unabhängige Blöcke zu zerlegen.}
+
+\vspace{3pt}
+Scopes sind ein solches Mittel: Eine Variable, die nur in einem bestimmten Block existiert, kann in einem anderen Abschnitt keinen Schaden anrichten: ich darf \enquote{vergessen}, was der Block tut, bzw. dass die Variable dort überhaupt existiert.
+
+\vspace{3pt}
+Ähnlich verhält es sich mit den Schleifen: während das \enquote{einfachere} \inC{goto} dieselbe Funktion wie \inC{for} und \inC{while} bietet, müssen wir hier als Programmierer*innen mehr Details beachten. Die dezidierten Schleifen \enquote{zwingen} uns zu einer besser lokalisierten Form.
+\end{hintbox}
+%
+\end{frame}
+
+% ========================================================================== %
+
+\begin{frame}[fragile]{\inC{break} and \inC{continue}}
+%
+\begin{tcbraster}[raster columns=2,
+                  raster equal height,
+                  nobeforeafter,
+                  raster column skip=0.2cm]
 \begin{tcolorbox}[title=\mintinline{text}{break}]
 \begin{itemize}
 \item Beendet Schleifen-Ausführung unabhängig von formaler Bedingung
-\item Überspringt \emph{alle} folgenden Anweisungen
+\item Überspringt alle \emph{folgenden} Anweisungen
 \item Code wird nach der aktuellen \{Umgebung\} fortgesetzt
-\item Für zusätzliche Abbruch-Bedingungen
-\item Vergleiche: \mintinline{c}{switch}
+\item[\Thus] Erlaubt Ausbruch aus \emph{Mitte} der Schleife
+\item Vergleiche: \inC{switch}
 \end{itemize}
 \end{tcolorbox}
 %
-\column{.5\linewidth}
 \begin{tcolorbox}[title=\mintinline{text}{continue}]
 \begin{itemize}
 \item Springt zum nächsten Schleifen-Anfang
 \item Schleife wird nicht verlassen/beendet
-\item Bei \mintinline{c}{for}: Führt Iteration aus
+\item Bei \inC{for}: Führt Iteration aus
+\item[\Thus] Erlaubt Überspringen eines Teils des Schleifen-Codes
 \item Einzele Durchläufe überspringen, ohne Schleifenstruktur zu verwerfen
 \end{itemize}
 \end{tcolorbox}
-\end{columns}
+\end{tcbraster}
 %
 \end{frame}
 

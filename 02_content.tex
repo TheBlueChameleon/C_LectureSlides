@@ -217,6 +217,102 @@ int main () {
 
 % =========================================================================== %
 
+\begin{frame}[fragile]{Clusterf*ck \texttt{scanf}}
+%
+\begin{itemize}
+\item \texttt{scanf}: Anfrage an das Betriebssystem: Lese String aus dem Tastaturpuffer und interpretiere diesen
+\item Wenn Text im Puffer nicht auf erwartetes Format passt: lasse Text im Puffer
+\item Zeilenumbruch ist auch ein Zeichen!
+\end{itemize}
+
+\begin{tcbraster}[raster columns=2,
+                  raster equal height,
+                  nobeforeafter,
+                  raster column skip=0.2cm]
+\begin{codebox}[Szenario]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+int main () {
+  int a, b;
+  char c;
+
+  scanf("%d", &a);
+  scanf("%c", &c);
+  scanf("%d", &b);
+  printf("%d %c %d\n", a, c, b);
+}
+
+\end{minted}
+\end{codebox}
+%
+\begin{cmdbox}[Ausführungsbeispiel]
+\begin{minted}[fontsize=\scriptsize]{text}
+1
++
+1 
+ 32767
+\end{minted}
+
+\footnotesize
+\Thus \texttt{c} liest den verbleibenden Zeilenumbruch von der Eingabe von \texttt{a}
+
+\Thus \texttt{b} \textsf{kann nicht eingegeben werden und behält den Startwert \texttt{32767} (Zufälliger Wert).}
+\end{cmdbox}
+\end{tcbraster}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Clusterf*ck \texttt{scanf}}
+%
+\begin{itemize}
+\item Lösung: Ein einziges Leerzeichen
+\end{itemize}
+
+\begin{tcbraster}[raster columns=2,
+                  raster equal height,
+                  nobeforeafter,
+                  raster column skip=0.2cm]
+\begin{codebox}[Szenario]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#include <stdio.h>
+
+int main () {
+  int a, b;
+  char c;
+
+  scanf("%d", &a);
+  scanf(" %c", &c);
+  scanf("%d", &b);
+  printf("%d %c %d\n", a, c, b);
+}
+
+\end{minted}
+\end{codebox}
+%
+\begin{cmdbox}[Ausführungsbeispiel]
+\begin{minted}[fontsize=\scriptsize]{text}
+1
++
+1 
+ 32767
+\end{minted}
+
+\footnotesize
+\Thus \textsf{Vor Eingabe von} \texttt{c} \textsf{wird Tastaturpuffer geleert}
+
+\Thus \textsf{Zahlen-Eingabe ignoriert vorangehende Sonderzeichen}
+
+\Thus \textsf{Im Zweifel: Immer Leerzeichen voran stellen}
+\end{cmdbox}
+\end{tcbraster}
+%
+\end{frame}
+
+% =========================================================================== %
+
 \begin{frame}{Script}
 %
 \begin{itemize}

@@ -38,16 +38,20 @@
 \end{itemize}
 %
 \begin{codebox}[Syntax -- Deklaration]
+\footnotesize
 \mint{c}{Datentyp Variable[Anzahl];}
 \end{codebox}
 %
 \begin{codebox}[Syntax -- Zugriff]
+\footnotesize
 \mint{c}{Variable[Index] = Ausdruck;}
 \end{codebox}
 %
 \column{.5\linewidth}
+\vspace{-12pt}
 \begin{warnbox}
-Zugriff auf nicht reservierten Bereich undefiniert!
+\footnotesize
+Effekt von Zugriff auf nicht reservierten Bereich nicht definiert!
 \end{warnbox}
 %
 \begin{tcolorbox}[title=Speicherbild]
@@ -99,11 +103,11 @@ int main () {
   int i;
   int cubes[14];
   
-  for (i = 0; i < 14; i++) {
+  for (i = 0; i < 14; ++i) {
     cubes[i] = i * i * i;
   }
   
-  for (i = 0; i < 14; i++) {
+  for (i = 0; i < 14; ++i) {
     printf("%2d^3 = %4d\n", i, cubes[i]);
   }
   printf("Adresse: %p\n", (void *) cubes);
@@ -137,40 +141,62 @@ Adresse: 0x7fff7caa82e0
 
 % =========================================================================== %
 
+\begin{frame}{Datentypen}
+%
+\begin{itemize}
+\item Zeile 5: \inC{int cubes[14];}
+	\begin{itemize}
+	\item Definition des Arrays
+	\item Liste von 14 \inC{int}-Werten
+	\item \texttt{cubes} ist vom Typ \inC{int *}
+	\item \inC{cubes[0]} ist vom Typ \inC{int}
+	\end{itemize}
+\item[\Thus] Ohne Index: wo ist die Liste? \thus Pointer
+\item[\Thus] Mit Index: Element der Liste \thus Skalar
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
 \begin{frame}[fragile]
 %
-\tcbset{width=.595\linewidth, on line, box align=center}
+\tcbset{width=.595\linewidth, on line, box align=center, equal height group = xmpSegfault}
 %
 \begin{warnbox}[Speicherverletzung, leftupper=6mm]
 \begin{minted}[fontsize=\scriptsize,linenos]{c}
 #include <stdio.h>
 
 int main () {
-  int foobar1[1];
-  int foobar2[1];
+  int first [1];
+  int second[1];
   
-  printf("foobar1 : %p\n", (void *) foobar1);
-  printf("foobar2 : %p\n", (void *) foobar2);
+  printf("first  at: %p\n", (void *) first );
+  printf("second at: %p\n", (void *) second);
   printf("\n");
   
-  foobar2[0] = 2;
-  printf("foobar2[0]: %d\n", foobar2[0]);
+  printf("Updating second\n");
+  second[0] = 2;
+  printf("second[0]: %d\n", second[0]);
 
-  foobar1[1] = 1;  
-  printf("foobar2[0]: %d\n", foobar2[0]);
+  printf("Bleeding into second\n");
+  first[1] = 1;  
+  printf("second[0]: %d\n", second[0]);
 }
 \end{minted}
 \end{warnbox}%
 %
-\tcbset{width=.395\linewidth, on line, box align=center}
+\tcbset{width=.395\linewidth, on line, box align=center, equal height group = xmpSegfault}
 %
 \begin{cmdbox}[Ausgabe]
 \begin{minted}[fontsize=\footnotesize]{text}
-foobar1 : 0x7ffc3c3b43f0
-foobar2 : 0x7ffc3c3b43f4
+first  at: 0x7ffc3c3b43f0
+second at: 0x7ffc3c3b43f4
 
-foobar2[0]: 2
-foobar2[0]: 1
+Updating second
+second[0]: 2
+Bleeding into second
+second[0]: 1
 \end{minted}
 \end{cmdbox}
 %
@@ -192,13 +218,14 @@ foobar2[0]: 1
 \item Zugriff auf bestimmtes Element:	\tabto{3.1cm} \texttt{pointer[index]}
 \item Adresse finden:					\tabto{3.1cm} \texttt{\&variable}
 \item Addition und Subtraktion definiert
-\item Gehe \texttt{index} Schritte weiter.
+\item Gehe \texttt{summand} Schritte weiter.
 \item Schrittweite: Automatische Anpassung an Datentypen
 \item Selten nötig, aber manchmal wichtig, um andere Codes zu verstehen
 \item C++: Konzept Iterator
 \end{itemize}
 %
 \column{.55\linewidth}
+\vspace{-6pt}
 \begin{codebox}[Arrayzugriff -- mehrere Syntaxes]
 \begin{minted}[fontsize=\scriptsize,linenos]{c}
 #include <stdio.h>
@@ -207,7 +234,7 @@ int main () {
    int i;
    int array[10];
 	
-   for (i=0; i<10; i++) {array[i] = 2*i;}
+   for (i = 0; i < 10; ++i) {array[i] = 2*i;}
 	
    printf("%d\n",   array  [5]);
    printf("%d\n", *(array + 5));
@@ -256,13 +283,13 @@ Variante \mintinline{c}{int array[variable]} seit C99 möglich, aber gefährlich
 
 int main () {
   int cubes[14];
-  int i, size = sizeof(cubes) / sizeof(*cubes);
+  int size = sizeof(cubes) / sizeof(*cubes);
   
-  for (i = 0; i < size; i++) {
+  for (int i = 0; i < size; ++i) {
     cubes[i] = i * i * i;
   }
   
-  for (i = 0; i < size; i++) {
+  for (int i = 0; i < size; ++i) {
     printf("%2d^3 = %4d\n", i, cubes[i]);
   }
   
@@ -287,7 +314,7 @@ int main () {
 \item Bei zu wenigen Werten: Automatisch 0
 \item Mindestens ein Wert muss angegeben werden, darf 0 sein.
 \item Zu viele Werte: Speicherverletzung (Compiler gibt Warnung aus)
-\item Größe kann automatisch ermittelt werden
+\item Größe kann automatisch ermittelt werden -- dann leere eckige Klammern
 \end{itemize}
 %
 \column{.55\linewidth}
@@ -306,12 +333,12 @@ Benutzt die \texttt{[]}-Syntax und \mintinline{c}{sizeof}, um Speicherverletzung
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Beispiel: Array vorbelegen}
 %
 \tcbset{width=.545\linewidth, on line, box align=center}
 %
-\begin{codebox}
-\begin{minted}[fontsize=\footnotesize,linenos]{c}
+\begin{codebox}[Code, equal height group = xmpEuler]
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
 #include <stdio.h>
 
 int main () {
@@ -322,7 +349,8 @@ int main () {
     6, 0, 2, 8, 7, 4, 7};
   
   printf("Euler's number:\n");
-  for (i = 0; i < sizeof(digits); i++) {	
+  
+  for (i = 0; i < sizeof(digits); ++i) {	
     printf("%1d", digits[i]);
     if (i==0) {printf(".");}
   }
@@ -332,7 +360,8 @@ int main () {
 %
 \tcbset{width=.445\linewidth, on line, box align=center}
 %
-\begin{cmdbox}[Ausgabe]
+\begin{cmdbox}[Ausgabe, equal height group = xmpEuler]
+\footnotesize
 Euler's number:\\
 2.71828182845904523536028747
 \end{cmdbox}
@@ -357,7 +386,9 @@ Euler's number:\\
 	a_{11} & a_{12} & \ldots & a_{1n} \tabcrlf
 	a_{21} & a_{22} & \ldots & a_{2n} \tabcrlf
 	\ldots & \ldots & \ldots & \ldots \tabcrlf
-	a_{m1} & a_{m2} & \ldots & a_{mn} \tabcrlf
+	a_{m1} & a_{m2} & \ldots & a_{mn} \\
+	
+	\bottomrule
 	
 \end{tabularx}
 \end{table}
@@ -389,18 +420,18 @@ $\Rightarrow$ \emph{Tensoren}
 \column{.3\linewidth}
 \begin{itemize}
 \item Speicherobjekt mit mehreren Indizes
-\item Objekt selbst: Pointer
-\item Objekt mit $1 \ldots n-1$ Indizes: Pointer
+\item Objekt selbst: Pointer (erster Ordnung... siehe später)
+\item Objekt mit $1 \ldots n-1$ Indizes: Pointer (erster Ordnung)
 \item Objekt mit $n$ Indizes: Wert selbst
 \end{itemize}
 %
 \column{.7\linewidth}
 \begin{codebox}[Syntax: Deklaration]
-\texttt{\footnotesize Datentyp var[Zeilen][Spalten]...[Schichten]}
+\texttt{\footnotesize Datentyp var[Zeilen][Spalten]...[Schichten];}
 \end{codebox}
 %
 \begin{codebox}[Syntax: Zugriff]
-\texttt{\footnotesize var[Zeilen][Spalten]...[Schichten] = Ausdruck;}
+\texttt{\footnotesize var[Zeile][Spalte]...[Schicht] = Ausdruck;}
 \end{codebox}
 %
 \end{columns}
@@ -704,7 +735,7 @@ int main () {
 
    printf("Original Text:\n%s\n", s);
    
-   for (i=0; i<sizeof(s); i++) {
+   for (i=0; i<sizeof(s); ++i) {
       s[i] -= ' ';
    }
 
