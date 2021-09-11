@@ -33,7 +33,7 @@
 
 \begin{document}
 
-\part*{Formattierte Textausgabe}
+\part*{Formatierte Textausgabe (\texttt{printf}, \texttt{sprintf}, \texttt{snprintf}, \texttt{fprintf})}
 \newcolumntype{T}{>{\centering\ttfamily\arraybackslash}m{.10 \linewidth}}
 \newcolumntype{S}{>{\centering\ttfamily\arraybackslash}m{.10 \linewidth}}
 \newcolumntype{E}{>{\centering\ttfamily\arraybackslash}m{.15 \linewidth}}
@@ -54,11 +54,9 @@
 	\tabcrlf
 	
 \multirow{7}{*}{ \makecell{
-	\texttt{float} \\
-	oder \\
-	\texttt{double}
+	\texttt{float}
 } } & 
-	\%f {\normalfont ,} \%lf & 
+	\%f & 
 	0.700000 &
 	1234567890123456768.000000 &
 	Dezimalpunkt \tabsec
@@ -93,19 +91,15 @@
 	0X1.12210F47DE981P+60 &
 	hexadezimal mit \enquote{A} \tabcrlf
 
+double & 
+	\%lf  & 
+	\multicolumn{2}{G|}{ \normalfont wie bei \texttt{float} } &
+	Variationen (\texttt{\%le}, ...) analog zu \texttt{float} \tabcrlf
+
 long double & 
 	\%Lf  & 
 	\multicolumn{2}{G|}{ \normalfont wie bei \texttt{float} und \texttt{double} } &
-	Variationen (\texttt{\%Le}, ...) analog zu double  \tabcrlf
-
-\multirow{2}{*}{char} & 
-	\%c & 
-	\multicolumn{2}{H|}{A} &
-	als ASCII-Zeichen, Werte von 0 bis 255 \tabsec
-	
-	& \%hhi &
-	\multicolumn{2}{H|}{65} &
-	als Dezimalzahl, Werte von 0 bis 255 \tabcrlf
+	Variationen (\texttt{\%Le}, ...) analog zu \texttt{float} \tabcrlf
 	
 \multirow{6}{*}{\texttt{int}}
 	& \%d, \%i & 
@@ -132,6 +126,19 @@ long double &
 	FFFFFFFF &
 	7FFFFFFF &
 	unsigned hexadezimal \tabcrlf
+
+\multirow{3}{*}{char} & 
+	\%c & 
+	\multicolumn{2}{H|}{A} &
+	als ASCII-Zeichen, Werte von 0 bis 255 bzw. von -128 bis +127, abhängig von signedness der Variable \tabsec
+	
+	& \%hhi &
+	\multicolumn{2}{H|}{65} &
+	als Dezimalzahl, Werte von -128 bis +127 \tabsec
+	
+	& \%hhu &
+	\multicolumn{2}{H|}{65} &
+	als Dezimalzahl, Werte von 0 bis 255 \tabcrlf
 	
 long int &
 	\%li, \%lx, ... &
@@ -145,12 +152,22 @@ short int &
 	32767 &
 	Variationen analog zu int \tabcrlf
 
-\multirow{5}{*}{\makecell{alle \\ Zahlen-Typen}} &
+\multirow{7}{*}{\makecell{alle \\ Zahlen-Typen}} &
 	\%+\textit{code} &
 	-1 &
 	+2147483647 &
 	Ausgabe wie oben, immer mit Vorzeichen \tabsec
+	
+	& \% \textit{code} &
+	 1 &
+	+2147483647 &
+	Ausgabe wie oben, Leerzeichen vor positiven Werten, minus vor negativen Werten \tabsec
 
+	& \%N\textit{code} &
+	&
+ 	&
+	Vorgabe: Mindestens Platz für N Zeichen (wird mit Leerzeichen aufgefüllt) \tabsec
+	
 	& \%N.M\textit{code} &
 	-0.70 &
  	1234567890123456768.00 &
@@ -170,7 +187,7 @@ short int &
 	\multicolumn{2}{H|}{abcdefg} &
 	Als Zeichenkette; alle Zeichen von der adressierten Speicherstelle bis zum ersten \texttt{NULL}-Zeichen.	\tabcrlf
 	
-\textit{Datentyp} *\newline
+void*\newline
 \textsf{(Pointer)}
 	& \%p 
 	& 0x7fffc7a9dfb8
@@ -180,12 +197,11 @@ short int &
 	
 	\bottomrule[1.5pt]
 \end{tabularx}
-Diese Format-Codes funktionieren sowohl mit \texttt{printf}, \texttt{sprintf}, \texttt{snprintf},  als auch mit \texttt{fprintf}.
 
 %Siehe auch \url{http://en.cppreference.com/w/c/io/fprintf}
 
 \clearpage
-\part*{Formattierte Texteingabe}
+\part*{Formatierte Texteingabe (\texttt{scanf}, \texttt{sscanf}, \texttt{snscanf} und \texttt{fscanf})}
 \newcolumntype{C}{>{\centering         \arraybackslash}m{.75\linewidth}}
 \renewcommand*{\tabsec}{\\ \cline{1-2}}
 \begin{tabularx}
@@ -201,7 +217,7 @@ Diese Format-Codes funktionieren sowohl mit \texttt{printf}, \texttt{sprintf}, \
 float &
 	\%f &
 	\multirow{3}{*}{
-	Alle Schreibweisen (Dezimalpunkt, exponential, hexadezimal) werdenautomatisch erkannt) 
+	Alle Schreibweisen (Dezimalpunkt, exponential, hexadezimal) werdenautomatisch erkannt 
 	}\tabsec
 
 double &
@@ -227,8 +243,11 @@ long double &
 	& \%x & 
 	vorzeichenlos, hexadezimal \tabcrlf
 
-\multirow{2}{*}{char} 
+\multirow{3}{*}{char} 
 	& \%hhi 
+	& Werte zwischen -128 und +127 \tabSec
+	
+	& \%hhu
 	& Werte zwischen 0 und 255 \tabSec
 	
 	& \%c
@@ -247,7 +266,7 @@ long long int
 	& \%lli, ...
 	& Variationen analog zu \texttt{int} und \texttt{unsigned int} \tabcrlf
 	
-\multirow{7}{*}{
+\multirow{8}{*}{
 	\makecell{
 		{\ttfamily char*}, \\
 		{\ttfamily char[]}, \\
@@ -268,6 +287,13 @@ long long int
 	\texttt{\%[0-9a-fA-F]} erlaubt Eingabe von Hexadezimalen Ganzzahlen\newline
 	Beispiel 2:
 	\texttt{\%[ \SLASH ta-z]} erlaubt Eingabe von Kleinbuchstaben, dem Tabulator und dem Leerzeichen.
+	\tabsec
+	
+	& \%[\textasciicircum\textit{list}]s
+	& Zeichenkette beliebiger Länge. Nur Zeichen, die \emph{nicht }in \textit{list} aufgeführt sind, werden akzeptiert. Der Ausdruck \textit{list} kann entweder eine Aneinanderreihung
+	aller verbotenen Zeichen sein, oder ein Ausdruck der Art \emph{von-bis}. Alle Zeichen, die in \textit{list} genannt wurden, gelten als Marker für das Eingabeende.\newline
+	Beispiel: 
+	\texttt{\%[\textasciicircum\textbackslash n]} erlaubt Eingabe aller Zeichen, beendet Eingabe mit Enter\newline
 	\\
 
 	\bottomrule[1.5pt]
