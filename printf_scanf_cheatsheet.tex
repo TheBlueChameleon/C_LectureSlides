@@ -152,7 +152,7 @@ short int &
 	32767 &
 	Variationen analog zu int \tabcrlf
 
-\multirow{7}{*}{\makecell{alle \\ Zahlen-Typen}} &
+\multirow{7}{*}{\makecell{\textrm{alle} \\ \textrm{Zahlen-Typen}}} &
 	\%+\textit{code} &
 	-1 &
 	+2147483647 &
@@ -178,17 +178,20 @@ short int &
 	1234567890123456768.00 &
 	Vorgabe: wie oben, aber leere Stellen werden mit 0 aufgefüllt\tabcrlf
 	
-\makecell{
-	{\ttfamily char*}, \\
-	{\ttfamily char[]}, \\
+\vspace{-6pt}\makecell{
+	\textrm{Strings:}\\
+	{\ttfamily char*, char[]}, \\
 	{\ttfamily unsigned~char*}
 } &
 	\%s &
 	\multicolumn{2}{H|}{abcdefg} &
 	Als Zeichenkette; alle Zeichen von der adressierten Speicherstelle bis zum ersten \texttt{NULL}-Zeichen.	\tabcrlf
-	
-void*\newline
-\textsf{(Pointer)}
+
+\makecell{
+	\textrm{Pointer} \\
+	\texttt{void *}
+}
+
 	& \%p 
 	& 0x7fffc7a9dfb8
 	& (nil) 
@@ -266,39 +269,39 @@ long long int
 	& \%lli, ...
 	& Variationen analog zu \texttt{int} und \texttt{unsigned int} \tabcrlf
 	
-\multirow{8}{*}{
+\multirow{11}{*}{
 	\makecell{
+		Strings:\\
 		{\ttfamily char*}, \\
 		{\ttfamily char[]}, \\
 		{\ttfamily unsigned~char*}
 	}
-} 
+}
 	& \%s
 	& Zeichenkette beliebiger Länge. Leerzeichen und Tabulatoren werden als Text-Ende interpretiert.
 	\tabSec
 	
 	& \%Ns
 	& Zeichenkette mit maximaler Länge N. Leerzeichen und Tabulatoren werden als Text-Ende interpretiert.
-	\tabSec
+	\tabSec 
 	
-	& \%[\textit{list}]s
+	& \%[\textit{list}] 
 	& Zeichenkette beliebiger Länge. Nur Zeichen, die in \textit{list} aufgeführt sind, werden akzeptiert. Der Ausdruck \textit{list} kann entweder eine Aneinanderreihung aller erlaubten Zeichen sein, oder ein Ausdruck der Art \emph{von-bis}. Alles hinter dem ersten Zeichen, das nicht in \textit{list} genannt wurde, wird ignoriert.\newline
 	Beispiel 1: 
 	\texttt{\%[0-9a-fA-F]} erlaubt Eingabe von Hexadezimalen Ganzzahlen\newline
 	Beispiel 2:
 	\texttt{\%[ \SLASH ta-z]} erlaubt Eingabe von Kleinbuchstaben, dem Tabulator und dem Leerzeichen.
-	\tabsec
+	\tabSec
 	
-	& \%[\textasciicircum\textit{list}]s
+	& \%[\textasciicircum\textit{list}]
 	& Zeichenkette beliebiger Länge. Nur Zeichen, die \emph{nicht }in \textit{list} aufgeführt sind, werden akzeptiert. Der Ausdruck \textit{list} kann entweder eine Aneinanderreihung
 	aller verbotenen Zeichen sein, oder ein Ausdruck der Art \emph{von-bis}. Alle Zeichen, die in \textit{list} genannt wurden, gelten als Marker für das Eingabeende.\newline
-	Beispiel: 
+	Beispiel 3: 
 	\texttt{\%[\textasciicircum\textbackslash n]} erlaubt Eingabe aller Zeichen, beendet Eingabe mit Enter\newline
 	\\
 
 	\bottomrule[1.5pt]
 \end{tabularx}
-Diese Format-Codes funktionieren sowohl mit \texttt{scanf}, \texttt{sscanf}, \texttt{snscanf},  als auch mit \texttt{fscanf}.
 
 
 \end{document}

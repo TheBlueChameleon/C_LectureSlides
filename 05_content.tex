@@ -52,9 +52,9 @@ int main () {
   int i, j;
   int h = 7;
   
-  for (i = 0; i < h; i++) {
-    for (j = 0; j < (h-i)  ; j++) {printf(" ");}
-    for (j = 0; j < 2*i + 1; j++) {printf("*");}
+  for (i = 0; i < h; ++i) {
+    for (j = 0; j < (h-i)  ; ++j) {printf(" ");}
+    for (j = 0; j < 2*i + 1; ++j) {printf("*");}
     printf("\n");
   }
 }
@@ -75,8 +75,8 @@ int main () {
 int main () {
   int r, c, h = 7;
   
-  for   (r = 0; r <     h    ; r++) {
-    for (c = 0; c < 2 * h + 1; c++) {
+  for   (r = 0; r <     h    ; ++r) {
+    for (c = 0; c < 2 * h + 1; ++c) {
       printf("%s", abs(c - h) < (r + 1)   ?   "*"   :   " ");
     }
     printf("\n");
@@ -190,7 +190,7 @@ Warnung in Zeile 16:\newline
 
 % =========================================================================== %
 
-\begin{frame}[fragile]{Texte auf Gleichheit Prüfen -- \texttt{strcmp}}
+\begin{frame}[fragile]{Texte auf Gleichheit Prüfen -- \texttt{strcmp} (\enquote{compare})}
 %
 \begin{columns}[T]
 \column{.4\linewidth}
@@ -230,7 +230,23 @@ int main () {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]{Strings Verketten -- \texttt{strcat}}
+\begin{frame}[fragile]{Einschub: Warum funktioniert nicht \texttt{str\_a == str\_b}?}
+%
+\begin{itemize}
+\item Zur Erinnerung: Strings sind Arrays und werden daher über Pointer verwaltet.
+\item Ein Pointer ist die Zahl, die angibt, wo eine bestimmte Information zu finden ist.
+\item Dieselbe Information kann an zwei verschiedenen Stellen vorliegen
+\item Das heißt: \texttt{str\_a != str\_b}
+\item Aber: \enquote{Text A == Text B}
+\item Stattdessen notwendig: Byte-weises vergleichen!
+\item[\Thus] wird erledigt von \texttt{strcmp}
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Strings Verketten -- \texttt{strcat} (\enquote{concatenation})}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
@@ -312,18 +328,38 @@ int main () {
 
 % =========================================================================== %
 
+\begin{frame}{Einschub: Warum funktioniert nicht \texttt{strPtr = "neuer Text"} ?}
+%
+\begin{itemize}
+\item Text in doppelten Anführungszeichen: Pointer auf String im Code-Semgent
+\item Darf gelesen aber nicht überschrieben werden
+\item \inC{char array[] = ...} erzeugt einen konstanten Pointer
+	\begin{itemize}
+	\item Speicher am Pointer-Ziel darf sich ändern, aber...
+	\item Adresse, auf die das Symbol \texttt{array} verweist nicht!
+	\end{itemize}
+\item Stattdessen: kopiere jedes Zeichen einzeln von [Quell-Adresse] nach [Ziel-Adresse]
+\item[\Thus] erledigt von \texttt{strcpy}
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
 \begin{frame}[fragile]{Strings durchsuchen -- \texttt{strchr} und \texttt{strrchr}}
 %
+\vspace{-15pt}
 \begin{columns}[T]
 \column{.5\linewidth}
 \begin{codebox}[Syntax]
-\footnotesize\texttt{ strchr(ptr\_data, int\_code)}\newline
-\footnotesize\texttt{strrchr(ptr\_data, int\_code)}
+\footnotesize\inC{ptr = strchr (ptr_data, int_code)}\newline
+\footnotesize\inC{ptr = strrchr(ptr_data, int_code)}
 \end{codebox}
 %
 \begin{itemize}
 \item Sucht das erste Zeichen mit Code \texttt{int\_code} im String \texttt{ptr\_data}
-\item Rückgabe: Pointer auf dieses Zeichen oder \texttt{NULL} zurück, wenn nicht gefunden.
+\item Rückgabe: Pointer auf dieses Zeichen oder \texttt{NULL}, wenn nicht gefunden.
+\item \texttt{NULL}: eine Konstante vom Typ \texttt{void *} mit dem Wert \texttt{0}.
 \item \texttt{strrchr}: Suche \enquote{von hinten}
 \end{itemize}
 %
@@ -334,7 +370,7 @@ int main () {
 #include <string.h>
 
 int main () {
-  char  str[] = "Replace *asteriscs*";
+  char  str[] = "Replace *asterisks*";
   char *found;   
    
   found = strchr(str, '*');
@@ -364,7 +400,8 @@ int main () {
 \item Varianten \texttt{memcmp}, \texttt{memcpy}, \texttt{memchr}
 \item Brauchen zusätzlichen Parameter \texttt{bytecount}
 \end{itemize}
-%
+
+\vspace{5pt}
 \begin{warnbox}
 \begin{itemize}
 \item Größe der Datentypen beachten!
@@ -373,6 +410,7 @@ int main () {
 \end{warnbox}
 %
 \column{.55\linewidth}
+\vspace{-10pt}
 \begin{codebox}[Beispiel -- \enquote{\texttt{memcat}} mit \texttt{memcpy}]
 \begin{minted}[fontsize=\scriptsize,linenos]{c}
 #include <stdio.h>
@@ -387,7 +425,7 @@ int main () {
    
   memcpy(dummy, src, 3 * sizeof(int));
    
-  for (i=0; i<6; i++) {
+  for (i=0; i<6; ++i) {
     printf("dst[%d]: %d\n", i, dst[i]);
   }
 }
@@ -401,6 +439,7 @@ int main () {
 
 \begin{frame}[fragile]{Groß- und Kleinschreibung -- \texttt{tolower} und \texttt{toupper}}
 %
+\vspace{-15pt}
 \begin{columns}[T]
 \column{.45\linewidth}
 \begin{codebox}[Syntax]
@@ -412,10 +451,11 @@ int main () {
 \item Ändern nur a...z bzw. A...Z
 \item Keine Behandlung von Umlauten, Akzenten, ...
 \item Definiert in \texttt{ctype.h}
+\item Für Profis: Siehe Befehl \texttt{setlocale} in der CPP-Referenz
 \end{itemize}
 %
 \column{.55\linewidth}
-\begin{codebox}[Beispiel -- \enquote{\texttt{memcat}} mit \texttt{memcpy}]
+\begin{codebox}[Beispiel -- \texttt{tolower} und \texttt{toupper}]
 \begin{minted}[fontsize=\scriptsize,linenos]{c}
 #include <stdio.h>
 #include <ctype.h>
@@ -425,7 +465,7 @@ int main () {
   char upC[256], loC[256];
   int i;
 
-  for (i=0; src[i]; i++) {
+  for (i=0; src[i]; ++i) {
     upC[i] = toupper(src[i]);
     loC[i] = tolower(src[i]);
   }
@@ -443,6 +483,7 @@ int main () {
 
 \begin{frame}[fragile]{Zeichentypen in Klassen einteilen -- \texttt{isXXX}-Functions}
 %
+\vspace{-15pt}
 \begin{columns}[T]
 \column{.37\linewidth}
 \begin{codebox}[Syntax]
@@ -470,7 +511,7 @@ int main () {
   printf("Please enter a number:\n");
   scanf("%255s", input);
 	
-  for (i=0; i<strlen(input); i++)
+  for (i=0; i<strlen(input); ++i)
     tVal &= isdigit(input[i]) || (input[i] == '.');
 	
   printf("%s is%s a number.\n", 
@@ -522,8 +563,9 @@ sprintf(ptr_String,
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Beispiele}
 %
+\vspace{-15pt}
 \begin{columns}[T]
 \column{.5\linewidth}
 \begin{codebox}[atoi{,} atof]
@@ -537,8 +579,8 @@ int main () {
    double d;
    int    i;
 
-   i = atoi(str);
-   d = atof(str);
+   i = atoi(str);   // i = 1234
+   d = atof(str);   // d = 1234.56789
 
    printf("%s -> int   : %d\n" , str, i);
    printf("%s -> double: %lf\n", str, d);

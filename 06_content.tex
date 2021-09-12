@@ -42,7 +42,7 @@ Funktionen
 \item Von Parametern abhängig gestaltbar
 \item Rückgabewert
 \item Muss vor Aufruf definiert sein
-\item Die Meisten Befehle bisher waren bereits Funktionen
+\item Die meisten Befehle bisher waren bereits Funktionen
 \end{itemize}
 %
 \column{.7\linewidth}
@@ -63,7 +63,7 @@ Rueckgabetyp Funktionsname ( Parameterliste ) {
 %
 \begin{codebox}[Syntax: Aufruf]
 \begin{minted}[fontsize=\footnotesize]{c}
-Funktionsname ( Parameterliste )
+Rueckgabewert = Funktionsname ( Parameterliste )
 \end{minted}
 \end{codebox}
 \end{columns}
@@ -126,9 +126,9 @@ double polyNomNomNom(double x) {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]{Beispiel: Ohne Deklaration}
+\begin{frame}[fragile]
 %
-\begin{codebox}
+\begin{codebox}[Beispiel: Ohne Deklaration]
 \begin{minted}[fontsize=\scriptsize,linenos]{c}
 #include <stdio.h>
 
@@ -145,18 +145,35 @@ int main() {
 \end{minted}
 \end{codebox}
 %
+\begin{tcbraster}[raster columns=2,
+                  raster equal height,
+                  nobeforeafter,
+                  raster column skip=0.2cm]
+\begin{hintbox}[Vorteile]
+\small
+\begin{itemize}
+\item Weniger zu tippen
+\item Eine Fehlerquelle weniger
+\end{itemize}
+\end{hintbox}
+%
+\begin{warnbox}[Nachteile]
+\small
+\begin{itemize}
+\item \emph{Muss} vor erstem Aufruf stehen
+\item Verhindert manche Konstrukte
+\end{itemize}
+\end{warnbox}
+\end{tcbraster}
+%
 \end{frame}
 
 % =========================================================================== %
 
-\begin{frame}[fragile]%{\mintinline{c}{void} -- der Nicht-Datentyp}
+\begin{frame}[fragile]{\inC{void} -- der Nicht-Datentyp}
 %
 \begin{columns}[T]
 \column{.43\linewidth}
-\begin{Large}
-\mintinline{c}{void} -- der Nicht-Datentyp
-\vspace{10pt}
-\end{Large}
 \begin{itemize}
 \item Funktionen, die kein \emph{Argument} erwarten: \mintinline{c}{void}
 \item Aufruf: \mintinline{c}{funcName();}
@@ -168,6 +185,7 @@ int main() {
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-10pt}
 \begin{codebox}
 \begin{minted}[fontsize=\scriptsize,linenos]{c}
 #include <stdio.h>
@@ -184,8 +202,68 @@ int main () {
 \end{columns}
 %
 \begin{hintbox}
-\texttt{funcName} ohne Parameterliste ist nur ein Pointer!
+\begin{itemize}
+\item Unterscheide Rückgabewert (bei \inC{return}) und \emph{Nebeneffekte} (\texttt{printf}, ...)!
+\item \texttt{funcName} ohne Parameterliste ist nur ein Pointer!
+\end{itemize}
 \end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}{Funktionen: Unabhängig vom Rest des Codes}
+%
+\begin{itemize}
+\item Wunsch: Funktionsaufruf soll Aufgabe erledigen, ohne den Zustand des restlichen Codes zu beeinflussen
+\item Bedeutet: Darf keine Variablen überschreiben
+\item Bedeutet: Braucht Mechanismus, der Funktions-Code von restlichem Code abtrennt
+\item[\Thus] Automatisch mit eingebaut: Scopes
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Scopes: Lokale Definition von Variablen}
+%
+\vspace{-15pt}
+\begin{columns}[t]
+\column{.5\linewidth}
+\begin{itemize}
+\item Umgebung, eingerahmt von \{curly brackets\}
+\item Definition von Variablen darin: nur gültig innerhalb des Scopes
+\item Verweis auf Variablen von anderen Scopes: Fehlermeldung
+\item Verweis auf Variablen außerhalb des Scopes: Fehlermeldung
+\item[!] Alle Blockstrukturen definieren ihre eigenen Scopes
+	\begin{itemize}
+	\item Funktionen
+	\item \inC{if}, \inC{switch}, \inC{for}, \inC{while}, ...
+	\end{itemize}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+int main () {
+  {
+    int x = 7, y = 3;
+    printf("First Scope:\n");
+    printf("   x: %d\n", x);   // 7
+    printf("   y: %d\n", y);   // 3
+  }
+
+  {
+    float x = 9;
+    printf("Second Scope:\n");
+    printf("   x: %f\n", x);   // 9.00000
+    // printf("y: %d\n", y);   // Fehler!
+  }
+}
+\end{minted}
+\end{codebox}
+\end{columns}
 %
 \end{frame}
 
@@ -271,6 +349,7 @@ void func(int x) {
   x += y;
   printf("in func: %d\n", x);
 }
+
 int main () {
   int x = 3;   
   func(x);   
@@ -333,7 +412,7 @@ int main () {
 
 % =========================================================================== %
 
-\begin{frame}{Warum Scopes}
+\begin{frame}{Nochmal also: warum Scopes}
 %
 \begin{itemize}
 \item Funktionen: \enquote{abgeschlossene Arbeitspakete}
@@ -353,7 +432,7 @@ int main () {
 %
 \tcbset{width=.495\linewidth, height=7.6cm, on line}
 %
-\begin{codebox}
+\begin{codebox}[Beispiel ...]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 #include <stdio.h>
 #include <math.h>
@@ -363,7 +442,7 @@ double myExp(double x0, int accuracy) {
   double denominator = 1.0;
   double result = 1.0;
 
-  for (int i=1; i<accuracy; i++) {
+  for (int i=1; i<=accuracy; i++) {
     x           *= x0;
     denominator *= i;
     result      += x / denominator;
@@ -374,25 +453,25 @@ double myExp(double x0, int accuracy) {
 \end{minted}
 \end{codebox}
 %
-\begin{codebox}
+\begin{codebox}[... Fortsetzung]
 \begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
 int main () {
-  double d, e;
-  
+  double d, e, x = exp(1);
+
   printf("Genauigkeit\t"
          "Näherung\t"
          "Abweichung\t"
          "Relativ\n"
   );
-  
+
   for (int i=0; i<10; i++) {
     e = myExp(1, i);
-    d = e - exp(1);
-    printf("%d\t"
+    d = e - x;
+    printf("%d\t\t"
            "%+8.6lf\t"
            "%+8.6lf\t"
-           "%8.3lf\n",
-           i, e, d, d/e
+           "%6.3lf%%\n",
+           i, e, d, fabs(d/x) * 100
     );
   }
 }
@@ -408,16 +487,16 @@ int main () {
 \begin{cmdbox}[Ausführungseispiel: Funktion \texttt{myExp} in Anwendung]
 \begin{minted}[fontsize=\scriptsize]{text}
 Genauigkeit     Näherung        Abweichung      Relativ
-0               +1.000000       -1.718282         -1.718
-1               +1.000000       -1.718282         -1.718
-2               +2.000000       -0.718282         -0.359
-3               +2.500000       -0.218282         -0.087
-4               +2.666667       -0.051615         -0.019
-5               +2.708333       -0.009948         -0.004
-6               +2.716667       -0.001615         -0.001
-7               +2.718056       -0.000226         -0.000
-8               +2.718254       -0.000028         -0.000
-9               +2.718279       -0.000003         -0.000
+0               +1.000000       -1.718282       63.212%
+1               +2.000000       -0.718282       26.424%
+2               +2.500000       -0.218282        8.030%
+3               +2.666667       -0.051615        1.899%
+4               +2.708333       -0.009948        0.366%
+5               +2.716667       -0.001615        0.059%
+6               +2.718056       -0.000226        0.008%
+7               +2.718254       -0.000028        0.001%
+8               +2.718279       -0.000003        0.000%
+9               +2.718282       -0.000000        0.000%
 \end{minted}
 \end{cmdbox}
 %
