@@ -210,6 +210,34 @@ int main () {
 %
 \end{frame}
 
+% =========================================================================== %\\
+
+\begin{frame}[fragile]{Die \inC{int main} als Funktion}
+%
+\begin{itemize}
+\item Vergleiche Form: \inC{int main () {...}} ist Funktionskörper!
+	\begin{itemize}
+	\item Alles \enquote{Nebeneffekte}
+	\item Aber es wird nichts berechnet?!
+	\end{itemize}
+\item Alles bisher gesagte gilt auf für die \texttt{main}
+	\begin{itemize}
+	\item Funktion \inC{return someIntValue;} verlassen
+	\item Rückgabewert ist \emph{Errorlevel}
+	\item Meldung an das Betriebssystem: z.\;B. Programm erfolgreich abgelaufen
+	\item Nicht genormt, häufig aber: \inC{return 0;} für normales beenden, \inC{return 1;} bei Abbruch durch Fehler
+	\item Ohne explizites \inC{return 0;}: zufälliger Wert (Betriebssystem-Abhängig, meist 0).
+	\item In \texttt{<stdlib.h}: Befehl \texttt{exit(errorlevel)} -- beende aus jeder Funktion heraus mit \texttt{errorlevel}
+	\end{itemize}
+\item Konsolenkommandos
+	\begin{itemize}
+	\item Linux, Mac: \texttt{echo \$?}
+	\item Windows: \texttt{echo \%ERRORLEVEL\%}
+	\end{itemize}
+\end{itemize}
+%
+\end{frame}
+
 % =========================================================================== %
 
 \begin{frame}{Funktionen: Unabhängig vom Rest des Codes}

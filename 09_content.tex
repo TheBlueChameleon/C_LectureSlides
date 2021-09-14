@@ -1,5 +1,4 @@
 % =========================================================================== %
-% --------------------------------------------------------------------------- %
 
 \begin{frame}[t,plain]
 \titlepage
@@ -54,7 +53,7 @@
 
 % =========================================================================== %
 
-\begin{frame}{structs -- Motivation}
+\begin{frame}{\inC{struct}s -- Motivation}
 %
 \begin{itemize}
 \item Aufgabe: Mehrere zusammenhängende Datensätze
@@ -74,15 +73,17 @@
 
 % =========================================================================== %
 
-\begin{frame}[fragile]%{structs -- \enquote{Container-Datentypen}}
+\begin{frame}[fragile]{\inC{struct}s -- \enquote{Container-Datentypen}}
 %
+\vspace{-10pt}
 \begin{columns}[b]
 \column{.5\linewidth}
-\begin{Large}
-structs -- \enquote{Container-Datentypen}
-\vspace{-5pt}
-\end{Large}
+%\begin{Large}
+%\inC{struct}s -- \enquote{Container-Datentypen}
+%\vspace{-5pt}
+%\end{Large}
 %
+\small
 \begin{itemize}
 \item Definiert neuen Datentyp (wie \mintinline{c}{int})
 \item Vorstellung: \emph{Tabellenkopf} -- enthält noch nicht die Information selbst!
@@ -95,7 +96,7 @@ structs -- \enquote{Container-Datentypen}
 \item \texttt{struct} muss \emph{vor Verwendung} definiert sein
 \end{itemize}
 \begin{hintbox}
-\small Objekte, die \enquote{in einem Gedanken} greifbar sind, zu einer \texttt{struct} zusammenfassen
+\footnotesize Objekte, die \enquote{in einem Gedanken} greifbar sind, zu einer \texttt{struct} zusammenfassen
 \end{hintbox}
 %
 \column{.5\linewidth}
@@ -146,6 +147,12 @@ struct Karteieintrag {
 
 int main () {
    struct Karteieintrag Cessi, Chami;
+   
+   Cessi.geburtsjahr = 1897;
+   Chami.geburtsjahr = 1996;
+   
+   strcpy(Chami.vorname, "Lisl");
+   // ...
 }
 \end{minted}
 \end{codebox}
@@ -169,6 +176,40 @@ int main () {
 \end{tabular}
 \vfill
 \end{tcolorbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Erlaubte Operationen}
+%
+\texttt{struct}s stellen sehr vielfältige Ideen dar. Telefonbucheinträge, komplexe Zahlen, Spielkarten, ... sind allesamt sinnvoll in \texttt{struct}s abbildbar.
+
+\vspace{3pt}
+Folge dessen ist, dass die meisten Rechenoperationen nicht allgemeingültig erklärt werden können. Daher sind nur die Wertzuweisung (\texttt{=}) und der direkte Vergleich (\texttt{==} und \texttt{!=}) definiert.
+
+\begin{tcbraster}[raster columns=2,
+                  raster equal height,
+                  nobeforeafter
+                 ]
+\begin{codebox}[Wertzuweisung]
+\begin{minted}[fontsize=\scriptsize]{c}
+struct sometype x, y;
+
+x = y;
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}[Vergleich]
+\begin{minted}[fontsize=\scriptsize]{c}
+if (x == y) {
+  printf("Instanzen identisch.\n");
+}
+\end{minted}
+\end{codebox}
+\end{tcbraster}
+
+Addition, Subtraktion, ... und Ordnung (\texttt{<}, \texttt{>}, ...), etc. dagegen sind nur indirekt über ihre Attribute möglich.
 %
 \end{frame}
 
@@ -236,7 +277,7 @@ int main (void) {
 	\begin{itemize}
 	\item Pointer-Symbol \texttt{*}
 	\item \mintinline{c}{unsigned}
-	\item Weitere Modifier: Siehe \href{http://en.cppreference.com/w/c/language/declarations}{cppref.com}
+	\item Weitere Modifier: Siehe \href{http://en.cppreference.com/w/c/language/declarations}{cppreference.com}
 	\end{itemize}
 \item mehrere Definitionen mit einem Aufruf: Komma-Syntax (siehe Beispiel)
 \end{itemize}
@@ -256,8 +297,8 @@ Alias Variable;
 %
 \begin{codebox}[Beispiel]
 \begin{minted}[fontsize=\footnotesize]{c}
-typedef unsigned long long big, * big_p;
-big   myVar;
+typedef unsigned long long big_t, * big_p;
+big_t myVar;
 big_p myVarPointer = &myVar;
 \end{minted}
 \end{codebox}
@@ -320,15 +361,10 @@ int main (void) {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]%{Anonyme Typen}
+\begin{frame}[fragile]{Anonyme Typen}
 %
 \begin{columns}[T]
 \column{.4\linewidth}
-\begin{Large}
-Anonyme Typen
-\vspace{10pt}
-\end{Large}
-%
 \begin{itemize}
 \item Weitere Kontraktion/Abkürzung
 \item \texttt{struct} erhält keinen eigenen Namen
@@ -337,10 +373,11 @@ Anonyme Typen
 \end{itemize}
 %
 \column{.55\linewidth}
+\vspace{-10pt}
 \begin{codebox}[Beispiel -- Komplexe Zahlen]
-\begin{minted}[fontsize=\footnotesize]{c}
-/* Original-Code aus 
- * meiner Bachelor-Arbeit */
+\begin{minted}[fontsize=\footnotesize, linenos]{c}
+/* Original-Code aus meiner
+ * Bachelor-Arbeit */
  
 typedef struct {
 	double real;
@@ -361,11 +398,33 @@ typedef struct {
 
 % =========================================================================== %
 
+\begin{frame}[fragile]{Recap bis hierhin}
+%
+\begin{itemize}
+\item \inC{struct}s sind wie Formulare, in die mehrere \emph{unterschiedliche} Wertetypen eingetragen werden
+\item In der Deklaration eines \inC{struct}s nennen wir die Datentypen, also die Felder unseres \enquote{Formulars}
+\item Die einzelnen Elemente (\enquote{Bausteine}) einer \inC{struct} heißen \emph{Attribute}, \emph{Felder} oder \emph{Records}
+\item Wir brauchen \emph{Instanzen} von \inC{struct}s, um sinnvoll damit zu arbeiten
+\item Eine \inC{struct}-Instanz zusammen mit einem Attribut verhält sich wie eine \emph{einfache Variable}
+\item Eine \inC{struct}-Instanz alleine beschreibt \emph{alle} Werte (\enquote{ein gesamtes, ausgefülltes Formular})
+\item \inC{struct}s werden i.\;d.\;R. \emph{global} definiert (Datentyp im gesamten Programm relevant). Die \emph{Instanzen} sind selbstverständlich trotzdem \emph{lokal}.
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
 \begin{frame}[fragile]{\texttt{struct}s und Pointer (I)}
 %
-\tcbset{width=.495\linewidth, on line}
-%
-\begin{itembox}[Arrays als records, equal height group=GStrPtrI]
+\begin{tcbraster}[raster columns=2,
+                  raster equal height,
+                  nobeforeafter
+                 ]
+\begin{tcolorbox}[title=Records mit Array-Type]
+\small
+Die Attribute eines \texttt{struct}s können selbst Pointer sein.\\
+\Thus Bekannte Syntax-Elemente
+\begin{itemize}
 \item Dereferenzierung: \newline
 	\texttt{*var.record}
 \item Index-Zugriff: \newline
@@ -373,9 +432,10 @@ typedef struct {
 \item Adresse finden: \newline
 	\texttt{\&var.record}
 \item[$\Rightarrow$] Wie bei gewöhnlichen Arrays
-\end{itembox}
+\end{itemize}
+\end{tcolorbox}
 %
-\begin{codebox}[Code, equal height group=GStrPtrI]
+\begin{codebox}[Code]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 typedef struct {
     double position[3];
@@ -395,6 +455,7 @@ int main () {
   printf("%lf\n",  obj.mass       );
 \end{minted}
 \end{codebox}
+\end{tcbraster}
 %
 \end{frame}
 
@@ -402,9 +463,15 @@ int main () {
 
 \begin{frame}[fragile]{\texttt{struct}s und Pointer (II)}
 %
-\tcbset{width=.495\linewidth, on line}
-%
-\begin{itembox}[Array von structs, equal height group=GStrPtrII]
+\vspace{-5pt}
+\begin{tcbraster}[raster columns=2,
+                  raster equal height,
+                  nobeforeafter
+                 ]
+\begin{tcolorbox}[title=Arrays von \texttt{struct}-Instanzen]
+\small
+Pointer auf \inC{struct}-Instanzen möglich:
+\begin{itemize}
 \item Dereferenzierung: 
 	\tabto{3cm}
 	\texttt{*var}
@@ -414,15 +481,18 @@ int main () {
 \item Adresse finden: 
 	\tabto{3cm}
 	\texttt{\&var}
-\item[$\Rightarrow$] Wie bei gewöhnlichen Arrays
-\item Zugriff von Pointer auf Record\newline
-	\texttt{var\_p->record}\newline
+\end{itemize}
+Neue Syntax: Von Pointer zu Record
+\begin{itemize}
+\item \texttt{var\_p->record} \\
+	gleichbedeutend zu \\
 	\texttt{(*var\_p).record}
 \item Auflösung \enquote{von rechts nach links}
 \item Klammern werden beachtet
-\end{itembox}
+\end{itemize}
+\end{tcolorbox}
 %
-\begin{codebox}[Code, equal height group=GStrPtrII]
+\begin{codebox}[Code]
 \begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
   motiondata   swarm[100];
   motiondata_p swarmEl = &swarm[1];
@@ -442,6 +512,7 @@ int main () {
 }
 \end{minted}
 \end{codebox}
+\end{tcbraster}
 %
 \end{frame}
 
@@ -449,9 +520,11 @@ int main () {
 
 \begin{frame}[fragile]
 %
-\tcbset{width=.495\linewidth, on line}
-%
-\begin{codebox}[\texttt{structs} in Funktionen, equal height group=GStrPtrXmp]
+\begin{tcbraster}[raster columns=2,
+                  raster equal height,
+                  nobeforeafter
+                 ]
+\begin{codebox}[\texttt{struct}s in Funktionen]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 #include <stdio.h>
 #include <string.h>
@@ -474,7 +547,7 @@ void printEmployee(employee_t employee) {
 \end{minted}
 \end{codebox}
 %
-\begin{codebox}[...Fortsetzung, equal height group=GStrPtrXmp]
+\begin{codebox}[...Fortsetzung]
 \begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
 int () {
   employee_t emps[2];
@@ -494,6 +567,7 @@ int () {
 }
 \end{minted}
 \end{codebox}
+\end{tcbraster}
 %
 \end{frame}
 
@@ -545,14 +619,11 @@ void printEmployee(employee_t * employee) {
 
 % =========================================================================== %
 
-\begin{frame}[t,fragile]%{\texttt{struct}s und Scopes}
+\begin{frame}[t,fragile]{\inC{struct}s und Scopes}
 %
+\vspace{-10pt}
 \begin{columns}[T]
 \column{.4\linewidth}
-\begin{Large}
-\texttt{struct}s und Scopes
-\vspace{10pt}
-\end{Large}
 %
 \begin{itemize}
 \item Selbe Regeln wie für Variablen
@@ -565,6 +636,7 @@ void printEmployee(employee_t * employee) {
 \end{hintbox}
 %
 \column{.55\linewidth}
+\vspace{-10pt}
 \begin{codebox}
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 typedef struct {int dummy;} tglobal;
@@ -580,9 +652,7 @@ int main (void) {
 //  tproc   z; -- no horizontal visibility
     {
         typedef struct {int dummy;} tsub;
-        tglobal a;
-        tmain   b;
-        tsub    c;
+        tglobal a; tmain b; tsub c;
     }
 //  tsub z;  -- no insight into scope
 }
@@ -597,6 +667,7 @@ int main (void) {
 
 \begin{frame}[fragile]{Initializer-Syntax}
 %
+\vspace{-10pt}
 \begin{codebox}[Beispiel: Initializer-Syntax bei \texttt{struct}s]
 \begin{minted}[linenos, fontsize=\scriptsize]{c}
 typedef struct {
@@ -611,6 +682,15 @@ int main () {
 }
 \end{minted}
 \end{codebox}
+%
+\begin{itemize}
+\item Weist Werte in Reihenfolge der Deklaration zu
+	\begin{itemize}
+	\item \texttt{jahr} $\leftarrow$ \texttt{1989}, \texttt{monat} $\leftarrow$ \texttt{3}, ...
+	\end{itemize}
+\item \emph{Ausschließlich} bei der Deklaration der Instanz möglich
+\item Funktioniert hier dafür auch mit Strings
+\end{itemize}
 %
 \end{frame}
 
@@ -661,19 +741,17 @@ Adresse von charPointer:
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{\mintinline{c}{enum}s -- automatisch nummerierte Symbole}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-{\mintinline{c}{enum}s -- automatisch nummerierte Symbole}
-\vspace{6pt}
-\end{Large}
-%
+\vspace{-5pt}
 \begin{itemize}
 \item Definition von Konstanten mit aufsteigenden Werten
 \item Gleichzeitig Definition von Alias für \mintinline{c}{int}
 \item Hilft für besser lesbaren Code
+\item Häufig in ALL CAPS
+\item Anonyme \inC{enum}s möglich
 \end{itemize}
 %
 \begin{codebox}[Syntax]
@@ -687,6 +765,7 @@ enum Name {
 \end{codebox}
 %
 \column{.5\linewidth}
+\vspace{-7pt}
 \begin{codebox}[Beispiel]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 enum Cardsuits {
@@ -713,14 +792,7 @@ if (myCard.suit == HEARTS) {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
-%
-\begin{columns}[T]
-\column{.5\linewidth}
-\begin{Large}
-{\mintinline{c}{union}s -- Typecasting-Interfaces}
-\vspace{6pt}
-\end{Large}
+\begin{frame}[fragile]{\inC{union}s -- Typecasting-Interfaces}
 %
 \begin{itemize}
 \item Ähnlich \mintinline{c}{struct}s
@@ -728,9 +800,9 @@ if (myCard.suit == HEARTS) {
 \item Effektiv: Typecasting
 \item Elektronik-Anwendungen
 \end{itemize}
-%
-\column{.44\linewidth}
-\begin{codebox}[Beispiel]
+
+\tcbset{width=.35\linewidth, on line}
+\begin{codebox}[Beispiel, equal height group = xmpUnion]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 typedef union {
   int i;
@@ -743,9 +815,9 @@ int main () {
 }
 \end{minted}
 \end{codebox}
-\end{columns}
 %
-\begin{tcolorbox}[title=Speicherbild]
+\tcbset{width=.6\linewidth, on line}
+\begin{tcolorbox}[title=Speicherbild, equal height group = xmpUnion]
 \begin{center}
 \begin{tikzpicture}
   [ 

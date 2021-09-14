@@ -1,5 +1,4 @@
 % =========================================================================== %
-% --------------------------------------------------------------------------- %
 
 \begin{frame}[t,plain]
 \titlepage
@@ -34,7 +33,7 @@ int strlen(char * string) {
   int Stelle = 0;
   
   if (string) {
-    while(string[Stelle]) {Stelle++;}
+    while(string[Stelle]) {++Stelle;}
     return Stelle;
     
   } else {
@@ -101,7 +100,7 @@ int strlen(char * string) {
   if (string) {
     int Stelle = 0;
     
-    for (; string[Stelle]; Stelle ++) {}
+    for (; string[Stelle]; ++Stelle) {}
     return Stelle;
     
   } else {
@@ -115,7 +114,7 @@ int strlen(char * string) {
 \small
 Solche Konstruktionen können effiziente und elegante Lösungen darstellen; in den meisten Fällen \enquote{stolpert} man aber beim Lesen über die \mintinline{c}{for}-Zeile. In der Regel ist die \enquote{Standard Form}:
 \begin{center}
-\mintinline{c}{for(int i=0; i<N; i++)}
+\mintinline{c}{for(int i=0; i<N; ++i)}
 \end{center}
 zu bevorzugen.
 \end{hintbox}
@@ -132,7 +131,7 @@ zu bevorzugen.
 \begin{itemize}
 \item Beide Statements: implizites \mintinline{c}{goto}
 \item \mintinline{c}{break}: Hinter die Schleifen-Klammer (\})
-\item \mintinline{c}{continue}: Vor die Schleifen-Klammer (\{)
+\item \mintinline{c}{continue}: Vor die Schleifen-Klammer (\})
 \item Funktioniert nur über eine Ebene hinweg
 \item Wenn mehrere Schleifen gleichzeitig übersprungen werden sollen: \mintinline{c}{goto} oder Flags
 	(Variablen mit Wahrheitswert)
@@ -144,8 +143,8 @@ zu bevorzugen.
 #include <stdio.h>
 
 int main () {
-  for   (int i=1; i<100; i++) {
-    for (int j=1; j<100; j++) {
+  for   (int i=1; i<100; ++i) {
+    for (int j=1; j<100; ++j) {
       if (i + j > 150) {
         goto label_end;
       }
@@ -183,7 +182,8 @@ int main () {
 \end{itemize}
 %
 \column{.45\linewidth}
-\begin{codebox}[Beispiel: Variable Schrittweite, equal height group=B]
+\vspace{-15pt}
+\begin{codebox}[Beispiel: Variable Schrittweite]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 #include <stdio.h>
 
@@ -195,7 +195,7 @@ int main () {
 \end{minted}
 \end{codebox}
 %
-\begin{cmdbox}[Ausgabe, equal height group=B]
+\begin{cmdbox}[Ausgabe]
 \begin{minted}[fontsize=\scriptsize]{text}
 1
 2
@@ -232,6 +232,7 @@ int main () {
 \end{itemize}
 %
 \column{.45\linewidth}
+\vspace{-10pt}
 \begin{codebox}[Beispiel: Variable Schrittweite]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 #include <stdio.h>
@@ -239,7 +240,7 @@ int main () {
 int main () {
   int i = 1;
   
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; ++i) {
     int i = 2;
     printf("i=%d\n", i);
   }

@@ -14,7 +14,7 @@ Letzte Stunde haben wir gesehen/kennengelernt:
 \column{.5\linewidth}
 \begin{itemize}
 \item Konzept String: \mintinline{c}{char}-Array
-\item Funktionen aus \emph{stringh.h}
+\item Funktionen aus \emph{string.h}
 	\begin{itemize}
 	\item \texttt{strlen} -- Länge bestimmen
 	\item \texttt{strcmp} -- Vergleichen
@@ -104,7 +104,7 @@ int main () {
   srand(time(NULL));
   
   printf("Numbers, unsorted:\n");
-  for (i=0; i<N; i++) {
+  for (i=0; i<N; ++i) {
     nums[i] = Lo + rand() % (Hi-Lo+1);
     printf("%d\n", numbers[i]);
   }
@@ -115,10 +115,10 @@ int main () {
 \begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
   do {
     flagSwap = 0;
-    for (i = 0; i < N-1; i++) {
+    for (i = 0; i < N-1; ++i) {
       if (nums[i] > nums[i+1]) {
         flagSwap = 1;
-        countSwaps++;
+        ++countSwaps;
 	    
         dummy     = nums[i  ];
         nums[i  ] = nums[i+1];
@@ -129,7 +129,7 @@ int main () {
 
   printf("Sorted List (%d swaps):\n", 
     countSwaps);
-  for (i=0; i<N; i++) {
+  for (i=0; i<N; ++i) {
     printf("%d\n", nums[i]);
   }
 }
@@ -140,20 +140,25 @@ int main () {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]{Aus den letzten Übungen}
+\begin{frame}[fragile]
 %
-\tcbset{width=.52\linewidth, on line, height=6.3cm}
+\begin{tcbraster}[raster columns=2,
+                  raster equal height,
+                  nobeforeafter,
+                  raster column skip=0.2cm]
 \begin{codebox}[Aufgabe: Swap]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 #include <stdio.h>
 
-void swapDoubles (double * x, double * y) {
+void swapDoubles (double * x, double * y)
+{
   double dummy = *y;
   *y = *x;
   *x = dummy;
 }
 
-int main () {
+int main ()
+{
   double a = 1.3;
   double b = 7.7;
   
@@ -164,25 +169,26 @@ int main () {
 \end{minted}
 \end{codebox}
 %
-\tcbset{width=.45\linewidth, on line, height=6.3cm}
+%\tcbset{width=.45\linewidth, on line, height=6.3cm}
 \begin{tcolorbox}[title=Speicherbild, valign=center]
 \renewcommand{\arraystretch}{1.5}
 \tiny
 \begin{tabular}{c|c|c|c|c|c|c}
-\ldots &   x  &   y  & dummy & \ldots &  a  &  b  \\ \hline
-\ldots & (??) & (??) &  (??) & \ldots & 1.3 & 7.7 \\
+Zeile &   x  &   y  & dummy & \ldots &  a  &  b  \\ \hline
+15 & (??) & (??) &  (??) & \ldots & 1.3 & 7.7 \\
 \multicolumn{7}{c}{$\Downarrow$}\\
-\ldots & \&a  & \&b  &  (??) & \ldots & 1.3 & 7.7 \\
+16 & \&a  & \&b  &  (??) & \ldots & 1.3 & 7.7 \\
 \multicolumn{7}{c}{$\Downarrow$}\\
-\ldots & \&a  & \&b  &  7.7 & \ldots & 1.3 & 7.7 \\
+ 5 & \&a  & \&b  &  7.7 & \ldots & 1.3 & 7.7 \\
 \multicolumn{7}{c}{$\Downarrow$}\\
-\ldots & \&a  & \&b  &  7.7 & \ldots & 1.3 & 1.3 \\
+ 6 & \&a  & \&b  &  7.7 & \ldots & 1.3 & 1.3 \\
 \multicolumn{7}{c}{$\Downarrow$}\\
-\ldots & \&a  & \&b  &  7.7 & \ldots & 7.7 & 1.3 \\
+ 7 & \&a  & \&b  &  7.7 & \ldots & 7.7 & 1.3 \\
 \multicolumn{7}{c}{$\Downarrow$}\\
-\ldots & (??) & (??) &  (??) & \ldots & 7.7 & 1.3 \\
+17 & (??) & (??) &  (??) & \ldots & 7.7 & 1.3 \\
 \end{tabular}
 \end{tcolorbox}
+\end{tcbraster}
 %
 \end{frame}
 
@@ -196,15 +202,15 @@ int main () {
 #include <stdio.h>
 
 int crosssum(int number) {
-   char snum[20] = {};
-   int  reVal    =  0;
+   char buffer[20] = {};
+   int  reVal      =  0;
 
-   sprintf(snum, "%d", number);
-   for (int i=0; i<20; i++) {
+   sprintf(buffer, "%d", number);
+   for (int i=0; i<20; ++i) {
       reVal += (
-         (snum[i] >= '0') && 
-         (snum[i] <= '9')
-      ) ? snum[i] - '0' : 0;
+         (buffer[i] >= '0') && 
+         (buffer[i] <= '9')
+      ) ? buffer[i] - '0' : 0;
    }
 
    return reVal;
@@ -305,7 +311,7 @@ Strings wo möglich vermeiden
 \item Variablen existieren nur innerhalb  ihres Scopes
 \item Wird Scope verlassen, so wird auch der Speicherbereich der Variablne frei gegeben
 \item Pointer können weiter darauf verweisen, sind dann aber ungültig
-\item Lösung: Variablen im \enquote{richtigen} Scope anlegen -- notfalls: Global
+\item Lösung: Variablen im \enquote{richtigen} Scope anlegen -- notfalls: global
 \item Function \texttt{prepArray} nur zum Befüllen nutzen
 \item Oder: Dynamische Speicherverwaltung
 \end{itemize}
@@ -372,8 +378,8 @@ int main () {
     return -1; // for OS: process failed
   }
   
-  srand(time(NULL));
-  for (i=0; i<N; i++) {
+  srand( time(NULL) );
+  for (i=0; i<N; ++i) {
     numbers[i] = rand();
   }
   return 0; // for OS: everything all right
@@ -389,12 +395,12 @@ int main () {
 
 \begin{frame}[fragile]{Dynamische Speicherverwaltung: Memory Allocation}
 %
-\begin{columns}[T]
+\begin{columns}
 \column{.5\linewidth}
 \begin{itemize}
 \item Aus \texttt{stdlib.h}: Befehl \texttt{malloc}
 	\begin{itemize}
-	\item Reserviert $N$ zusammenhängende Bytes im Speicher
+	\item Reserviert $N$ zusammenhängende \emph{Bytes} im Speicher
 	\item Gibt Pointer auf Anfang des reservierten Bereichs zurück
 	\item Gibt bei Fehler \texttt{NULL} zurück
 	\end{itemize}
@@ -441,7 +447,7 @@ Beim Tippen von \texttt{malloc} sofort das zugehörige \texttt{free} schreiben -
 #include <time.h>
 
 int main () {
-  int i, N; srand(time(NULL));
+  int i, N; srand( time(NULL) );
   printf("generate how many numbers?\n"); scanf("%d", &N);
   
   int * willy = malloc(N * sizeof(int));
@@ -450,8 +456,8 @@ int main () {
     return -1;	// for OS: process failed
   }
   
-  for (i=0; i<N; i++) {willy[i] = rand();}
-  for (i=0; i<N; i++) {printf("%d\n", willy[i]);}
+  for (i=0; i<N; ++i) {willy[i] = rand();}
+  for (i=0; i<N; ++i) {printf("%d\n", willy[i]);}
   
   free(willy);
   return 0; // for OS: everything all right
@@ -463,13 +469,13 @@ int main () {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Pointer beliebigen Typs -- \mintinline{c}{void *}}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-Pointer beliebigen Typs -- \mintinline{c}{void *}
-\end{Large}
+%\begin{Large}
+%Pointer beliebigen Typs -- \mintinline{c}{void *}
+%\end{Large}
 %
 \begin{itemize}
 \item \texttt{malloc} und \texttt{free} \enquote{wissen nicht}, welchen Pointer-Typ sie zurück geben sollen.
@@ -481,19 +487,19 @@ Pointer beliebigen Typs -- \mintinline{c}{void *}
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-15pt}
 \begin{codebox}[Beispiel: Keine Prüfung des Datentyps]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 int     * x = malloc(sizeof(int));
 double  * y = malloc(sizeof(double));
 
-// warning -- incompatible types
-double  * z = x;
-
-// invalid -- pointer to scalar
-// double d = x;
-
 // valid statement, no warning
 void    * v = x;
+
+// warning -- incompatible types
+double  * z = x;
+// invalid -- pointer to scalar
+// double d = x;
 
 // invalid use of void object
 // printf("%lf\n", *v);  // x
@@ -527,7 +533,8 @@ free(y);
 \item Kann Werte \enquote{umziehen lassen}
 \item Arraygröße \mintinline{c}{0} nicht zulässig
 \end{itembox}
-%
+
+\vspace{3pt}
 \tcbset{width=.495\linewidth, on line, height=1.5cm}
 %
 \begin{codebox}[Syntax]
@@ -553,7 +560,11 @@ ptr = realloc(ptr, newSizeBytes)
 \begin{center}
 \includegraphics[width=\linewidth]{./gfx/xkcd_standards}
 \newline
+\tiny{\enquote{Fortunately, the charging one has been solved now that we've all standardized on mini-USB. Or is it micro-USB? Shit.}}\\
 \tiny\url{https://xkcd.com/927/}
+
+\vspace{3pt}
+\tiny{\emph{Ich habe schon mehr von diesem Webcomic gelernt, als von mancher Vorlesung.}}
 \end{center}
 %
 \column{.5\linewidth}
@@ -824,17 +835,19 @@ Im Zweifel könnt ihr immer in der CPP-Referenz nachschlagen!
 #include <stdlib.h>
 
 int main() {
-  int   i;
-  int   src[] = {3, 4, 5};
-  int * dst   = calloc(3, sizeof(int));
+  int i;
+
+  int * dst = calloc(3, sizeof(int));
+  for (i=0; i<3; ++i) {dst[i] = i;}
   
-  for (i=0; i<3; i++) {dst[i] = i;}
+  int src[] = {3, 4, 5};
   
   dst = realloc(dst, 6 * sizeof(int));
+  for (i=0; i<3; ++i) {
+    dst[i+3] = src[i];
+  }
   
-  for (i=0; i<3; i++) {dst[i+3] = src[i];}
-  
-  for (i=0; i<6; i++) {printf("%d\n", dst[i]);}
+  for (i=0; i<6; ++i) {printf("%d\n", dst[i]);}
   
   free(dst);
 }
@@ -877,19 +890,20 @@ void * memcat(
 \begin{codebox}[...Fortsetzung]
 \begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
 int main() {
-   int i, B, N = 5;
-   int   src[] = {1, 2, 3};
-   int * dst   = malloc(N * sizeof(int));
+   int i, N = 5;
 
-   for(i=0; i<N; i++) {dst[i] = i;}
+   int * dst = malloc(N * sizeof(int));
+   for(i=0; i<N; ++i) {dst[i] = i;}
+   
+   int   src[] = {1, 2, 3};
 
    dst = memcat(
       dst, N * sizeof(int), 
       src,     sizeof(src)
    );
 
-   B = N + sizeof(src) / sizeof(int);
-   for (i = 0; i < B; i++) {
+   N += sizeof(src) / sizeof(int);
+   for (i = 0; i < N; ++i) {
       printf("%d\n", dst[i]);
    }
 
@@ -923,7 +937,7 @@ Bei \texttt{realloc} wird in diesem Fall der \enquote{alte Speicher} nicht freig
 
 \begin{frame}[fragile]
 %
-\tcbset{width=.495\linewidth, on line, height=7.8cm}
+\tcbset{width=.495\linewidth, on line, equal height group = grpXmpReallocCheck}
 %
 \begin{codebox}[Beispiel]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
@@ -931,43 +945,47 @@ Bei \texttt{realloc} wird in diesem Fall der \enquote{alte Speicher} nicht freig
 #include <stdlib.h>
  
 int main(void) {
-  // allocate an array of 10 int
+  // allocate an array of 10 int = 40 B
   int *pa = malloc(10 * sizeof(*pa));
   
   if (pa) {
-    printf("%ld bytes allocated. "
-           "Storing ints: ", 
+    printf("%ld bytes allocated:\n",
            10 * sizeof(int)
     );
-    
     for(int n = 0; n < 10; ++n) {
       printf("%d ", pa[n] = n);
     }
-  }
+    
+  } else {return -1;}
+  
+  // reallocate array to hold 4 MB
+  int *pb;
+  pb = realloc(pa, 1000000*sizeof(*pb));
 \end{minted}
 \end{codebox}
 %
-\begin{codebox}[...Fortsetzung]
+\begin{codebox}[...Fortsetzung, equal height group = grpXmpReallocCheck]
 \begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
-  // reallocate array to a larger size
-  int *pb = realloc(
-    pa, 1000000 * sizeof(*pb)
-  );
   
   if (pb) {
     printf("\n%ld bytes allocated, "
            "first 10 ints are: ", 
            1000000 * sizeof(int)
     );
+    
     for(int n = 0; n < 10; ++n) {
       printf("%d ", pb[n]);
     }
+    
     free(pb);
+    
   } else { 
     // if realloc failed, the original 
     // pointer needs to be freed
     free(pa);
   }
+  
+  return 0;
 }
 \end{minted}
 \end{codebox}
@@ -1113,6 +1131,7 @@ einfacher\_Pointer     & Bytes für Pointer (unabhängig vom Datentyp) \\
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-10pt}
 \begin{warnbox}
 Für \emph{jedes} \texttt{malloc}/\texttt{calloc} ein eigenes \texttt{free}!\\
 Also sowohl für die Unterlisten als auch für die Liste der Listen!\\
@@ -1130,7 +1149,7 @@ Setzt Matrizen und Tensoren als eindimensionale Objekte um -- die Speicherverwal
 \begin{frame}{Speicherbild}
 %
 \begin{itemize}
-\item \texttt{var}: unsere Verwaltungsvariable
+\item \texttt{var}: unsere Verwaltungsvariable -- \enquote{die ganze Tabelle}
 \item Variable selbst \enquote{irgendwo} im Speicher (\zB an \texttt{0x8e80})
 \item Zeigt auf Speicherbereich: \enquote{Liste von Pointern: Wo sind die tatsächlichen Tabelleneinträge
 	zu finden}
@@ -1200,6 +1219,7 @@ Setzt Matrizen und Tensoren als eindimensionale Objekte um -- die Speicherverwal
 
 \begin{frame}[fragile]{In Code}
 %
+\vspace{-10pt}
 \begin{codebox}[eindimensionale Repräsentation]
 \begin{minted}[fontsize=\scriptsize]{text}
 Datentyp * matrix = malloc(  Zeilen * Spalten * sizeof(Datentyp)  );
@@ -1212,8 +1232,8 @@ free(matrix);
 %
 \begin{codebox}[mehrdimensionale Repräsentation]
 \begin{minted}[fontsize=\scriptsize]{text}
-Datentyp ** matrix          = malloc(  Zeilen  * sizeof( *matrix)  );
-matrix[ID_Zeile]            = malloc(  Spalten * sizeof(**matrix)  );
+Datentyp ** matrix = malloc(  Zeilen  * sizeof( *matrix)  );
+matrix[ID_Zeile]   = malloc(  Spalten * sizeof(**matrix)  );
 
 matrix[ID_Zeile][ID_Spalte] = value;
 
@@ -1256,15 +1276,15 @@ int main() {
 \begin{codebox}[...Fortsetzung]
 \begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
   lineStart = N * N - N;
-  for (i = 0; i < N * N; i++) {
+  for (i = 0; i < N * N; ++i) {
     matrix[i] = lineStart + i + 1;
     if (i % N == N - 1) {
       lineStart -= 2 * N;
     }
   }
 	
-  for   (r = 0; r < N; r++) {
-    for (c = 0; c < N; c++) {
+  for   (r = 0; r < N; ++r) {
+    for (c = 0; c < N; ++c) {
       printf("%d\t", matrix[r * N + c]);
     }
     printf("\n");
@@ -1281,24 +1301,23 @@ int main() {
 
 \begin{frame}[fragile]
 %
-\tcbset{width=.495\linewidth, on line, height=7.2cm}
+\tcbset{width=.495\linewidth, on line}
 %
-\begin{codebox}[Beispiel: 2D-Matrix-Repräsentation]
+\begin{codebox}[Beispiel: 2D-Matrix-Repräsentation, equal height group = xmp2DMatrix]
 \begin{minted}[fontsize=\scriptsize, linenos, firstnumber = 16]{c}
 ...
-int ** matrix = malloc(
-       N * sizeof(*matrix)
-);
-for (i = 0; i < N; i++) {
-   matrix[i] = malloc(
-                  N * sizeof(*matrix[i])
-               );
+int ** matrix =
+  malloc( N * sizeof(*matrix) );
+
+for (i = 0; i < N; ++i) {
+   matrix[i] =
+     malloc( N * sizeof(*matrix[i]) );
 }
 
 lineStart = N * N - N;
 
-for    (r = 0; r < N; r++) {
-   for (c = 0; c < N; c++) {
+for    (r = 0; r < N; ++r) {
+   for (c = 0; c < N; ++c) {
       matrix[r][c] = lineStart + c + 1;
    }
    lineStart -= N;
@@ -1306,16 +1325,16 @@ for    (r = 0; r < N; r++) {
 \end{minted}
 \end{codebox}
 %
-\begin{codebox}[...Fortsetzung]
+\begin{codebox}[...Fortsetzung, equal height group = xmp2DMatrix]
 \begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
-for    (r = 0; r < N; r++) {
-   for (c = 0; c < N; c++) {
+for    (r = 0; r < N; ++r) {
+   for (c = 0; c < N; ++c) {
       printf("%d\t", matrix[r][c]);
    }
    printf("\n");
 }
 
-for (i = 0; i < N; i++) {
+for (i = 0; i < N; ++i) {
    free(matrix[i]);
 }
 free(matrix);
@@ -1329,9 +1348,17 @@ free(matrix);
 \begin{frame}
 %
 \begin{hintbox}[Ein Index vs. mehrere Indizes -- welche Technik wann?]
-In der Praxis: Fast immer \enquote{geplättete Listen} zu bevorzugen. Weniger Fehleranfällig, effizientere Code-Ausführung.\\
-Vergleiche automatische Arrays: Compiler setzt diese intern als einfaches Array um.\\
-Einziger Vorteil für Multi-Index-Listen: Spalten unterschiedlicher Länge können Speicherschonender umgesetzt werden. (Dann aber eine zusätzliche Liste der Spaltenlängen nötig.)
+In der Praxis: Fast immer \enquote{geplättete Listen} zu bevorzugen. Weniger Fehleranfällig, effizientere Code-Ausführung.
+
+Vergleiche automatische Arrays: Compiler setzt diese intern als einfaches Array um.
+
+\vspace{6pt}
+Vorteile von Multi-Index-Listen:
+\begin{itemize}
+\item Spalten unterschiedlicher Länge können Speicherschonender umgesetzt werden. (Dann aber eine zusätzliche Liste der Spaltenlängen nötig.)
+\item Einfügen/Löschen von ganzen Spalten (Zeilen) ist leichter
+\end{itemize}
+
 \end{hintbox}
 %
 \end{frame}
