@@ -6,7 +6,7 @@
 
 % =========================================================================== %
 
-\begin{frame}{Recap}
+\begin{frame}{Recap: Speicherstrukturen}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
@@ -14,9 +14,9 @@
 \item \mintinline{c}{struct}s
 	\begin{itemize}
 	\item \enquote{Container-Datentyp}
-	\item Daten-Records
-	\item Pointer-Records
-	\item Pointer auf \texttt{struct}s
+	\item Daten-Attribute
+	\item Pointer-Attribute
+	\item Pointer auf \inC{struct}s
 	\item Operator \texttt{->}
 	\end{itemize}
 \item \mintinline{c}{enum}s
@@ -38,25 +38,25 @@
 	\item Alias für häufig benutzte Datentypen
 	\item Mehrfach-Definitionen, \zB für Pointer
 	\end{itemize}
-\item Fragen?
 \end{itemize}
 \end{columns}
-
 %
 \end{frame}
 
 % =========================================================================== %
 
-\begin{frame}{Recap}
+\begin{frame}{Recap: Modularisierung}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
 \begin{itemize}
 \item Aufteilung in Module
 	\begin{itemize}
+	\item Zweck: Gliederung, Kompilierzeit sparen, Closed-Source-Lösungen
 	\item Header: Definitionen; Sichtbar-Machen
 	\item Module: Normaler C-Code
 	\item Globale Variablen über Module hinweg: \mintinline{c}{extern}
+	\item Ggf. Kompilieren und Linken über spezielle Aufrufe
 	\end{itemize}
 \end{itemize}
 %
@@ -68,9 +68,12 @@
 	\item \mintinline{c}{unsigned}, \mintinline{c}{const}, \mintinline{c}{restrict}, 
 		\mintinline{c}{volatile}
 	\end{itemize}
-\item Fragen?
 \end{itemize}
 \end{columns}
+%
+\begin{center}
+\emph{Noch Fragen?}
+\end{center}
 %
 \end{frame}
 
@@ -89,30 +92,27 @@
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Wiederholung: Pointer vs. Skalar}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-{Wiederholung: Pointer vs. Skalar}
-\vspace{6pt}
-\end{Large}
 %
 \begin{itemize}
 \item Skalar: Tatsächliches Objekt -- einzelne Zahl
 \item Pointer: Wo ist die gefragte Zahl?
 \item Analogie: Früchte in nummerierten Boxen
 	\begin{itemize}
-	\item Frucht         \tab $\rightarrow$ Skalar
-	\item Nummer der Box \tab $\rightarrow$ Pointer 
+	\item Frucht         \tab \thus Skalar
+	\item Nummer der Box \tab \thus Pointer 
 	\item Nummer der Box bestimmen \newline
-		$\rightarrow$ Adress-Operator \texttt{\&variable})
+		\Thus Adress-Operator \texttt{\&variable}
 	\item Inhalt der Box ansehen oder verändern \newline
-		$\rightarrow$ Dereferenzierung \texttt{*variable})
+		\Thus Dereferenzierung \texttt{*variable}
 	\end{itemize}
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-10pt}
 \begin{codebox}[Beispiel: Einfache Pointer]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 #include <stdio.h>
@@ -138,30 +138,28 @@ int main () {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Wiederholung: Automatische Arrays}
 %
 \begin{columns}[T]
-\column{.5\linewidth}
-\begin{Large}
-{Wiederholung: Automatische Arrays}
-\vspace{6pt}
-\end{Large}
-%
+\column{.4\linewidth}
 \begin{itemize}
 \item Liste von Werten
 \item Realisierung über Startadresse und Index
 \item Analogie mit Früchten und Boxen:
 	\begin{itemize}
 	\item Nummer der ersten Box \newline 
-		$\rightarrow$ Pointer
+		$\rightarrow$ Pointer\\
+		\vspace{3pt}
 	\item Schritte zwischen erster und gewünschter Box \newline
-		$\rightarrow$ Index
+		$\rightarrow$ Index\\
+		\vspace{3pt}
 	\item Eine bestimmte Frucht ansehen oder austauschen \newline
 		$\rightarrow$ \texttt{variable[index]}
 	\end{itemize}
 \end{itemize}
 %
-\column{.5\linewidth}
+\column{.6\linewidth}
+\vspace{-13pt}
 \begin{codebox}[Beispiel: Statische Arrays]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 #include <stdio.h>
@@ -177,8 +175,9 @@ int main () {
 \end{codebox}
 %
 \begin{hintbox}
+\small
 Schon bei Deklaration genau überlegen: ist das ein Pointer oder ein Skalar?\newline
-Pointer im Namen kennzeichnen!
+\Thus Pointer im Namen kennzeichnen!
 \end{hintbox}
 \end{columns}
 
@@ -196,17 +195,21 @@ Pointer im Namen kennzeichnen!
 \item Analogie mit Früchten und Boxen:
 	\begin{itemize}
 	\item Gib mir $N$ Boxen \newline 
-		$\rightarrow$ \footnotesize \texttt{ptr = malloc(N * sizeof(type))}
+		\Thus \footnotesize \texttt{ptr = malloc(N * sizeof(type))}\\
+		\vspace{6pt}
 	\item \small Gib mir $N$ \emph{leere} Boxen \newline 
-		$\rightarrow$ \footnotesize \texttt{ptr = calloc(N, sizeof(type))}
+		\Thus \footnotesize \texttt{ptr = calloc(N, sizeof(type))}\\
+		\vspace{6pt}
 	\item \small Ich brauche meine Boxen nicht mehr \newline
-		$\rightarrow$ \footnotesize \texttt{free(ptr)}
+		\Thus \footnotesize \texttt{free(ptr)}\\
+		\vspace{6pt}
 	\item \small Zahl nötiger Boxen hat sich geändert \newline
-		$\rightarrow$ \footnotesize \texttt{ptr = realloc(ptr, N * size)}
+		\Thus \footnotesize \texttt{ptr = realloc(ptr, N * size)}
 	\end{itemize}
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-5pt}
 \begin{codebox}[Beispiel: Dynamische Arrays]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 #include <stdlib.h>
@@ -214,7 +217,7 @@ Pointer im Namen kennzeichnen!
 int main () {
   int * px = malloc(5 * sizeof(*px));
 
-  for (int i=0; i<5; i++) {px[i] = i;}
+  for (int i=0; i<5; ++i) {px[i] = i;}
 
   px = realloc(px, 6 * sizeof(*px));
 
@@ -236,15 +239,17 @@ int main () {
 \item Jede Funktion hat \enquote{ihre eigenen} Boxen
 \item Aufruf mit Parametern: Vorbefüllen der Boxen der Funktion
 \item Ausnahme: Globale Variablen
-\item Werte in aufrufender Funktion ändern \newline
-	$\rightarrow$ Pointer übergeben: welchen Wert ändern
+\item Werte durch aufrufend einer Funktion ändern \newline
+	\Thus Pointer übergeben: welchen Wert ändern
 \end{itemize}
 %
 \begin{warnbox}
-Ziel des Pointers muss zu beim Zugriff existieren!
+\small
+Das Ziel des Pointers muss zu beim Zugriff existieren!
 \end{warnbox}
 %
 \column{.5\linewidth}
+\vspace{-10pt}
 \begin{codebox}[Beispiel: Parameterübergabe]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 void passPtr(int x, int * px) {
@@ -282,7 +287,7 @@ int main (void) {
 	\begin{itemize}
 	\item User-Interface mit mehreren Buttons
 	\item Anwender soll über diese seine wichtigsten Programm-Funktionen aufrufen können
-	\item Funktion des Button also zur Laufzeit änderbar
+	\item Funktion des Buttons also zur Laufzeit änderbar
 	\end{itemize}
 \item Beispiel 2: aus der Mathe:
 	\begin{itemize}
@@ -385,9 +390,8 @@ int hasZeros(
   if (f(a) == 0) {return 1;}
   
   int lastsgn = (f(a) > 0);
-  double x;
   
-  for (x=a; x<b; x+=s) {
+  for (double x=a; x<b; x+=s) {
     if (lastsgn != (f(x) > 0)) {
       return 1;
     } else {
@@ -498,7 +502,7 @@ int main(void) {
   printf("Aufsteigend:\n");
   qsort(ints, size, sizeof(int), asc);
     
-  for (int i = 0; i < size; i++) {
+  for (int i = 0; i < size; ++i) {
     printf("%d ", ints[i]);
   }
   printf("\n");
@@ -506,7 +510,7 @@ int main(void) {
   printf("Absteigend:\n");
   qsort(ints, size, sizeof(int), dsc);
     
-  for (int i = 0; i < size; i++) {
+  for (int i = 0; i < size; ++i) {
     printf("%d ", ints[i]);
   }
   printf("\n");
@@ -531,15 +535,10 @@ int main(void) {
 
 % =========================================================================== %
 
-\begin{frame}
+\begin{frame}{Kommandozeilenparameter}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-{Kommandozeilenparameter}
-\vspace{6pt}
-\end{Large}
-%
 \begin{itemize}
 \item Systemebene: Kommandozeile $\rightarrow$ Betriebssystem (OS): Programm starten
 \item GUIs: Nur Verpackung, Weiterleitung an Konsole
@@ -548,9 +547,9 @@ int main(void) {
 %
 \begin{cmdbox}[Beispiel: Compileraufruf]
 \footnotesize 
-gcc myCode.c -std=c11 -Wall -lm\\
-./cr myCode.c
+gcc myCode.c -std=c11 -Wall -lm
 \end{cmdbox}
+{\footnotesize \texttt{gcc} ist das Programm. Es wird mit den Parametern \texttt{myCode.c}, \texttt{-std=c11}, \texttt{-Wall} und \texttt{-lm} aufgerufen.}
 %
 %
 \column{.5\linewidth}
@@ -582,30 +581,21 @@ gcc myCode.c -std=c11 -Wall -lm\\
 	\begin{codebox}[main mit Parametern]
 	\footnotesize\mintinline{c}{int main(int argc, char **argv)}
 	\end{codebox}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{itemize}
 \item neue Parameter:
 	\begin{itemize}
 	\item \mintinline{c}{int argc} -- \enquote{argument count}: Wie viele Parameter
 	\item \mintinline{c}{char ** argv} -- \enquote{argument values}: Liste der Parameter
 	\end{itemize}
-\end{itemize}
-%
-\column{.5\linewidth}
-\begin{itemize}
 \item Erinnerung: String ist Liste von \mintinline{c}{char}s
 \item Parameterliste ist Liste von Strings
 \item[$\Rightarrow$] \texttt{argv} ist \emph{Liste von Listen}
 \item[$\Rightarrow$] \mintinline{c}{char **}
 \end{itemize}
-\begin{itemize}
-\item Einschub: Rückgabetyp \mintinline{c}{int}
-	\begin{itemize}
-	\item OS kann auf \enquote{Antwort} von Programm reagieren
-	\item Üblich: \enquote{Fehlercode}, vom Programmierer definiert
-	\item Guter Stil: Programm beenden mit \mintinline{c}{return 0;}	
-	\end{itemize}
-\end{itemize}
 \end{columns}
-
 %
 \end{frame}
 
@@ -627,7 +617,7 @@ int main (int argc, char ** argv) {
   printf("%3d Parameters:\n", argc - 1);
   }
   int i;
-  for(i=1; i<argc; i++) {
+  for(i=1; i<argc; ++i) {
     printf("%3d\t%s\n", i, argv[i]);
   }
 }
@@ -644,12 +634,12 @@ int main (int argc, char ** argv) {
 \item Kein unterschied beim Kompilieren.
 	\begin{cmdbox}[Kompilieren mit Parametern -- wie immer]
 	\footnotesize 
-	gcc myCode.c -std=c11 -Wall -lm -o myExecutable
+	gcc myCode.c -std=c11 -Wall -Wextra -Wpedantic -lm -o myExecutable
 	\end{cmdbox}
 \item Starten durch anhängen der Parameter
 	\begin{cmdbox}[Ausführen mit Parametern]
 	\footnotesize 
-	./myExecutable my parameters
+	./myExecutable {\color{cyan} my parameters}
 	\end{cmdbox}
 \item Funktioniert so auf jedem Linux/Mac-Rechner
 \item Windows: Programm-Aufruf bis auf führendes \texttt{./} identisch
@@ -663,7 +653,7 @@ int main (int argc, char ** argv) {
 %
 \begin{cmdbox}[Kompilieren ohne Script{,} Aufruf mit Parametern]
 \begin{minted}[fontsize=\footnotesize]{text}
-gcc cmdLineProc.c -std=c11 -Wall -o cmdLineProc
+gcc cmdLineProc.c -std=c11 -Wall -Wextra -Wpedantic  -o cmdLineProc
 ./cmdLineProc Hieronymus Lauser "Chameleons are beautiful" more Parameters
 \end{minted}
 \end{cmdbox}

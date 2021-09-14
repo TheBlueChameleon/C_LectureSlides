@@ -14,25 +14,30 @@
 \item Kompilierzeit vs. Laufzeit
 \item \texttt{malloc}, \texttt{calloc} und \texttt{free}
 	\begin{itemize}
-	\item Speicherplatz reservieren und Freigeben
+	\item Speicherplatz Reservieren und Freigeben
 	\item Zählung in Bytes bzw. Records
+	\item Vorteil: Lebenszeit nicht mehr an Scopes gebunden
+	\item Erlaubt Arbeit mit Informationen, die erst zur \emph{Laufzeit} zur Verfügung stehen
 	\end{itemize}
 \item Typenlose Pointer -- \mintinline{c}{void *}
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{itemize}
 \item \texttt{realloc}
 	\begin{itemize}
 	\item Größe eines bestehenden Arrays ändern
 	\item Lässt Werte ggf. \enquote{umziehen}
 	\end{itemize}
-\end{itemize}
-%
-\column{.5\linewidth}
-\begin{itemize}
 \item Unterschiedliche Wirkung von \mintinline{c}{sizeof} auf automatische und dynamische Arrays
 \item Möglichkeit mehrdimensionaler Arrays
 \item Heap und Stack
-\item \emph{Fragen}?
 \end{itemize}
 \end{columns}
+%
+\begin{center}
+\emph{Noch Fragen?}
+\end{center}
 %
 \end{frame}
 

@@ -11,13 +11,13 @@
 \begin{itemize}
 \item Kapitel 9
 	\begin{itemize}
-	\item 9.2.8. Speicherklasse static	
+	\item 9.2.8. Speicherklasse \inC{static}
 	\end{itemize}
 \item Kapitel 11
 	\begin{itemize}
 	\item 11.1. Trennung von Header- und Modul-Code
-	\item 11.2. Speicherklasse extern
-	\item 11.3. Funktionen mit eingeschränkter Sichtbarkeit: static
+	\item 11.2. Speicherklasse \inC{extern}
+	\item 11.3. Funktionen mit eingeschränkter Sichtbarkeit: \inC{static}
 	\end{itemize}
 \end{itemize}
 %
@@ -61,7 +61,7 @@
 	\end{itemize}
 \item Erlaubt nur positive Werte
 \item Dafür doppelter Betrag
-\item Unintuitives verhalten: Buffer underflow
+\item Unintuitives Verhalten: \emph{Buffer underflow}
 \item Ausgabe mit \texttt{printf}: Modifier Formatzeichen \texttt{u}
 	\begin{itemize}
 	\item Weitere Typen: \texttt{hh} für \mintinline{c}{char}
@@ -73,6 +73,7 @@
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-10pt}
 \begin{codebox}
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 #include <stdio.h>
@@ -98,15 +99,10 @@ int main () {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{\inC{const}}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-{\mintinline{c}{const}}
-\vspace{6pt}
-\end{Large}
-%
 \begin{itemize}
 \item Verhindert Wert-Änderung nach Initialisierung
 \item Sicherheitsmechanismus
@@ -119,6 +115,7 @@ int main () {
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-10pt}
 \begin{codebox}
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 #include <stdio.h>
@@ -153,7 +150,8 @@ int main () {
 \item Kein \enquote{Überlappen} referenzierter Speicherbereiche
 \item Beeinflusst interne Umsetzung durch Compiler
 \end{itemize}
-%
+
+\vspace{6pt}
 \begin{itemize}
 \item \mintinline{c}{volatile}: Hinweis, dass Variable von anderen Prozessen geändert werden kann
 \item Verhindert Optimierungsschritte des Compilers
@@ -163,6 +161,8 @@ int main () {
 \begin{itemize}
 \item \mintinline{c}{register}: Ablegen im \enquote{Prozessor-Speicher}
 \item Optimierung für Variablen, die besonders häufig gelesen/geändert werden
+\item Wird mit Standard C 2020 nicht mehr verwendet
+\item Weiterhin reserviertes Schlüsselwort
 \end{itemize}
 \end{columns}
 %
@@ -170,17 +170,12 @@ int main () {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Speicherklasse \inC{static}}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-{\mintinline{c}{static}}
-\vspace{6pt}
-\end{Large}
-%
 \begin{itemize}
-\item Residente Variablen
+\item \enquote{Residente Variablen}
 \item Speicherstelle wird nicht frei gegeben, wenn Scope verlassen wird
 \item Optionaler Startwert wird nur ein einziges Mal zugewiesen
 \item Symbol dennoch nur auf Scope begrenzt
@@ -190,6 +185,7 @@ int main () {
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-10pt}
 \begin{codebox}
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 void func () {
@@ -198,7 +194,7 @@ void func () {
 }
 
 int main () {
-  for (int i=0; i<3; i++) {func();}
+  for (int i=0; i<3; ++i) {func();}
 }
 \end{minted}
 \end{codebox}
@@ -213,26 +209,45 @@ Aufruf 3 von func
 %
 \end{frame}
 
-% =========================================================================== %\\
+% =========================================================================== %
 
-\begin{frame}[fragile]{Auslagern in mehrere Dateien -- Modularisierung}
+\begin{frame}[fragile]{Modularisierung -- Motivation}
 %
 \begin{itemize}
-\item \mintinline{c}{#include "filename.ext"} bzw. \mintinline{c}{#include <filename.ext>} wird ersetzt
-	durch Inhalt der Datei
-\item \enquote{Copy \& Paste}
+\item Erinnerung: Mathe-Bibliothek
+	\begin{itemize}
+	\item Braucht \mintinline{c}{#include <math.h>}
+	\item Braucht Compiler-Option \texttt{-lm}
+	\end{itemize}
+\item Erlaubt, alte Funktionen wieder zu verwenden, ohne sie extra in den Code zu kopieren
+	\begin{itemize}
+	\item Bessere Gliederung, höhere Wiederverwendbarkeit
+	\item Großprojekte kompilieren schneller
+	\item Kommerzielle \enquote{Blackbox-Lösungen}
+	\end{itemize}
+\end{itemize}
+
+\vspace{10pt}
+Unser Ziel hier ist, ebenfalls Bibliotheken zu schreiben.
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Modularisierung -- Recap \texttt{\#include}}
+%
+\begin{itemize}
+\item \enquote{Copy \& Paste} einer Datei direkt in den Code
+\item \mintinline{c}{#include "filename.ext"} bzw. \mintinline{c}{#include <filename.ext>}
 \item \texttt{''Double Quotes}: Lade aus aktuellem Verzeichnis
 \item \texttt{<angle brackets>}: Lade aus Standard-Verzeichnis
 \item Konvention:
 	\begin{itemize}
-	\item Dateiendung \texttt{.c}: Tatsächlicher Code -- Funktionen, Anweisungen
+	\item Dateiendung \texttt{.c}: Tatsächlicher Modul-Code -- Funktionen, Anweisungen
 	\item Dateiendung \texttt{.h}: \enquote{\emph{Header}} -- Definitionen
 	\end{itemize}
-\item Dadurch: Code vorkompilierbar, als Bibliothek einbindbar
-	\begin{itemize}
-	\item Großprojekte kompilieren schneller
-	\item Kommerzielle \enquote{Blackbox-Lösungen}
-	\end{itemize}
+\item[\Thus] Übersetzung von jedem Modul als eigenständige Einheit
+\item[\Thus] Header enthält nur \enquote{überall} gültige Definitionen
 \end{itemize}
 %
 \end{frame}
@@ -243,8 +258,6 @@ Aufruf 3 von func
 %
 \begin{itemize}
 \item Header: \texttt{.h}-Datei
-\item \enquote{verbinden} mehrere Module
-\item Werden also in mehreren \texttt{.c}-Dateien via \mintinline{c}{#include "header.h"} eingebunden
 \item Nur \emph{Definitionen}, keine \emph{Deklarationen}
 	\begin{itemize}
 	\item Funktions-Prototypen
@@ -254,6 +267,9 @@ Aufruf 3 von func
 	\item \mintinline{c}{enum}s
 	\item[$\Rightarrow$] Alles, was selbst keinen Speicherplatz braucht
 	\end{itemize}
+\item Werden also in mehreren \texttt{.c}-Dateien via \mintinline{c}{#include "header.h"} eingebunden
+\item Dürfen daher keine Deklarationen enthalten, da sonst gedoppelt
+\item[\Thus] \enquote{verbinden} mehrere Module
 \end{itemize}
 %
 \end{frame}
@@ -264,16 +280,15 @@ Aufruf 3 von func
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-%\begin{Large}
-%{Module}
-%\vspace{6pt}
-%\end{Large}
 %
 \begin{itemize}
 \item \enquote{normaler} C-Code
-\item Nur ein Modul mit \texttt{int main()}
+\item Pro Projekt: nur ein Modul mit \texttt{int main()}
+\item Meist: Sammlung von Funktionen
+\item Kann aber auch globale Variaben enthalten
 \item Modul als \enquote{umfassender Scope}
 \item[$\Rightarrow$] \enquote{eigene globale Variablen je Modul}
+\item Alles, das über die Modulgrenzen sichtbar sein soll, wird im Header definiert
 \end{itemize}
 %
 \column{.5\linewidth}
@@ -285,6 +300,7 @@ gcc modul1.c modul2.c ... [Optionen]
 \begin{itemize}
 \item Nur Module, keine Header
 \item Bedenke: Bereits durch \mintinline{c}{#include}-Zeile teil der \texttt{.c}-Datei
+\item[\Thus] Erzeugt eine ausführbare Datei, die aus den einzelnen Modulen zusammen gesetzt wurde
 \end{itemize}
 \end{columns}
 %
@@ -294,6 +310,7 @@ gcc modul1.c modul2.c ... [Optionen]
 
 \begin{frame}[fragile]
 %
+\vspace{-5pt}
 \begin{codebox}[Beispiel: Header \texttt{vector2D.h}]
 \begin{minted}[linenos, fontsize=\scriptsize]{c}
 typedef struct {
@@ -364,22 +381,74 @@ gcc std=c11 myProg.c vector2D.c -lm -Wall -Wextra
 
 % =========================================================================== %
 
+\begin{frame}{Vorkompilierte Bibliotheken}
+%
+\begin{itemize}
+\item Bisher:
+	\begin{itemize}
+	\item Gliederung in Module, aber
+	\item Immer noch jedes Mal jedes Modul komplett übersetzt
+	\end{itemize}
+\item Anderer Compiler-Aufruf
+	\begin{itemize}
+	\item 
+\begin{cmdbox}[Object-Files erstellen (Zwischenzustand beim Kompilieren)]
+\scriptsize
+gcc std=c11 myLibrary.c -Wall -Wextra -Wedantic {\color{cyan} -c -fPIC} -o myLibrary.o
+\end{cmdbox}
+	\item 
+\begin{cmdbox}[Zu einer \emph{static library} linken]
+\scriptsize
+ar rcs myLibrary.a myLibrary.o
+\end{cmdbox}
+	\end{itemize}
+\item Library kann auch mehrere \texttt{.o}-Dateien enthalten
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Library benutzen}
+%
+\begin{itemize}
+\item Normalen \texttt{main}-Code schreiben
+\item Darf natürlich auch eigene Funktionen enthalten (vgl: Mathe-Library verbietet das auch nicht)
+\item Library-Header mit \mintinline{c}{#include} einbinden
+\item Kompilieren mit \texttt{-lMyLibName}
+\end{itemize}
+%
+\begin{cmdbox}[Eigene Library benutzen]
+\scriptsize
+gcc std=c11 -Wall -Wextra -Wedantic mainMoudle.c {\color{cyan} myLibrary.a} -o myExecutable
+\end{cmdbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
 \begin{frame}[fragile]{Über Module geteilte globale Variablen: Speicherklasse \mintinline{c}{extern}}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
 \begin{itemize}
 \item Globale Variablen auf Module beschränkt
-\item In Header: Copy \& Paste $\Rightarrow$ Mehrfaches Anlegen
-\item Stattdessen: \mintinline{c}{extern}
-\item Im Header: \enquote{Sichtbarmachen} einer Variablen
-\item Selbst keine Deklaration, nur Definition
-\item Keine Wertzuweisung in \mintinline{c}{extern}-Zeile
+	\begin{itemize}
+	\item Gut so, aber manchmal wollen wir diese Globals \emph{projektweit} nutzen
+	\item In Header packen: Copy \& Paste 
+	\item[\Thus] Mehrfaches Anlegen
+	\end{itemize}
+\item Stattdessen: \inC{extern}
+	\begin{itemize}
+	\item Im Header: \enquote{Sichtbarmachen} einer Variablen
+	\item Selbst keine Deklaration, nur Definition
+	\item Keine Wertzuweisung in \mintinline{c}{extern}-Zeile
+	\end{itemize}
 \end{itemize}
 %
 \column{.5\linewidth}
 \begin{codebox}[Syntax]
-\mintinline{c}{extern Datentyp Variable;}
+\inC{extern Datentyp Variable;}
 \end{codebox}
 \end{columns}
 %
