@@ -23,15 +23,43 @@
 
 % =========================================================================== %
 
-\begin{frame}[fragile]{\texttt{\#define} und der Präprozessor}
+\begin{frame}[fragile]{Der Präprozessor}
+%
+\begin{itemize}
+\item Übersetzungsschritt des C-Compilers
+\item Glorifiziertes Search and Replace
+\item Präprozessor-Direktiven
+	\begin{itemize}
+	\item Code im Code
+	\item Eigene \enquote{Befehle}, die eigentlich kein C sind
+	\item Alle solchen Befehle beginnen mit einem Raute-Symbol (\texttt{\#})
+	\item Beispiel: \mintinline{c}{#include} -- wird durch Dateiinhalt ersetzt
+	\end{itemize}
+\end{itemize}
+%
+\begin{hintbox}[Nur Präprozessor laufen lassen]
+Mit dem Befehl
+
+\mint{text}{gcc -E myCode.c}
+
+wird auf der Konsole der vom Präprozessor erzeugte \emph{reine C-Code} angezeigt.
+\end{hintbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{\texttt{\#define} -- Makros und bedingte Kompilation}
 %
 \begin{columns}[T]
-\column{.43\linewidth}
+\column{.5\linewidth}
+\vspace{-5pt}
 \begin{itemize}
-\item Präprozessor: Ändert Code, bevor Compiler einsetzt
-\item Beispiel: \mintinline{c}{#include} -- wird durch Dateiinhalt ersetzt
-\item \mintinline{c}{#define} -- Symbole anlegen (Makros)
+\item \mintinline{c}{#define SYMBOL Ersetzung}\\ Symbole anlegen (Makros)
 	\begin{itemize}
+	\item Jedes Erscheinen des Code-Texts \texttt{SYMBOL} wird durch den \emph{Text} \texttt{Ersetzung} ausgetauscht
+	\item Keine Syntax-Prüfung
+	\item Rekursiv: Ersetze \texttt{SYMBOL2} in \texttt{SYMBOL1} in ...
 	\item Konvention: ALL CAPS
 	\end{itemize}
 \item Vordefinierte Symbole
@@ -41,25 +69,63 @@
 	\item \texttt{\_\_WIN32}, \texttt{WIN32}, \texttt{\_\_WIN32\_\_}
 	\item \texttt{\_\_UNIX}, \texttt{\_\_APPLE}, ...
 	\end{itemize}
-\item \mintinline{c}{#if}-Konstrukt und \mintinline{c}{defined} 
+\item \mintinline{c}{#undef} löscht Symbole wieder
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-10pt}
 \begin{codebox}
 \begin{minted}[fontsize=\scriptsize,linenos]{c}
 #include <stdio.h>
 
 #define M_PI 3.14159265358979323846
 
-#if defined(__WIN32)
-    /* Windows-Specific Code */
-#else
-    /* Unix-Specific Code */
-#endif
-
 int main (void) {
    printf("pi = %lf\n", M_PI);
 }
+\end{minted}
+\end{codebox}
+
+\begin{itemize}
+\item \texttt{SYMBOL}e können auch \emph{ohne Wert} angelegt werden
+\item Viele vordefinierte Symbole haben keinen Wert
+\item (Grund kommt gleich)
+\end{itemize}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{\texttt{\#if} und \texttt{defined} -- Bedingte Kompilation}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item Kompilation von Abschnitten an Bedingungen knüpfbar
+\item \mintinline{c}{#if}, \mintinline{c}{#elif}, \mintinline{c}{#else}, \mintinline{c}{#endif}
+\item Logik wie bei normalem \inC{if}, Bedingung muss aber aus Konstanten und Makros bestehen
+\end{itemize}
+%
+\begin{itemize}
+\item \mintinline{c}{defined(SYMBOL)}: wird zu wahr ausgewertet, wenn \texttt{SYMBOL} existiert
+\item Häufig verwendet mit Betriebssystem-Spezifischem Code
+\item Header guards
+\end{itemize}
+%
+\column{.5\linewidth}
+\begin{codebox}
+\begin{minted}[fontsize=\scriptsize,linenos]{c}
+#if defined(__WIN32)
+    // Windows-Specific Code
+#else
+    // Unix-Specific Code
+#endif
+
+#define DEBUGMODE
+#if defined(DEBUGMODE)
+  // Mechanism that prints debug messages
+#endif
 \end{minted}
 \end{codebox}
 \end{columns}
@@ -109,6 +175,8 @@ printf("%d", 10;);
 int main () {
   printf("SIX multiplied by NINE equals"
          " %d.\n", SIX * NINE);
+  // approved by the Hitchhikers Guide
+  // to the Galaxy.
 }
 \end{minted}
 \end{warnbox}
@@ -173,6 +241,7 @@ int main () {
 %
 \adjustbox{valign=t}{\begin{minipage}{.495\linewidth}
 \begin{hintbox}[Vor- und Nachteile]
+\small
 Vorteile
 \begin{itemize}
 \item Kein Overhead für Funktionsaufruf
@@ -183,16 +252,19 @@ Nachteile
 \item Größere ausführbare Dateien durch Code-Kopien
 \item Unerwartete Nebenwirkungen und schwer deutbare Fehlermeldungen
 \end{itemize}
+\vspace{3pt}
+Mehrzeilige Macros erlauben, eine komplett neue Sprache auf C aufzubauen. Dies braucht aber sehr gute Kenntnis der Mechanismen von C und viel Arbeit, diese alle zu durchdenken.
 \end{hintbox}
 \end{minipage}}
 %
 %
 \adjustbox{valign=t}{\begin{minipage}{.495\linewidth}
-\begin{hintbox}[Vor- und Nachteile]
+\begin{hintbox}[Empfehlung: \texttt{inline}-Funktionen]
 In Deklarations-Zeile: Funktionen als \mintinline{c}{inline} ausgezeichnen\\
 Compiler setzt diese ähnlich um; Verhalten im Code aber wie bei Funktionen, ohne Nebeneffekte.
 \end{hintbox}
-%
+
+\vspace{3pt}
 \begin{codebox}[Beispiel]
 \begin{minted}[fontsize=\scriptsize,linenos]{c}
 #include <stdio.h>
@@ -264,6 +336,7 @@ int main (void) {
 
 int main () {
   int i = 8, j = 7;
+  
   printf("MAX: %2d\n" , MAX(i++, j++));
   printf(" i : %2d\n", i);
   printf(" j : %2d\n", j);
@@ -282,6 +355,7 @@ int main () {
 \end{minted}
 \end{codebox}
 
+\vspace{-3pt}
 \begin{cmdbox}[Ausgabe, leftupper=6mm]
 \begin{minted}[fontsize=\scriptsize]{text}
 MAX: 9
@@ -309,7 +383,7 @@ Inline-Funktionen bevorzugen!
 %
 \begin{codebox}[Beispiel]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
-#define DebugInt(x) printf("The value of %s is %d\n", #x, x)
+#define DebugInt(x) printf("The value of '%s' is %d\n", #x, x)
 
 int myInt = 5;
 
@@ -318,12 +392,12 @@ DebugInt(myInt + 7);
 \end{minted}
 \end{codebox}
 %
-\begin{codebox}[Ausgabe]
-\begin{minted}[fontsize=\scriptsize, linenos]{text}
-The value of myInt is 7
-The value of myInt + 7 is 12
+\begin{cmdbox}[Ausgabe]
+\begin{minted}[fontsize=\scriptsize]{text}
+The value of 'myInt' is 5
+The value of 'myInt + 7' is 12
 \end{minted}
-\end{codebox}
+\end{cmdbox}
 %
 \end{frame}
 
@@ -332,7 +406,7 @@ The value of myInt + 7 is 12
 \begin{frame}[fragile]{\emph{Concatenation}-Operator}
 %
 \begin{itemize}
-\item Verkettune zwei Code-Zeichenketten zu einem Ausdruck
+\item Verkette zwei Code-Zeichenketten zu einem Ausdruck
 \item Concatenation-Operator \texttt{\#\#}
 \end{itemize}
 %
@@ -367,6 +441,19 @@ command menuItems[] = {
 };
 \end{minted}
 \end{codebox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}
+%
+\begin{hintbox}[Bewertung Präprozessor für diesen Kurs]
+Der C-Präprozessor erlaubt es, eine eigenständige Sprache auf C aufzubauen und schnell mächtige Tools zu erstellen. Die vielseitigen Nebeneffekte verlangen dabei aber große Vorsicht. In der Community wird der Präprozessor kontrovers diskutiert, von seiner Verwendung wird tendenziell abgeraten.
+
+\vspace{6pt}
+Als Element der Sprache C werdet ihr Präprozessor-Code oft online finden, und solltet diesen daher \emph{lesen und verstehen} können. Vom Selbst-Schreiben rate ich aber eher ab.
+\end{hintbox}
 %
 \end{frame}
 
@@ -468,8 +555,8 @@ int main(void)
 }
 \end{minted}
 \end{codebox}
-%
-\vspace{-4pt}
+
+\vspace{-9pt}
 \begin{hintbox}[Definition: Standardabweichung]
 \footnotesize Statistisches Maß für Streuung einer Messreihe $(x_i)_{i=1,\ldots,n}$ um Mittelwert 
 $\overline{x}$.
