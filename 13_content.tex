@@ -46,7 +46,7 @@
 \end{minipage}
 %
 \begin{center}
-Fragen?
+\emph{Noch Fragen?}
 \end{center}
 
 %
@@ -70,15 +70,10 @@ Fragen?
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Dateiverwaltung}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-Dateiverwaltung
-\vspace{10pt}
-\end{Large}
-%
 \begin{itemize}
 \item Zugriff über \emph{handle}
 	\item Komplexes Datenobjekt, von \texttt{stdio.h} bereits vorbereitet
@@ -86,9 +81,11 @@ Dateiverwaltung
 	\item Enthält \enquote{Adresse auf dem Datenträger}, Cursorposition, Dateimodus, ...
 \item Handle erhalten: Über \texttt{fopen}
 \item Muss wieder geschlossen werden mit \texttt{fclose}
+\item \texttt{filename}: String -- \mintinline{c}{char *}
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-10pt}
 \begin{codebox}[Syntax: fopen]
 \begin{minted}[fontsize=\scriptsize]{c}
 FILE * handle = fopen(filename, mode);
@@ -98,7 +95,6 @@ fclose(handle);
 \end{codebox}
 %
 \begin{itemize}
-\item \texttt{filename}: String -- \mintinline{c}{char *}
 \item \texttt{mode}: einer von diesen:
 	\begin{itemize}
 	\item \texttt{''w''} -- write\newline
@@ -115,24 +111,20 @@ fclose(handle);
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{In Dateien schreiben}
 %
 \begin{columns}[T]
 \column{.40\linewidth}
-\begin{Large}
-In Dateien schreiben
-\vspace{10pt}
-\end{Large}
-%
 \begin{itemize}
 \item Einfachste Variante: \texttt{fprintf}
 \item Wie \texttt{printf}, zusätzlicher Parameter \texttt{handle}
 \item Definiert in \texttt{stdio.h}
-\item Alle Formattierzeichen, wie von \texttt{printf} bekannt
+\item Alle Formatierzeichen, wie von \texttt{printf} bekannt
 \item Rückgabewert: Zahl geschriebener Zeichen
 \end{itemize}
 %
 \column{.60\linewidth}
+\vspace{-10pt}
 \begin{codebox}[Syntax]
 \begin{minted}[fontsize=\footnotesize]{c}
 fprintf(handle, Formatstring, Parameter);
@@ -150,6 +142,7 @@ fclose(fp);
 \end{codebox}
 %
 \begin{warnbox}
+\small
 \texttt{fclose} nicht vergessen!
 \end{warnbox}
 \end{columns}
@@ -158,15 +151,10 @@ fclose(fp);
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Arrays schreiben}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-Arrays schreiben
-\vspace{10pt}
-\end{Large}
-%
 \begin{itemize}
 \item \emph{Binäres} Schreiben mit \texttt{fwrite}
 \begin{itemize}
@@ -174,11 +162,12 @@ Arrays schreiben
 	\item Also Dateiinhalt wie im Speicher
 \end{itemize}
 \item Definiert in \texttt{stdio.h}
-\item Rückgabewert: Zahl geschriebene Objekte
+\item Rückgabewert: Anzahl geschriebene Objekte
 \item Schneller als \texttt{fprintf}, da keine Übersetzung in menschenlesbares Format nötig.
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-10pt}
 \begin{codebox}[Syntax]
 \begin{minted}[fontsize=\footnotesize]{c}
 fwrite(source, count, size, handle);
@@ -199,6 +188,49 @@ fwrite(source, count, size, handle);
 
 \begin{frame}[fragile]
 %
+\begin{tcbraster}[raster columns=2,
+                  raster equal height,
+                  nobeforeafter
+                 ]
+\begin{codebox}[Beispiel: \texttt{fwrite}]
+\begin{minted}[fontsize=\scriptsize, linenos]{c}
+#include <stdio.h>
+
+int main (void) {
+  int data[] = {
+     543516756,
+    1702194274,
+    1634231072,
+    1701602669,
+     169963119
+  };
+
+  FILE * hFile = fopen("data.bin", "w");
+
+  fwrite(data, 5, sizeof(int), hFile);
+
+  fclose(hFile);
+}
+\end{minted}
+\end{codebox}
+%
+\begin{cmdbox}[Dateiinhalt \texttt{data.bin}]
+\begin{minted}[fontsize=\scriptsize]{tex}
+The blue chameleon!
+\end{minted}
+\end{cmdbox}
+\end{tcbraster}
+%
+\begin{center}
+\Thus Woher kommt der Text?
+\end{center}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]
+%
 \tcbset{width=.495\linewidth, on line, height=7.5cm}
 %
 \begin{codebox}[Beispiel: \texttt{fwrite} und \texttt{fprintf}]
@@ -210,14 +242,14 @@ int main (void) {
   int  somenum = 67;
   int i;
   
-  for (i=0; i<sizeof(alphabet); i++) {
+  for (i=0; i<sizeof(alphabet); ++i) {
     alphabet[i] = 'A' + i;
   }
   
   FILE * fp = fopen("file.txt", "w");    
   fprintf(fp, "'alphabet' as "
               "decimals, fprintf:\n");
-  for (i=0; i<sizeof(alphabet); i++) {
+  for (i=0; i<sizeof(alphabet); ++i) {
     fprintf(fp, "%d\t", alphabet[i]);
   }
   fprintf(fp, "|\n\n");
@@ -285,7 +317,7 @@ Beachte die drei \texttt{NULL}-chars bei der Ausgabe mit \texttt{fwrite}
 \begin{itemize}
 \item \texttt{fscanf}: Wie \texttt{scanf}, zusätzlicher Parameter \texttt{handle}
 \item Definiert in \texttt{stdio.h}
-\item Alle Formattierzeichen, wie von \texttt{scanf} bekannt
+\item Alle Formatierzeichen, wie von \texttt{scanf} bekannt
 \item Datei muss im \emph{Lesemodus} geöffnet sein!
 \item Rückgabewert: Zahl erfolgreich gelesener Arumente
 \end{itemize}
@@ -297,7 +329,6 @@ fscanf(handle, formatstr, arglist);
 \end{codebox}
 %
 \column{.5\linewidth}
-%
 \begin{codebox}[Beispiel]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 #include <stdio.h>
@@ -322,15 +353,10 @@ int main () {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Arrays lesen}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-Arrays lesen
-\vspace{10pt}
-\end{Large}
-%
 \begin{itemize}
 \item \emph{Binäres} Lesen mit \texttt{fread}
 \begin{itemize}
@@ -343,6 +369,7 @@ Arrays lesen
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-10pt}
 \begin{codebox}[Syntax]
 \begin{minted}[fontsize=\footnotesize]{c}
 fread(dest, count, size, handle);
@@ -418,20 +445,20 @@ int main (void) {
 \begin{codebox}[... Fortsetzung ...]
 \begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
     printf("fscanf:\t");
-    for (i=0; i<26; i++) {
+    for (i=0; i<26; ++i) {
       fscanf(fp, "%hhi", alphabet + i);
     }
     
-    for (i=0; i<26; i++) {
+    for (i=0; i<26; ++i) {
       printf("%c ", alphabet[i]);
     }
     printf("\n");
     
-    for(i=0; i<3; i++) {gotoEnter(fp);}
+    for(i=0; i<3; ++i) {gotoEnter(fp);}
     
     printf("fread:\t");
     fread(alphabet, 26, 1, fp);
-    for (i=0; i<26; i++) {
+    for (i=0; i<26; ++i) {
       printf("%c ", alphabet[i]);
     }
     printf("\n");
@@ -446,12 +473,12 @@ int main (void) {
 %
 \begin{codebox}[... Fortsetzung]
 \begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
-    for(i=0; i<3; i++) {gotoEnter(fp);}
+    for(i=0; i<3; ++i) {gotoEnter(fp);}
     
     fscanf(fp, "%c", (char *) (&somenum));
     printf("fscanf:\t%d\n", somenum);
     
-    for(i=0; i<3; i++) {gotoEnter(fp);}
+    for(i=0; i<3; ++i) {gotoEnter(fp);}
     
     fread(&somenum, 1, sizeof(int), fp);
     printf("fread:\t%d\n", somenum);
@@ -506,6 +533,7 @@ Lese- und Schreibmethode aufeinander abstimmen: \texttt{fread} mit \texttt{fwrit
 
 \begin{frame}[fragile]{Cursorposition in Datei bestimmen und ändern: \texttt{ftell} und \texttt{fseek}}
 %
+\vspace{-20pt}
 \begin{columns}[T]
 \column{.5\linewidth}
 \begin{codebox}[Syntax]
@@ -555,17 +583,13 @@ int main ()
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Umgang mit Dateiende -- \texttt{feof}}
 %
+\vspace{-10pt}
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-Umgang mit Dateiende -- \texttt{feof}
-\vspace{10pt}
-\end{Large}
-%
 \begin{codebox}[Syntax]
-\begin{minted}[fontsize=\scriptsize, linenos]{c}
+\begin{minted}[fontsize=\scriptsize]{c}
 endReached = feof(handle);
 \end{minted}
 \end{codebox}
@@ -607,25 +631,29 @@ int main () {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Dateilänge bestimmen}
 %
+\vspace{-5pt}
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-Dateilänge bestimmen
-\vspace{10pt}
-\end{Large}
-%
 \begin{itemize}
 \item Kein eigenständiger Befehl
 \item Ausnutzung von \texttt{fseek} und \texttt{ftell}
-\item Springe ans Ende
-\item bestimme Position 
-\item Springe zurück
 \end{itemize}
 %
 \column{.5\linewidth}
-\begin{codebox}[Beispiel: Dateilänge bestimmen]
+\begin{itemize}
+\item Springe ans Ende
+\item Bestimme Position 
+\item Springe zurück
+\end{itemize}
+\end{columns}
+%
+\begin{tcbraster}[raster columns=2,
+                  raster equal height,
+                  nobeforeafter
+                 ]
+\begin{codebox}[Beispiel: Dateilänge bestimmen ...]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 #include <stdio.h>
 
@@ -638,16 +666,22 @@ long int flof (FILE * pFile) {
   fseek(pFile, oldPos, SEEK_SET);
   return endPos;
 }
-
+\end{minted}
+\end{codebox}
+%
+\begin{codebox}[... Fortsetzung]
+\begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c}
 int main (void) {
   FILE * pFile = fopen("file.txt", "r");  
+
   printf(
-    "file.txt: %ld bytes.\n", flof(pFile)
+    "file.txt: %ld bytes.\n",
+    flof(pFile)
   );
   fclose(pFile);
 }
 \end{minted}
 \end{codebox}
-\end{columns}
+\end{tcbraster}
 %
 \end{frame}
