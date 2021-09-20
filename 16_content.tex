@@ -6,13 +6,6 @@
 
 % =========================================================================== %
 
-\begin{frame}
-%
-%
-\end{frame}
-
-% =========================================================================== %
-
 \begin{frame}{C++ -- Eine mächtige Sprache}
 %
 \begin{warnbox}
@@ -24,7 +17,7 @@ C++ ist eine eigenständige Sprache! Trotz großer Ähnlichkeiten sollten die be
 \item Eigener Compiler \texttt{g++} ersetzt \texttt{gcc}.
 \item \texttt{gcc} und \texttt{g++} für beide Sprachen geeignet, jedoch unterschiedlich optimiert
 \item Viele neue Konzepte, von denen hier nur einige exemplarisch gezeigt werden
-\item \emph{Gigantische} Sammlung an Libraries
+\item \emph{Gigantische} Sammlung von Routinen in der Standard-Library (STL)
 \item Support: \url{http://en.cppreference.com} bzw. \url{http://de.cppreference.com}
 \item UR bietet eigenen Kurs an:
 	\href{http://www.physik.uni-regensburg.de/studium/it/c++kurs/}
@@ -35,15 +28,10 @@ C++ ist eine eigenständige Sprache! Trotz großer Ähnlichkeiten sollten die be
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{C vs. C++ -- Unterschiede}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-{C vs. C++ -- Unterschiede}
-\vspace{10pt}
-\end{Large}
-%
 \begin{itemize}
 \item Stream-Konzepte
 	\begin{itemize}
@@ -84,15 +72,11 @@ int main (void) {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Default Arguments und Function Overloading}
 %
+\vspace{-6pt}
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-{Default Arguments und Function Overloading}
-\vspace{10pt}
-\end{Large}
-%
 \begin{itemize}
 \item Default Arguments
 	\begin{itemize}
@@ -102,12 +86,14 @@ int main (void) {
 \item Function Overloading
 	\begin{itemize}
 	\item Mehrere Funktionen mit gleichem Namen
+	\item Aber: Unterschiedliche Art und/oder Anzahl von Parametern
 	\item Zweck: Selbe Aufgabe für unterschiedliche Parametertypen oder Rückgabetypen erfüllen
 	\item Code der einzelnen Funktionen unabhängig
 	\end{itemize}
 
 \end{itemize}
 \column{.5\linewidth}
+\vspace{-6pt}
 \begin{codebox}[Beispiel: Default Arguments]
 \begin{minted}[fontsize=\scriptsize, linenos]{c++}
 int getBiggestIdx(
@@ -119,6 +105,7 @@ cout << getBiggestIdx(arr2, N,  , 7);
 \end{minted}
 \end{codebox}
 %
+\vspace{-12pt}
 \begin{codebox}[Beispiel: Function Overloading]
 \begin{minted}[fontsize=\scriptsize, linenos]{c++}
 double distance(double x1, double y1,
@@ -136,26 +123,22 @@ double distance(double x1, double y1,
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Strings in C++}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-{Strings in C++}
-\vspace{10pt}
-\end{Large}
-%
 \begin{itemize}
 \item Eigener \enquote{Datentyp} (eigentlich: \emph{Klasse})
 \item Baut auf C-String auf
 \item Kommt mit einer großen Zahl von \emph{Methoden}: Routinen, die auf Strings angewandt werden können
-\item Library \texttt{string}
+\item STL-Header \texttt{string}
 \item \texttt{at} -- Elemente lesen oder schreiben mit \emph{boundary check}
 \item \texttt{size}, \texttt{length} -- Zeichen bis zum ersten \texttt{NULL}-Char
 \item \texttt{capacity} -- Größe des zugrunde liegenden \mintinline{c}{char}-Arrays
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-12pt}
 \begin{codebox}[Beispiel: Hello World in C++]
 \begin{minted}[fontsize=\scriptsize, linenos]{c++}
 #include <iostream>
@@ -183,24 +166,20 @@ int main (void) {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Strings in C++ (Fortsetzung)}
 %
 \begin{columns}[T]
 \column{.45\linewidth}
-\begin{Large}
-{Strings in C++ (Fortsetzung)}
-\vspace{10pt}
-\end{Large}
-%
 \begin{itemize}
 \item \texttt{clear} -- String leeren
 \item \texttt{insert(where, count, what)} -- Anderen String einfügen
 \item \texttt{find\_first\_of(what)} -- Zeichen in einem String finden
 \item und viele mehr
-\item[$\rightarrow$] \url{http://en.cppreference.com/w/cpp/string/basic_string}
+\item[\Thus] \url{http://en.cppreference.com/w/cpp/string/basic_string}
 \end{itemize}
 %
 \column{.55\linewidth}
+\vspace{-12pt}
 \begin{codebox}[Beispiel: Insert Strings]
 \begin{minted}[fontsize=\scriptsize, linenos]{c++}
 #include <iostream>
@@ -246,6 +225,7 @@ In C++ it’s harder to shoot yourself in the foot, but when you do, you blow of
 %
 \includegraphics[width=.495\linewidth]{./gfx/cppFirst}
 %
+\vspace{-12pt}
 \begin{itemize}
 \item Bild: Fehlermeldung bei meinem ersten Kompilierdurchgang zu \emph{Insert Strings}.
 \item Fehlermeldungen erstrecken sich über mehr als eine Bildschirmseite
@@ -275,7 +255,7 @@ In C++ it’s harder to shoot yourself in the foot, but when you do, you blow of
 %
 \column{.5\linewidth}
 \begin{itemize}
-\item Zugriffsbeschränkung: \mintinline{c++}{private}, \mintinline{c++}{public}
+\item Zugriffsbeschränkung: \mintinline{c++}{private} und \mintinline{c++}{public}
 	\begin{itemize}
 	\item \mintinline{c++}{public} -- Zugriff auf Record von überall -- wie aus C bekannt
 	\item \mintinline{c++}{private} -- Zugriff nur von Klassenmethoden aus
@@ -299,10 +279,13 @@ In C++ it’s harder to shoot yourself in the foot, but when you do, you blow of
 using namespace std;
 
 class Mat {
-public:
+private: // internal mechanisms
+   int rows, cols;
+   double * data;
+   
+public:  // exposed to the user
    int getRows();
    int getCols();
-
    double getElement(int row, int col);
 
    // constructors
@@ -311,9 +294,6 @@ public:
 
    // destructor
    ~Mat ();
-private:
-   int rows, cols;
-   double * data;
 };
 \end{minted}
 \end{codebox}
@@ -325,10 +305,10 @@ Mat::Mat (int rows, int cols) {
    this->cols = cols;
    this->data = new double[rows * cols];
 }
-
 Mat::~Mat () {delete this->data;}
 
 int Mat::getRows() {return this->rows;}
+int Mat::getCols() {return this->cols;}
 
 double Mat::getElement(int r, int c) {
    if (
@@ -351,7 +331,7 @@ double Mat::getElement(int r, int c) {
 %
 \begin{columns}[T]
 \column{.55\linewidth}
-%
+\vspace{-6pt}
 \begin{codebox}[... Fortsetzung]
 \begin{minted}[fontsize=\scriptsize, linenos, firstnumber=last]{c++}
 int main () {
@@ -369,6 +349,8 @@ int main () {
 %
 \begin{itemize}
 \item Denkweise: \texttt{Objekt.Aktion(Parameter)}
+\item Abgekapselte Systeme (Objekte) erlauben mehr Sicherheit, indem Wechselwirkungen beschränkt werden
+\item \enquote{Semi-Globale Variablen} (\ie Records)
 \end{itemize}
 %	
 \column{.45\linewidth}
@@ -386,14 +368,10 @@ int main () {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Templates}
 %
 \begin{columns}[T]
 \column{.51\linewidth}
-\begin{Large}
-{Templates}
-\vspace{10pt}
-\end{Large}
 \begin{itemize}
 \item Typen-unabhängige, abstrakte Formulierung von Routinen und Klassen
 \item Klasse: Hier jeder beliebige Datentyp, also primitive Typen (z.\,B. \mintinline{c}{int}) bis hin zu
@@ -408,15 +386,15 @@ int main () {
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-16pt}
 \begin{codebox}[Beispiel: Templates]
-\begin{minted}[fontsize=\scriptsize, linenos]{c}
+\begin{minted}[fontsize=\scriptsize, linenos]{c++}
 #include <iostream>
 using namespace std;
 
 template <class T>
 T sum (T a, T b) {
-    T result;
-    result = a + b;
+    T result = a + b;
     return result;
 }
 
@@ -430,6 +408,7 @@ int main () {
 }
 \end{minted}
 \tiny \url{http://www.cplusplus.com/doc/tutorial/functions2/}
+\vspace{-6pt}
 \end{codebox}
 \end{columns}
 %
@@ -437,14 +416,15 @@ int main () {
 
 % =========================================================================== %
 
-\begin{frame}{Template-Klasse Vector}
+\begin{frame}{Template-Klasse \texttt{vector}}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
 \begin{itemize}
-\item \mintinline{c++}{vector}: \emph{Template-Klasse} aus eigener Library
+\item konsekutive Listen von Objekten gleichen Datentyps
 \item \enquote{n-Tupel gleichen Datentyps} -- Liste von n Werten
-\item Interface für C-Arrays
+\item Interface für dynamische C-Arrays
+\item Methoden erlauben häufige Aufgaben (Vergrößern, Sortieren, ...) bequem \emph{und} effizient
 \item Template: Für jeden beliebigen Datentyp machbar -- auch für eigene \texttt{struct}s oder Klassen.
 \end{itemize}
 %
@@ -453,7 +433,7 @@ int main () {
 \item Methoden:
 	\begin{itemize}
 	\item \texttt{at}, \texttt{size}, \texttt{capacity} -- wie bei \texttt{string}
-	\item \texttt{cbegin}, \texttt{cend} -- erstes und letztes Element
+	\item \texttt{begin}, \texttt{end} -- erstes und letztes Element
 	\item \texttt{clear}, \texttt{erase}, \texttt{swap}, \texttt{resize}
 	\end{itemize}
 \item Bereitgestellte Algorithmen

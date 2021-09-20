@@ -23,8 +23,11 @@
 	\item Zerlegung in einfachere Unterprobleme
 	\item Eigener Scope für jede Instanz
 	\end{itemize}
-\item Fragen?
 \end{itemize}
+%
+\begin{center}
+	\emph{Noch Fragen?}
+\end{center}
 %
 \end{frame}
 
@@ -46,15 +49,11 @@
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Linked List: Ausgangsproblem}
 %
 \begin{columns}[T]
 \column{.4\linewidth}
-\begin{Large}
-Linked List: Ausgangsproblem
-\vspace{10pt}
-\end{Large}
-%
+\vspace{-6pt}
 \begin{itemize}
 \item Aufgabe: Füge Element in Liste ein
 \item Nötige Schritte:
@@ -67,15 +66,14 @@ Linked List: Ausgangsproblem
 \end{itemize}
 %
 \column{.6\linewidth}
+\vspace{-15pt}
 \begin{codebox}[Beispiel: Wert Einfügen]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
-int * insert(
-   int * lst, int len, int pos, int new
-) {
-   lst = realloc(
-      lst, 
-      (len + 1) * sizeof(int)
-   );
+int * insert(int * lst, int len,
+             int pos, int new)
+{
+   lst = realloc(lst, 
+                 (len + 1) * sizeof(int));
    if (!lst) {
       printf("failure.\n"); 
       return NULL;
@@ -97,13 +95,28 @@ int * insert(
 
 % =========================================================================== %
 
+\begin{frame}{Linked Lists: Grundidee}
+%
+\begin{itemize}
+\item Daten nicht mehr \emph{konsekutiv} (direkt aufeinander folgend)
+\item Sondern: \enquote{irgendwo} im Speicher
+\item Aber: Paar aus \enquote{Nutzdaten} und \enquote{Nachfolger-Adresse}
+\item[\Thus] Von einem Element aus alle seine Nachfolger auffindbar
+\item[\Thus] Nicht aber die Vorgänger
+\item[\Thus] Sonderrolle erstes Element
+\end{itemize}
+%
+\end{frame}
+
+% =========================================================================== %
+
 \begin{frame}[fragile]
 %
 \begin{codebox}[Datentyp für Elemente einer Linked List]
 \begin{minted}[linenos, fontsize=\scriptsize]{c}
 typedef struct listElement_struct {
-  int                         data;
-  struct listElement_struct * next;
+  int                         data;   // Nutzdaten
+  struct listElement_struct * next;   // Nachfolger-Adresse
 } listElement_t;
 \end{minted}
 \end{codebox}
@@ -147,6 +160,9 @@ typedef struct listElement_struct {
   		node [midway, yshift=-0.5cm]
 		(I3) {\scriptsize Instanz Element 3};
 \end{tikzpicture}
+
+\vspace{6pt}
+Listenende? Lasse \texttt{next} auf ungültige Adresse zeigen: \texttt{NULL}
 \end{tcolorbox}
 %
 \end{frame}
@@ -155,7 +171,7 @@ typedef struct listElement_struct {
 
 \begin{frame}[fragile]
 %
-\begin{tcolorbox}[title=Visualisierung: Einfügen in eine verkettete Liste]
+\begin{tcolorbox}[title=Visualisierung: Einfügen in eine verketteten Liste]
 \begin{tikzpicture}
   [ 
     cell/.style={text width=6mm,
@@ -205,6 +221,7 @@ typedef struct listElement_struct {
 \item Neues Element vorbereiten
 \item Zeigt auf Nachfolger
 \item Pointer des Vorgängers updaten
+\item[\Thus] Kein Kopieren/Verschieben nötig!
 \end{itemize}
 \end{tcolorbox}
 %
@@ -214,7 +231,7 @@ typedef struct listElement_struct {
 
 \begin{frame}[fragile]
 %
-\begin{tcolorbox}[title=Visualisierung: Einfügen an das Ende einer verkettete Liste]
+\begin{tcolorbox}[title=Visualisierung: Einfügen an das Ende einer verketteten Liste]
 \begin{tikzpicture}
   [ 
     cell/.style={text width=6mm,
@@ -272,7 +289,7 @@ typedef struct listElement_struct {
 
 \begin{frame}
 %
-\begin{tcolorbox}[title=Visualisierung: Einfügen an den Anfang einer verkettete Liste]
+\begin{tcolorbox}[title=Visualisierung: Einfügen an den Anfang einer verketteten Liste]
 \begin{tikzpicture}
   [ 
     cell/.style={text width=6mm,
@@ -380,6 +397,7 @@ typedef struct listElement_struct {
 \item Pointer des Vorgängers updaten
 \item Speicher freigeben
 \item Ähnliche Sonderfälle für Listenanfang und Listenende
+\item[\Thus] Wieder: Kein Kopieren/Verschieben!
 \end{itemize}
 \end{tcolorbox}
 %
@@ -387,15 +405,10 @@ typedef struct listElement_struct {
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Problem Einstiegspunkt}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-{Problem Einstiegspunkt}
-\vspace{6pt}
-\end{Large}
-%
 \begin{itemize}
 \item Einfügen und Löschen kann Einstiegspunkt verändern
 \item Funktionen, die diese Aufgaben übernehmen müssen diese Information weiterleiten
@@ -405,9 +418,11 @@ typedef struct listElement_struct {
 	\item Listenelemente
 	\item Verwaltungs-Variable
 	\end{itemize}
+\item Vorteil: Adresse von Verwaltungsvariable ändert sich nie!
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-5pt}
 \begin{codebox}[Datentypen für Listenelemente und Verwaltungsvariable einer Linked List]
 \begin{minted}[linenos, fontsize=\scriptsize]{c}
 typedef struct listElement_struct {
@@ -425,6 +440,194 @@ typedef struct {
 \end{minted}
 \end{codebox}
 \end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Problem Generalisierung}
+%
+\begin{columns}[T]
+\column{.5\linewidth}
+\begin{itemize}
+\item Bisher: Nur Listen von \inC{int}s
+\item Viel Aufwand; wir wollen nicht für jeden Datentyp neue LinkedLists schreiben!
+\item[\Thus] Nutzdaten sind \emph{Pointer auf \inC{void}}
+\end{itemize}
+
+\vspace{3pt}
+\begin{itemize}
+\item Benutzerdefinierte Interpretation des Speicherbereichs am Zielort
+\item[\Thus] \texttt{print}-Methode
+\end{itemize}
+
+\vspace{3pt}
+\begin{itemize}
+\item Wir als Programmierer*innen sind für die Speicherverwaltung zuständig
+\item[\Thus] Automatisierung an/abschalten
+\end{itemize}
+
+\column{.5\linewidth}
+\vspace{-5pt}
+\begin{codebox}[Datentypen für Listenelemente und Verwaltungsvariable einer Linked List]
+\begin{minted}[linenos, fontsize=\scriptsize]{c}
+typedef struct listElement_struct {
+  void *                      data;
+  struct listElement_struct * next;
+} listElement_t;
+
+typedef struct {
+  listElement_t * first;
+  int             size;
+  
+  int             memoryAutoManaged;
+  void (*printElement)(void *);
+} linkedList_t;
+\end{minted}
+\end{codebox}
+\end{columns}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}
+%
+\begin{tcolorbox}[title=Visualisierung: Struktur mit Verwaltungsvariable]
+\begin{tikzpicture}
+  [ 
+    cell/.style={text width=6mm,
+    text height=5mm, draw=black, inner sep=1mm},
+    ld/.style={draw=blue,shorten >=2pt,->}
+  ]
+
+  \node (c00) at ( 0.0,0) [cell]         {\ttfamily \ldots};
+  \node (c01) at ( 0.8,0) [cell, teal]   {\ttfamily \scriptsize PTR};
+  \node (c02) at ( 1.6,0) [cell, teal]   {\ttfamily \scriptsize 1};
+  \node (c03) at ( 2.4,0) [cell, teal]   {\ttfamily \scriptsize 0};
+  \node (c04) at ( 3.2,0) [cell, teal]   {\ttfamily \scriptsize NULL};
+  \node (c05) at ( 4.0,0) [cell]         {\ttfamily \ldots};
+  \node (c06) at ( 4.8,0) [cell]         {\ttfamily \ldots};
+  \node (c07) at ( 5.6,0) [cell]         {\ttfamily \ldots};
+  \node (c08) at ( 6.4,0) [cell]         {\ttfamily \ldots};
+  \node (c09) at ( 7.2,0) [cell, blue]   {\ttfamily \scriptsize PTR};
+  \node (c10) at ( 8.0,0) [cell, blue]   {\ttfamily \scriptsize NULL};
+  \node (c11) at ( 8.8,0) [cell]         {\ttfamily \ldots};
+  \node (c12) at ( 9.6,0) [cell, violet] {\ttfamily \scriptsize 1337};
+  \node (c13) at (10.4,0) [cell]         {\ttfamily \ldots};
+  \node (c14) at (11.2,0) [cell]         {\ttfamily \ldots};
+  \node (c15) at (12.0,0) [cell]         {\ttfamily \ldots};
+
+  \node (l01) at ( 0.8,.15) [teal] {\ttfamily \tiny first};
+  \node (l02) at ( 1.6,.15) [teal] {\ttfamily \tiny size};
+  \node (l03) at ( 2.4,.15) [teal] {\ttfamily \tiny auto};
+  \node (l04) at ( 3.2,.15) [teal] {\ttfamily \tiny print};
+  
+  \node (l09) at ( 7.2,.15) [blue] {\ttfamily \tiny data};
+  \node (l10) at ( 8.0,.15) [blue] {\ttfamily \tiny next};
+  
+  \draw [ld, teal]   (c01.north) .. controls +(1.0,0.5) and +(-1.0, 0.5) .. (c09.north west);
+  \draw [ld, blue]   (c09.north) .. controls +(1.0,0.5) and +(-1.0, 0.5) .. (c12.north west);
+
+  \draw [decorate, decoration={brace, amplitude=5pt, mirror}, xshift=-4pt, yshift=0pt, teal]
+  		(0.55, -0.5) -- (3.75, -0.5) 
+  		node [midway, yshift=-0.5cm]
+		(I0) {\scriptsize Verwaltungsvariable};
+  \draw [decorate, decoration={brace, amplitude=5pt, mirror}, xshift=-4pt, yshift=0pt, blue]
+  		(6.95, -0.5) -- (8.55, -0.5) 
+  		node [midway, yshift=-0.5cm]
+		(I1) {\scriptsize Listenelement 1};
+  \draw [decorate, decoration={brace, amplitude=5pt, mirror}, xshift=-4pt, yshift=0pt, violet]
+  		(9.35, -0.5) -- (10.15, -0.5) 
+  		node [midway, yshift=-0.5cm]
+		(N1) {\scriptsize Daten 1};
+\end{tikzpicture}
+\end{tcolorbox}
+%
+\begin{tcolorbox}[title=Visualisierung: Einfügen mit Verwaltungsvariable]
+\begin{tikzpicture}
+  [ 
+    cell/.style={text width=6mm,
+    text height=5mm, draw=black, inner sep=1mm},
+    ld/.style={draw=blue,shorten >=2pt,->}
+  ]
+
+  \node (c00) at ( 0.0,0) [cell]         {\ttfamily \ldots};
+  \node (c01) at ( 0.8,0) [cell, teal]   {\ttfamily \scriptsize \color{red} PTR};
+  \node (c02) at ( 1.6,0) [cell, teal]   {\ttfamily \scriptsize \color{red} 2};
+  \node (c03) at ( 2.4,0) [cell, teal]   {\ttfamily \scriptsize 0};
+  \node (c04) at ( 3.2,0) [cell, teal]   {\ttfamily \scriptsize NULL};
+  \node (c05) at ( 4.0,0) [cell]         {\ttfamily \ldots};
+  \node (c06) at ( 4.8,0) [cell, purple] {\ttfamily \scriptsize PTR};
+  \node (c07) at ( 5.6,0) [cell, purple] {\ttfamily \scriptsize PTR};
+  \node (c08) at ( 6.4,0) [cell]         {\ttfamily \ldots};
+  \node (c09) at ( 7.2,0) [cell, blue]   {\ttfamily \scriptsize PTR};
+  \node (c10) at ( 8.0,0) [cell, blue]   {\ttfamily \scriptsize NULL};
+  \node (c11) at ( 8.8,0) [cell]         {\ttfamily \ldots};
+  \node (c12) at ( 9.6,0) [cell, blue]   {\ttfamily \scriptsize 1337};
+  \node (c13) at (10.4,0) [cell]         {\ttfamily \ldots};
+  \node (c14) at (11.2,0) [cell, purple] {\ttfamily \scriptsize 3.14};
+  \node (c15) at (12.0,0) [cell]         {\ttfamily \ldots};
+
+  \node (l01) at ( 0.8,.15) [teal] {\ttfamily \tiny first};
+  \node (l02) at ( 1.6,.15) [teal] {\ttfamily \tiny size};
+  \node (l03) at ( 2.4,.15) [teal] {\ttfamily \tiny auto};
+  \node (l04) at ( 3.2,.15) [teal] {\ttfamily \tiny print};
+  
+  \node (l09) at ( 7.2,.15) [blue] {\ttfamily \tiny data};
+  \node (l10) at ( 8.0,.15) [blue] {\ttfamily \tiny next};
+  
+  \draw [ld, red]    (c01.north) .. controls +(1.0,0.5) and +(-1.0, 0.5) .. (c06.north west);
+  \draw [ld, blue]   (c09.north) .. controls +(1.0,0.5) and +(-1.0, 0.5) .. (c12.north west);
+  \draw [ld, purple] (c07.north) .. controls +(0.3,0.5) and +(-0.3, 0.5) .. (c09.north west);
+  \draw [ld, purple] (c06.north) .. controls +(1.0,1.0) and +(-1.0, 1.0) .. (c14.north west);
+
+  \draw [decorate, decoration={brace, amplitude=5pt, mirror}, xshift=-4pt, yshift=0pt, teal]
+  		(0.55, -0.5) -- (3.75, -0.5) 
+  		node [midway, yshift=-0.5cm]
+		(I0) {\scriptsize Verwaltungsvariable};
+  \draw [decorate, decoration={brace, amplitude=5pt, mirror}, xshift=-4pt, yshift=0pt, purple]
+  		(4.55, -0.5) -- (6.15, -0.5) 
+  		node [midway, yshift=-0.5cm]
+		(I1) {\scriptsize Listenelement neu};
+  \draw [decorate, decoration={brace, amplitude=5pt, mirror}, xshift=-4pt, yshift=0pt, blue]
+  		(6.95, -0.5) -- (8.55, -0.5) 
+  		node [midway, yshift=-0.5cm]
+		(I1) {\scriptsize Listenelement 1};
+  \draw [decorate, decoration={brace, amplitude=5pt, mirror}, xshift=-4pt, yshift=0pt, blue]
+  		(9.35, -0.5) -- (10.15, -0.5) 
+  		node [midway, yshift=-0.5cm]
+		(N1) {\scriptsize Daten 1};
+  \draw [decorate, decoration={brace, amplitude=5pt, mirror}, xshift=-4pt, yshift=0pt, purple]
+  		(10.95, -0.5) -- (11.75, -0.5) 
+  		node [midway, yshift=-0.5cm]
+		(N1) {\scriptsize Daten neu};
+\end{tikzpicture}
+\end{tcolorbox}
+%
+\end{frame}
+
+% =========================================================================== %
+
+\begin{frame}[fragile]{Warum \texttt{memoryAutoManaged}?}
+%
+\begin{itemize}
+\item Beispiel: Liste von Strings
+\item Erinnerung: \texttt{String} \thus Array von \inC{char}s
+\item Können als \emph{literal strings} oder in automatischen Arrays vorliegen 
+	\begin{itemize}
+	\item \inC{"literal string"}
+	\item \inC{char string[100];}
+	\item[\Thus] kein \texttt{free} erlaubt!
+	\end{itemize}
+\item Oder als \emph{dynamische Arrays}
+	\begin{itemize}
+	\item \inC{char string = malloc(100);}
+	\item[\Thus] Braucht zwingend \texttt{free}!
+	\end{itemize}
+\item Wir \texttt{free\_linkedList(list);}
+\item[\Thus] soll \texttt{free\_linkedList} \texttt{free} aufrufen?
+\end{itemize}
 %
 \end{frame}
 
