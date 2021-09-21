@@ -57,7 +57,7 @@
 %
 \begin{cmdbox}[Compiler-Aufruf]
 \scriptsize
-gcc -std=c11 -Wall -Wextra -Wpedantic myCode.c {\color{cyan} -lglut -lGL} -o myExecutable
+gcc -std=c11 -Wall -Wextra -Wpedantic myCode.c {\color{cyan} -lglut -lGL -lGLU -lm} -o myExecutable
 \end{cmdbox}
 %
 \end{frame}
@@ -423,15 +423,10 @@ $\Rightarrow$
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Konstruktion Reshape-Callback}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-{Konstruktion der Reshape-Callback}
-\vspace{10pt}
-\end{Large}
-%
 \begin{itemize}
 \item Berechne Seitenverhältnis
 \item \enquote{Aktiviere} Projection-Matrix
@@ -448,25 +443,21 @@ $\Rightarrow$
 \end{itemize}
 %
 \column{.5\linewidth}
-\begin{codebox}[Function \texttt{changeSize}, height=7.6cm]
+\vspace{-10pt}
+\begin{codebox}[Function \texttt{changeSize}]%, height=7.6cm]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 void changeSize(int w, int h) {
    // Prevent a divide by zero
    if (h == 0) {h = 1;}
    float ratio =  (float) w / h;
-
    // Use the Projection Matrix
    glMatrixMode(GL_PROJECTION);
-
    // Reset Matrix
    glLoadIdentity();
-
    // Set the correct perspective.
    gluPerspective(45.0f, ratio, 1, 100);
-
    // Use the entire window
    glViewport(0, 0, w, h);
-
    // Get Back to the Modelview
    glMatrixMode(GL_MODELVIEW);
 }
@@ -494,6 +485,7 @@ void changeSize(int w, int h) {
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-10pt}
 \begin{codebox}[gl-Bewegungen: Syntax]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 glTranslatef    (x, y, z);
@@ -518,15 +510,10 @@ gluLookAt(   eyeX,    eyeY,    eyeZ,
 
 % =========================================================================== %
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Usereingaben: Tastatur}
 %
 \begin{columns}[T]
 \column{.57\linewidth}
-\begin{Large}
-{Usereingaben: Tastatur}
-\vspace{10pt}
-\end{Large}
-%
 \begin{itemize}
 \item Zwei neue Callbacks
 \item \texttt{glutKeyboardFunc(processNormalKeys);}
@@ -549,7 +536,8 @@ gluLookAt(   eyeX,    eyeY,    eyeZ,
 \end{itemize}
 %
 \column{.43\linewidth}
-\begin{codebox}[Keyboard-Callbacks:\\ Signatur]
+\vspace{-10pt}
+\begin{codebox}[Keyboard-Callbacks]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 void processNormalKeys(
     unsigned char key, 
