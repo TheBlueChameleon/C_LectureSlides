@@ -33,6 +33,24 @@
 
 % =========================================================================== %
 
+\begin{frame}{GTK+ 2.0 -- Dependencies}
+%
+GTK+ ist auf anderen Systemen aufgebaut, die ebenso erst installiert sein müssen. Wie exakt das funktioniert, hängt vom Betriebssystem und System-Details ab, auf die in der Vorlesung nicht eingegangen werden können. Hier soll stattdessen die Code-Logik im Mittelpunkt stehen.
+
+\vspace{4pt}
+Wer mit GTK+ arbeiten will, sollte die folgenden Pakete installieren:
+\begin{itemize}
+\item \texttt{gtk2.0} und \texttt{libgtk2.0-dev}
+\item \texttt{freeglut3} und \texttt{freeglut3-dev}
+\end{itemize}
+
+\vspace{4pt}
+Weiter nützlich ist das Linux-Tool \texttt{pkg-config}.
+%
+\end{frame}
+
+% =========================================================================== %
+
 \begin{frame}[fragile]{GTK+ 2.0 -- Eine GUI-API}
 %
 \begin{columns}[T]
@@ -47,19 +65,21 @@
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-6pt}
 \begin{cmdbox}[Compiler-Kommando]
 \begin{minted}[fontsize=\scriptsize]{text}
 gcc 
    myCodefile1.c myCodefile2.c ...
-   -lm -lglut -lGL
-   -std=c11 -Wall 
+   -std=c11
+   -Wall -Wextra -Wpedantic
    `pkg-config --cflags --libs gtk+-2.0`
+   -lm 
    -o myExecutable
 \end{minted}
 \end{cmdbox}
 %
 \begin{itemize}
-\item Information hier nur der Vollständigkeit halber -- jeder Programmierer automatisiert das
+\item Information hier nur der Vollständigkeit halber -- alle Programmierer*innen automatisieren das
 \end{itemize}
 \end{columns}
 %
@@ -89,7 +109,7 @@ gcc
 \begin{itemize}
 \item \emph{Callback-Functions}
 	\begin{itemize}
-	\item Code, der bei \emph{Signal} ausgelöst wird
+	\item Code, der bei \emph{Signal} oder \emph{Event} ausgelöst wird
 	\item Function Pointers
 	\end{itemize}
 \item Zuordnung: Signal $\rightarrow$ Callback Function
@@ -153,6 +173,7 @@ gcc
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-6pt}
 \begin{codebox}[GTK-Widgets anlegen -- zwei Beispiele]
 \begin{minted}[fontsize=\scriptsize]{c}
 GtkWidget *window = gtk_window_new (
@@ -188,6 +209,7 @@ GtkWidget *button =
 \end{itemize}
 %
 \column{.55\linewidth}
+\vspace{-6pt}
 \begin{codebox}[g\_signal\_connect -- Funktionssignatur]
 \begin{minted}[fontsize=\scriptsize]{c}
 gulong g_signal_connect(
@@ -299,7 +321,8 @@ g_signal_connect (window, "destroy",      G_CALLBACK(destroy)     , NULL);
 \begin{frame}{gtk\_hello\_world.c im Detail -- Fenstereigenschaften steuern}
 %
 \mint{c}{gtk_container_set_border_width (GTK_CONTAINER (window), 10);}
-%
+
+\vspace{3pt}
 \begin{minipage}{.6\linewidth}
 \begin{itemize}
 \item Konzept \emph{Container}
@@ -330,7 +353,7 @@ g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), wi
 \end{minted}
 %
 \begin{itemize}
-\item Mehrere Handler mit selbem Signal und selbem Emitter verknüpfbar -- werden hierarchisch abgearbeitet
+\item Mehrere Handler mit selbem Signal und selbem Emitter verknüpfbar -- werden in Reihenfolge abgearbeitet
 \item Erste Verknüpfung damit klar -- Aufruf von Function \texttt{hello} bei Klick auf Button
 \item \texttt{g\_signal\_connect\_swapped}
 	\begin{itemize}
@@ -410,9 +433,10 @@ static void destroy(
 }
 \end{minted}
 \end{codebox}
-%
+
+\vspace{3pt}
 \begin{itemize}
-\item \texttt{hello} -- Gibt \texttt{Hello World} auf Konsole aus
+\item \texttt{hello} -- gibt \texttt{Hello World} auf Konsole aus
 \item \texttt{delete\_event} -- gibt Text auf Konsole aus, verhindert Programm-Ende
 \item \texttt{destroy} -- beendet das Programm
 \end{itemize}

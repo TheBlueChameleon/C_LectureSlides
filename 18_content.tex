@@ -6,15 +6,10 @@
 
 % =========================================================================== %
 
-\begin{frame}
+\begin{frame}{Über OpenGL und GLUT}
 %
 \begin{columns}[T]
 \column{.5\linewidth}
-\begin{Large}
-{Über OpenGL und GLUT}
-\vspace{10pt}
-\end{Large}
-%
 \begin{itemize}
 \item Multiplattform-API (\emph{Application Programming Interface} für 2D- und 3D-Anwendungen
 \item Quelloffen und frei
@@ -25,7 +20,7 @@
 \end{itemize}
 %
 \column{.5\linewidth}
-\vspace{15pt}
+\vspace{-5pt}
 \href{https://www.opengl.org/}{\includegraphics[width=\linewidth]{./gfx/OpenGL-Logo}}
 \begin{itemize}
 \item GLUT (\emph{OpenGL Utility Toolkit}) -- auf OpenGL basierende Routinen
@@ -35,6 +30,35 @@
 %
 \vspace{15pt}
 {\scriptsize Gutes Tutorial: \url{http://www.lighthouse3d.com/tutorials/glut-tutorial/}}
+%
+\end{frame}
+
+% =========================================================================== %\\
+
+\begin{frame}{Dependencies und Compileraufruf}
+%
+\begin{itemize}
+\item openGL und GLUT
+\item Windows
+	\begin{itemize}
+	\item \url{https://medium.com/@bhargav.chippada/how-to-setup-opengl-on-mingw-w64-in-windows-10-64-bits-b77f350cea7e}
+	\item \url{http://freeglut.sourceforge.net/}
+	\end{itemize}
+\item Linux Debian/Ubuntu
+	\begin{itemize}
+	\item Einfacher Kommandozeilen-Befehl
+	\item \texttt{sudo apt-get install freeglut3 freeglut3-dev}
+	\end{itemize}
+\item Mac
+	\begin{itemize}
+	\item I have no effin clue.
+	\end{itemize}
+\end{itemize}
+%
+\begin{cmdbox}[Compiler-Aufruf]
+\scriptsize
+gcc -std=c11 -Wall -Wextra -Wpedantic myCode.c {\color{cyan} -lglut -lGL} -o myExecutable
+\end{cmdbox}
 %
 \end{frame}
 
@@ -329,6 +353,7 @@ void renderScene(void) {
 \end{itemize}
 %
 \column{.5\linewidth}
+\vspace{-6pt}
 \begin{codebox}[Syntax: Vertex Farbe zuweisen]
 \begin{minted}[fontsize=\scriptsize, linenos]{c}
 glColor3f(red, green, blue);
